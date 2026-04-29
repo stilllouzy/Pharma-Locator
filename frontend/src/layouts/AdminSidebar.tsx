@@ -1,5 +1,5 @@
-import { Box, Typography } from "@mui/material";
-import { NavLink } from "react-router-dom";
+import { Box, Typography, Button } from "@mui/material";
+import { NavLink, useNavigate } from "react-router-dom";
 
 const sections = [
   {
@@ -30,6 +30,14 @@ const sections = [
 ];
 
 export default function Sidebar() {
+   const navigate = useNavigate();
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("role");
+    navigate("/");
+  };
+
   return (
     <Box
       sx={{
@@ -80,9 +88,19 @@ export default function Sidebar() {
               </NavLink>
             ))}
           </Box>
-
         </Box>
       ))}
+           {/* LOGOUT — pushed to bottom */}
+      <Box sx={{ mt: "auto", pt: 2 }}>
+        <Button
+          fullWidth
+          variant="outlined"
+          color="error"
+          onClick={handleLogout}
+        >
+          Logout
+        </Button>
+      </Box>
     </Box>
   );
 }
