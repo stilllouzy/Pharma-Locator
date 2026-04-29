@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState,useRef } from "react";
+
 import api from "../../api/api";
 import {
   Box,
@@ -23,6 +24,10 @@ export default function Login() {
   const [regEmail, setRegEmail] = useState("");
   const [regPassword, setRegPassword] = useState("");
 
+  //EnterKey Nav
+  const passwordRef = useRef<HTMLInputElement>(null);
+const regEmailRef = useRef<HTMLInputElement>(null);
+const regPasswordRef = useRef<HTMLInputElement>(null);
   // LOGIN FUNCTION
   const handleLogin = async () => {
     try {
@@ -99,20 +104,23 @@ export default function Login() {
         {/* LOGIN FORM */}
         {tab === 0 && (
           <>
-            <TextField
-              fullWidth
-              label="Email"
-              margin="normal"
-              onChange={(e) => setEmail(e.target.value)}
-            />
+          <TextField
+  fullWidth
+  label="Email"
+  margin="normal"
+  onChange={(e) => setEmail(e.target.value)}
+  onKeyDown={(e) => e.key === "Enter" && passwordRef.current?.focus()} // ✅
+/>
 
-            <TextField
-              fullWidth
-              label="Password"
-              type="password"
-              margin="normal"
-              onChange={(e) => setPassword(e.target.value)}
-            />
+<TextField
+  fullWidth
+  label="Password"
+  type="password"
+  margin="normal"
+  inputRef={passwordRef} // ✅
+  onChange={(e) => setPassword(e.target.value)}
+  onKeyDown={(e) => e.key === "Enter" && handleLogin()}
+/>
 
             <Button
               fullWidth
@@ -128,27 +136,32 @@ export default function Login() {
         {/* REGISTER FORM */}
         {tab === 1 && (
           <>
-            <TextField
-              fullWidth
-              label="Full Name"
-              margin="normal"
-              onChange={(e) => setName(e.target.value)}
-            />
+         <TextField
+  fullWidth
+  label="Full Name"
+  margin="normal"
+  onChange={(e) => setName(e.target.value)}
+  onKeyDown={(e) => e.key === "Enter" && regEmailRef.current?.focus()} // ✅
+/>
 
-            <TextField
-              fullWidth
-              label="Email"
-              margin="normal"
-              onChange={(e) => setRegEmail(e.target.value)}
-            />
+<TextField
+  fullWidth
+  label="Email"
+  margin="normal"
+  inputRef={regEmailRef} // ✅
+  onChange={(e) => setRegEmail(e.target.value)}
+  onKeyDown={(e) => e.key === "Enter" && regPasswordRef.current?.focus()} // ✅
+/>
 
-            <TextField
-              fullWidth
-              label="Password"
-              type="password"
-              margin="normal"
-              onChange={(e) => setRegPassword(e.target.value)}
-            />
+<TextField
+  fullWidth
+  label="Password"
+  type="password"
+  margin="normal"
+  inputRef={regPasswordRef} // ✅
+  onChange={(e) => setRegPassword(e.target.value)}
+  onKeyDown={(e) => e.key === "Enter" && handleRegister()}
+/>
 
             <Button
               fullWidth

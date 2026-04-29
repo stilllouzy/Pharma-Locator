@@ -11,7 +11,8 @@ export interface IOrder extends Document {
   pharmacy: mongoose.Types.ObjectId;
   items: IOrderItem[];
   totalPrice: number;
-  status: "pending" | "paid" | "delivered" | "cancelled";
+  paymentStatus: "unpaid" | "paid" | "refunded";
+  status: "pending" | "preparing" | "delivered" | "cancelled";
   deliveryMethod: "pickup" | "delivery";
   deliveryAddress?: string;
   createdAt: Date;
@@ -28,10 +29,15 @@ const OrderSchema: Schema = new Schema(
         price: { type: Number, required: true },
       },
     ],
+    paymentStatus: {
+  type: String,
+  enum: ["unpaid", "paid", "refunded"],
+  default: "unpaid",
+},
     totalPrice: { type: Number, required: true },
     status: {
       type: String,
-      enum: ["pending", "paid", "delivered", "cancelled"],
+      enum: ["pending", "preparing", "delivered", "cancelled"],
       default: "pending",
     },
     deliveryMethod: {

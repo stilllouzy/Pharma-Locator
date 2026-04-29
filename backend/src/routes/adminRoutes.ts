@@ -3,7 +3,7 @@ import { createPharmacyAccount } from "../controllers/adminController";
 import { protect } from "../middleware/authMiddleware";
 import { authorize } from "../middleware/roleMiddleware";
 import User from "../models/User";
-
+import Order from "../models/Order";
 const router = express.Router();
 
 /* =========================
@@ -181,7 +181,17 @@ router.get(
   protect,
   authorize("admin"),
   async (req, res) => {
-    res.json([]);
+    try {
+      const { status } = req.query;
+      const filter = status ? { status } : {};
+      const orders = await Order.find(filter)
+        .populate("user", "name email")    
+        .populate("pharmacy", "name")       
+        .sort({ createdAt: -1 });
+      res.json(orders);
+    } catch (err) {
+      res.status(500).json({ message: "Server error" });
+    }
   }
 );
 /* =========================

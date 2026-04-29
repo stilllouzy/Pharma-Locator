@@ -12,16 +12,16 @@ import api from "../../api/api";
 
 interface IOrder {
   _id: string;
-  userId: {
+  user: {          // ✅ was userId
     name: string;
     email: string;
   };
-  pharmacyId: {
+  pharmacy: {      // ✅ was pharmacyId
     name: string;
   };
-  totalAmount: number;
+  totalPrice: number;  // ✅ was totalAmount
+  paymentStatus: "unpaid" | "paid" | "refunded";
   status: string;
-  paymentStatus: string;
   createdAt: string;
 }
 
@@ -133,19 +133,19 @@ export default function OrderManagement() {
 
               {/* INFO */}
               <Typography sx={{ fontWeight: "bold" }}>
-                {order.userId?.name}
+                {order.user?.name}
               </Typography>
 
               <Typography variant="body2">
-                {order.userId?.email}
+                {order.user?.email}
               </Typography>
 
               <Typography variant="body2">
-                Pharmacy: {order.pharmacyId?.name}
+                Pharmacy: {order.pharmacy?.name}
               </Typography>
 
               <Typography variant="body2">
-                ₱{order.totalAmount}
+                ₱{order.totalPrice}
               </Typography>
 
               {/* STATUS */}

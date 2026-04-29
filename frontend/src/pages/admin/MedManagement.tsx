@@ -15,22 +15,18 @@ interface Medicine {
   price: number;
   stock: number;
   category: string;
+  pharmacyId: {
+    name: string;
+  };
 }
 
 export default function MedManagement() {
   const [medicines, setMedicines] = useState<Medicine[]>([]);
   const [search, setSearch] = useState("");
 
-  const [newMed, setNewMed] = useState({
-    name: "",
-    price: "",
-    stock: "",
-    category: "",
-  });
-
   const token = localStorage.getItem("token");
 
-  // 🔷 FETCH MEDICINES
+  // 🔷 FETCH ALL MEDICINES
   const fetchMedicines = async () => {
     try {
       const res = await api.get("/medicines", {
@@ -48,22 +44,10 @@ export default function MedManagement() {
     fetchMedicines();
   }, [search]);
 
-  // 🔷 ADD MEDICINE
-  const addMedicine = async () => {
-    try {
-      await api.post("/medicines", newMed, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-
-      setNewMed({ name: "", price: "", stock: "", category: "" });
-      fetchMedicines();
-    } catch (err) {
-      console.log(err);
-    }
-  };
-
   // 🔷 DELETE MEDICINE
   const deleteMedicine = async (id: string) => {
+    if (!confirm("Are you sure you want to delete this medicine?")) return;
+
     try {
       await api.delete(`/medicines/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
@@ -84,58 +68,9 @@ export default function MedManagement() {
           Medicine Management
         </Typography>
         <Typography variant="caption" color="gray">
-          Manage all medicines in the system
+          Monitor all medicines across all pharmacies
         </Typography>
       </Box>
-
-      {/* ADD MEDICINE */}
-      <Card sx={{ mb: 2 }}>
-        <CardContent>
-          <Typography sx={{ fontWeight: "bold", mb: 1 }}>
-            Add Medicine
-          </Typography>
-
-          <Box sx={{ display: "flex", gap: 2, flexWrap: "wrap" }}>
-            <TextField
-              label="Name"
-              value={newMed.name}
-              onChange={(e) =>
-                setNewMed({ ...newMed, name: e.target.value })
-              }
-            />
-
-            <TextField
-              label="Price"
-              type="number"
-              value={newMed.price}
-              onChange={(e) =>
-                setNewMed({ ...newMed, price: e.target.value })
-              }
-            />
-
-            <TextField
-              label="Stock"
-              type="number"
-              value={newMed.stock}
-              onChange={(e) =>
-                setNewMed({ ...newMed, stock: e.target.value })
-              }
-            />
-
-            <TextField
-              label="Category"
-              value={newMed.category}
-              onChange={(e) =>
-                setNewMed({ ...newMed, category: e.target.value })
-              }
-            />
-
-            <Button variant="contained" onClick={addMedicine}>
-              Add
-            </Button>
-          </Box>
-        </CardContent>
-      </Card>
 
       {/* SEARCH */}
       <TextField
@@ -144,6 +79,11 @@ export default function MedManagement() {
         sx={{ mb: 2 }}
         onChange={(e) => setSearch(e.target.value)}
       />
+
+      {/* EMPTY STATE */}
+      {medicines.length === 0 && (
+        <Typography color="gray">No medicines found.</Typography>
+      )}
 
       {/* MEDICINE LIST */}
       <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
@@ -163,9 +103,12 @@ export default function MedManagement() {
                 <Typography variant="body2">
                   ₱{med.price} | Stock: {med.stock}
                 </Typography>
-                <Typography variant="caption">
+                <Typography variant="caption" sx={{ display: "block" }}>
                   {med.category}
                 </Typography>
+                <Typography variant="caption" color="gray">
+  Pharmacy: {(med as any).pharmacy?.name ?? "Unknown"}
+</Typography>
               </Box>
 
               <Button

@@ -14,7 +14,6 @@ const sections = [
       { label: "User Management", path: "/admin/users" },
       { label: "Pharmacy Management", path: "/admin/pharmacies" },
       { label: "Medicine Management", path: "/admin/medicines" },
-      { label: "Inventory Management", path: "/admin/inventory" },
       { label: "Order / Reservation", path: "/admin/orders" },
     ],
   },

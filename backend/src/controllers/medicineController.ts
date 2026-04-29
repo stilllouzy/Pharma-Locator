@@ -43,14 +43,9 @@ export const getAllMedicines = async (req: AuthRequest, res: Response) => {
   try {
     const { search, pharmacyId } = req.query;
 
-    // ❌ If no pharmacy selected → return empty
-    if (!pharmacyId) {
-      return res.json([]);
-    }
-
     let conditions: any[] = [];
 
-    // ✅ PHARMACY FILTER (SAFE ObjectId)
+    // ✅ PHARMACY FILTER (optional now)
     if (typeof pharmacyId === "string" && pharmacyId.trim() !== "") {
       conditions.push({
         pharmacy: new mongoose.Types.ObjectId(pharmacyId),
@@ -72,11 +67,34 @@ export const getAllMedicines = async (req: AuthRequest, res: Response) => {
 
     res.json(medicines);
   } catch (error) {
-    console.error(error); // 🔥 VERY IMPORTANT
+    console.error(error);
     res.status(500).json({ message: "Error fetching medicines" });
   }
 };
 
+// ✅ DELETE MEDICINE (OWNER OR ADMIN)
+export const deleteMedicine = async (req: AuthRequest, res: Response) => {
+  try {
+    const { id } = req.params;
+
+    // 🔐 Admin can delete any, pharmacy can only delete their own
+    const filter =
+      req.user.role === "admin"
+        ? { _id: id }
+        : { _id: id, pharmacy: req.user.pharmacyId };
+
+    const deleted = await Medicine.findOneAndDelete(filter);
+
+    if (!deleted) {
+      return res.status(404).json({ message: "Medicine not found" });
+    }
+
+    res.json({ message: "Medicine deleted" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Error deleting medicine" });
+  }
+};
 // ✅ UPDATE MEDICINE (ONLY OWNER)
 export const updateMedicine = async (req: AuthRequest, res: Response) => {
   try {
@@ -85,7 +103,7 @@ export const updateMedicine = async (req: AuthRequest, res: Response) => {
     const medicine = await Medicine.findOneAndUpdate(
       {
         _id: id,
-        pharmacy: req.user.pharmacyId, // 🔐 ownership check
+        pharmacy: req.user.pharmacyId,
       },
       req.body,
       { new: true }
@@ -99,26 +117,5 @@ export const updateMedicine = async (req: AuthRequest, res: Response) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Error updating medicine" });
-  }
-};
-
-// ✅ DELETE MEDICINE (ONLY OWNER)
-export const deleteMedicine = async (req: AuthRequest, res: Response) => {
-  try {
-    const { id } = req.params;
-
-    const deleted = await Medicine.findOneAndDelete({
-      _id: id,
-      pharmacy: req.user.pharmacyId, // 🔐 ownership check
-    });
-
-    if (!deleted) {
-      return res.status(404).json({ message: "Medicine not found" });
-    }
-
-    res.json({ message: "Medicine deleted" });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Error deleting medicine" });
   }
 };

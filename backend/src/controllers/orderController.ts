@@ -69,6 +69,9 @@ export const getUserOrders = async (req: AuthRequest, res: Response) => {
 // GET PHARMACY ORDERS
 export const getPharmacyOrders = async (req: AuthRequest, res: Response) => {
   try {
+    console.log("pharmacyId from token:", req.user!.pharmacyId); // 🔍 debug
+    console.log("user id:", req.user!.id); // 🔍 debug
+
     const orders = await Order.find({ pharmacy: req.user!.pharmacyId })
       .populate("items.medicine", "name price")
       .populate("user", "name email");

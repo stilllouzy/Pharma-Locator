@@ -19,6 +19,6 @@ router.get("/", getAllMedicines);
 router.post("/", protect, authorize("pharmacy"), createMedicine);
 router.get("/my", protect, authorize("pharmacy"), getMyMedicines);
 router.put("/:id", protect, authorize("pharmacy"), updateMedicine);
-router.delete("/:id", protect, authorize("pharmacy"), deleteMedicine);
+router.delete("/:id", protect, authorize("pharmacy", "admin"), deleteMedicine); // ✅ allow admin to delete
 
 export default router;

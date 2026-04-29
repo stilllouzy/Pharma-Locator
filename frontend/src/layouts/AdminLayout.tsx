@@ -7,7 +7,6 @@ import Dashboard from "../pages/admin/Dashboard";
 import Users from "../pages/admin/UserManagement";
 import Pharmacies from "../pages/admin/PharmaManagement";
 import Medicines from "../pages/admin/MedManagement";
-import Inventory from "../pages/admin/InventoryManagement";
 import Orders from "../pages/admin/OrderManagement";
 import MapModule from "../pages/admin/MapModule";
 import Notifications from "../pages/admin/Notifications";
@@ -29,7 +28,6 @@ export default function AdminLayout() {
           <Route path="users" element={<Users />} />
           <Route path="pharmacies" element={<Pharmacies />} />
           <Route path="medicines" element={<Medicines />} />
-          <Route path="inventory" element={<Inventory />} />
           <Route path="orders" element={<Orders />} />
           <Route path="map" element={<MapModule />} />
           <Route path="notifications" element={<Notifications />} />
