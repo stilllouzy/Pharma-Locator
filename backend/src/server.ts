@@ -7,6 +7,7 @@ import pharmacyRoutes from "./routes/pharmacyRoutes";
 import adminRoutes from "./routes/adminRoutes";
 import medicineRoutes from "./routes/medicineRoutes";
 import orderRoutes from "./routes/orderRoutes";
+import riderRoutes from "./routes/riderRoutes"
 dotenv.config();
 
 const app = express();
@@ -19,6 +20,7 @@ app.use("/api/pharmacies", pharmacyRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/medicines", medicineRoutes);
 app.use("/api/orders", orderRoutes);
+app.use("/api/rider", riderRoutes);
 mongoose
   .connect(process.env.MONGO_URI as string)
   .then(() => console.log("MongoDB Connected"))

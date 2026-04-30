@@ -3,6 +3,7 @@ import Login from "./pages/auth/Login";
 import AdminLayout from "./layouts/AdminLayout"
 import PharmacyLayout from "./layouts/PharmacyLayout";
 import UserLayout from "./layouts/UserLayout";
+import RiderLayout from "./layouts/RiderLayout";
 function App() {
   return (
     <BrowserRouter>
@@ -11,6 +12,7 @@ function App() {
         <Route path="/admin/*" element={<AdminLayout />} />
         <Route path="/pharmacy/*" element={<PharmacyLayout />} />
         <Route path="/user/*" element={<UserLayout />} />
+        <Route path="/rider/*" element={<RiderLayout/>}/>
       </Routes>
     </BrowserRouter>
   );

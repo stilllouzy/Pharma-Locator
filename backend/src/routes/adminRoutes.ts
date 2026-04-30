@@ -162,6 +162,96 @@ router.delete(
 );
 
 /* =========================
+   GET ALL RIDERS
+========================= */
+router.get(
+  "/riders",
+  protect,
+  authorize("admin"),
+  async (req, res) => {
+    try {
+      const riders = await User.find({ role: "rider" });
+      res.json(riders);
+    } catch (err) {
+      res.status(500).json({ message: "Server error" });
+    }
+  }
+);
+
+/* =========================
+   CREATE RIDER ACCOUNT
+========================= */
+router.post(
+  "/create-rider",
+  protect,
+  authorize("admin"),
+  async (req, res) => {
+    try {
+      const { name, email, password } = req.body;
+
+      const existingUser = await User.findOne({ email });
+      if (existingUser) {
+        return res.status(400).json({ message: "User already exists" });
+      }
+
+      const bcrypt = await import("bcryptjs");
+      const hashedPassword = await bcrypt.hash(password, 10);
+
+      const rider = await User.create({
+        name,
+        email,
+        password: hashedPassword,
+        role: "rider",
+      });
+
+      res.status(201).json(rider);
+    } catch (err) {
+      console.error("CREATE RIDER ERROR:", err); // ✅ add this
+      res.status(500).json({ message: "Server error" });
+    }
+  }
+);
+
+/* =========================
+   ASSIGN RIDER TO ORDER
+========================= */
+router.put(
+  "/orders/:id/assign-rider",
+  protect,
+  authorize("admin"),
+  async (req, res) => {
+    try {
+      const { riderId } = req.body;
+
+      const rider = await User.findOne({ _id: riderId, role: "rider" });
+      if (!rider) {
+        return res.status(404).json({ message: "Rider not found" });
+      }
+
+      const order = await Order.findByIdAndUpdate(
+        req.params.id,
+        {
+          riderId,
+          deliveryStatus: "assigned",
+        },
+        { new: true }
+      )
+        .populate("user", "name email")
+        .populate("pharmacy", "name")
+        .populate("riderId", "name email");
+
+      if (!order) {
+        return res.status(404).json({ message: "Order not found" });
+      }
+
+      res.json(order);
+    } catch (err) {
+      res.status(500).json({ message: "Server error" });
+    }
+  }
+);
+
+/* =========================
    MEDICINES (TEMP)
 ========================= */
 router.get(

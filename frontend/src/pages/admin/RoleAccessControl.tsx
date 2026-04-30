@@ -7,7 +7,7 @@ import {
 } from "@mui/material";
 import { useState } from "react";
 
-type Role = "admin" | "pharmacy" | "user";
+type Role = "admin" | "pharmacy" | "user" | "rider"; // ✅ add rider
 
 interface Permission {
   name: string;
@@ -44,6 +44,15 @@ export default function RoleAccessControl() {
         { name: "Place Orders", description: "Create purchase orders" },
       ],
     },
+    {
+  role: "rider",
+  permissions: [
+    { name: "View Deliveries", description: "See assigned delivery orders" },
+    { name: "Update Delivery Status", description: "Update pickup, on the way, delivered" },
+    { name: "View Delivery History", description: "Access past completed deliveries" },
+    { name: "View Delivery Map", description: "Navigate to customer location" },
+  ],
+},
   ]);
 
   return (
@@ -65,7 +74,7 @@ export default function RoleAccessControl() {
           display: "grid",
           gridTemplateColumns: {
             xs: "1fr",
-            md: "1fr 1fr 1fr",
+            md: "1fr 1fr",
           },
           gap: 2,
         }}

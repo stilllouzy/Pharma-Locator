@@ -45,6 +45,8 @@ const regPasswordRef = useRef<HTMLInputElement>(null);
         window.location.href = "/user";
       } else if (user.role === "pharmacy") {
         window.location.href = "/pharmacy";
+      } else if (user.role === "rider") {
+        window.location.href = "/rider";
       } else {
         window.location.href = "/admin";
       }

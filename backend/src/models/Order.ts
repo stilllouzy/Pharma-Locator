@@ -9,11 +9,13 @@ export interface IOrderItem {
 export interface IOrder extends Document {
   user: mongoose.Types.ObjectId;
   pharmacy: mongoose.Types.ObjectId;
+  rider: mongoose.Types.ObjectId;
   items: IOrderItem[];
   totalPrice: number;
   paymentStatus: "unpaid" | "paid" | "refunded";
   status: "pending" | "preparing" | "delivered" | "cancelled";
   deliveryMethod: "pickup" | "delivery";
+  deliveryStatus: "unassigned"| "assigned"| "picked_up"| "on_the_way"| "delivered";
   deliveryAddress?: string;
   createdAt: Date;
 }
@@ -22,6 +24,10 @@ const OrderSchema: Schema = new Schema(
   {
     user: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
     pharmacy: { type: mongoose.Schema.Types.ObjectId, ref: "Pharmacy", required: true },
+    rider: {
+  type: mongoose.Schema.Types.ObjectId,
+  ref: "User",
+},
     items: [
       {
         medicine: { type: mongoose.Schema.Types.ObjectId, ref: "Medicine", required: true },
@@ -45,6 +51,11 @@ const OrderSchema: Schema = new Schema(
       enum: ["pickup", "delivery"],
       required: true,
     },
+    deliveryStatus: {
+  type: String,
+  enum: ["unassigned", "assigned", "picked_up", "on_the_way", "delivered"],
+  default: "unassigned",
+},
     deliveryAddress: String,
   },
   { timestamps: true }

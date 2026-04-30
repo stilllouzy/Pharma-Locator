@@ -6,27 +6,41 @@ import {
   Button,
   Select,
   MenuItem,
+  Divider,
 } from "@mui/material";
 import { useEffect, useState } from "react";
 import api from "../../api/api";
 
 interface IOrder {
   _id: string;
-  user: {          // ✅ was userId
+  user: {
     name: string;
     email: string;
   };
-  pharmacy: {      // ✅ was pharmacyId
+  pharmacy: {
     name: string;
   };
-  totalPrice: number;  // ✅ was totalAmount
+  riderId?: {
+    _id: string;
+    name: string;
+  };
+  totalPrice: number;
   paymentStatus: "unpaid" | "paid" | "refunded";
   status: string;
+  deliveryStatus: string;
+  deliveryMethod: string;
   createdAt: string;
+}
+
+interface IRider {
+  _id: string;
+  name: string;
+  email: string;
 }
 
 export default function OrderManagement() {
   const [orders, setOrders] = useState<IOrder[]>([]);
+  const [riders, setRiders] = useState<IRider[]>([]);
   const [statusFilter, setStatusFilter] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -35,13 +49,11 @@ export default function OrderManagement() {
   // 🔷 FETCH ORDERS
   const fetchOrders = async () => {
     setLoading(true);
-
     try {
       const res = await api.get("/admin/orders", {
         headers: { Authorization: `Bearer ${token}` },
         params: { status: statusFilter },
       });
-
       setOrders(res.data);
     } catch (error) {
       console.log("Error fetching orders:", error);
@@ -51,8 +63,21 @@ export default function OrderManagement() {
     }
   };
 
+  // 🔷 FETCH RIDERS
+  const fetchRiders = async () => {
+    try {
+      const res = await api.get("/admin/riders", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setRiders(res.data);
+    } catch (error) {
+      console.log("Error fetching riders:", error);
+    }
+  };
+
   useEffect(() => {
     fetchOrders();
+    fetchRiders();
   }, [statusFilter]);
 
   // 🔷 UPDATE ORDER STATUS
@@ -61,11 +86,22 @@ export default function OrderManagement() {
       await api.put(
         `/admin/orders/${id}/status`,
         { status },
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
+        { headers: { Authorization: `Bearer ${token}` } }
       );
+      fetchOrders();
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
+  // 🔷 ASSIGN RIDER
+  const assignRider = async (orderId: string, riderId: string) => {
+    try {
+      await api.put(
+        `/admin/orders/${orderId}/assign-rider`,
+        { riderId },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
       fetchOrders();
     } catch (error) {
       console.log(error);
@@ -95,7 +131,6 @@ export default function OrderManagement() {
         >
           <MenuItem value="">All Orders</MenuItem>
           <MenuItem value="pending">Pending</MenuItem>
-          <MenuItem value="confirmed">Confirmed</MenuItem>
           <MenuItem value="preparing">Preparing</MenuItem>
           <MenuItem value="delivered">Delivered</MenuItem>
           <MenuItem value="cancelled">Cancelled</MenuItem>
@@ -111,19 +146,14 @@ export default function OrderManagement() {
 
       {/* EMPTY STATE */}
       {!loading && orders.length === 0 && (
-        <Typography color="gray">
-          No orders found.
-        </Typography>
+        <Typography color="gray">No orders found.</Typography>
       )}
 
       {/* ORDERS LIST */}
       <Box
         sx={{
           display: "grid",
-          gridTemplateColumns: {
-            xs: "1fr",
-            md: "1fr 1fr",
-          },
+          gridTemplateColumns: { xs: "1fr", md: "1fr 1fr" },
           gap: 2,
         }}
       >
@@ -135,17 +165,13 @@ export default function OrderManagement() {
               <Typography sx={{ fontWeight: "bold" }}>
                 {order.user?.name}
               </Typography>
-
-              <Typography variant="body2">
-                {order.user?.email}
-              </Typography>
-
+              <Typography variant="body2">{order.user?.email}</Typography>
               <Typography variant="body2">
                 Pharmacy: {order.pharmacy?.name}
               </Typography>
-
+              <Typography variant="body2">₱{order.totalPrice}</Typography>
               <Typography variant="body2">
-                ₱{order.totalPrice}
+                Method: {order.deliveryMethod}
               </Typography>
 
               {/* STATUS */}
@@ -167,17 +193,24 @@ export default function OrderManagement() {
                 Payment: {order.paymentStatus}
               </Typography>
 
-              {/* ACTIONS */}
-              <Box sx={{ mt: 2, display: "flex", gap: 1, flexWrap: "wrap" }}>
+              {/* DELIVERY STATUS — only for delivery orders */}
+              {order.deliveryMethod === "delivery" && (
+                <Typography variant="caption" sx={{ display: "block" }}>
+                  Delivery Status: {order.deliveryStatus}
+                </Typography>
+              )}
 
-                <Button
-                  size="small"
-                  variant="contained"
-                  onClick={() => updateStatus(order._id, "confirmed")}
-                >
-                  Confirm
-                </Button>
+              {/* RIDER INFO */}
+              {order.riderId && (
+                <Typography variant="caption" sx={{ display: "block", color: "green" }}>
+                  Rider: {order.riderId.name}
+                </Typography>
+              )}
 
+              <Divider sx={{ my: 1 }} />
+
+              {/* ORDER STATUS ACTIONS */}
+              <Box sx={{ display: "flex", gap: 1, flexWrap: "wrap" }}>
                 <Button
                   size="small"
                   variant="contained"
@@ -186,7 +219,6 @@ export default function OrderManagement() {
                 >
                   Preparing
                 </Button>
-
                 <Button
                   size="small"
                   variant="contained"
@@ -195,7 +227,6 @@ export default function OrderManagement() {
                 >
                   Delivered
                 </Button>
-
                 <Button
                   size="small"
                   variant="contained"
@@ -204,8 +235,31 @@ export default function OrderManagement() {
                 >
                   Cancel
                 </Button>
-
               </Box>
+
+              {/* RIDER ASSIGNMENT — only for delivery orders */}
+              {order.deliveryMethod === "delivery" && (
+                <Box sx={{ mt: 2 }}>
+                  <Typography variant="caption" color="gray">
+                    Assign Rider:
+                  </Typography>
+                  <Select
+                    displayEmpty
+                    size="small"
+                    fullWidth
+                    value={order.riderId?._id ?? ""}
+                    onChange={(e) => assignRider(order._id, e.target.value)}
+                    sx={{ mt: 0.5 }}
+                  >
+                    <MenuItem value="">-- Select Rider --</MenuItem>
+                    {riders.map((rider) => (
+                      <MenuItem key={rider._id} value={rider._id}>
+                        {rider.name}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </Box>
+              )}
 
             </CardContent>
           </Card>
