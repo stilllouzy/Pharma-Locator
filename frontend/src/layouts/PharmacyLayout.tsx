@@ -2,10 +2,12 @@ import { Box, Typography, Button } from "@mui/material";
 import { NavLink, Routes, Route, useNavigate } from "react-router-dom";
 import Medicines from "../pages/pharmacy/Medicines";
 import Orders from "../pages/pharmacy/Orders";
+import Prescriptions from "../pages/pharmacy/PharmaPrescriptions";
 
 const pharmacyLinks = [
   { label: "Medicines", path: "/pharmacy/medicines" },
   { label: "Orders", path: "/pharmacy/orders" },
+  { label: "Prescriptions", path: "/pharmacy/prescriptions" },
 ];
 
 export default function PharmacyLayout() {
@@ -69,6 +71,7 @@ export default function PharmacyLayout() {
         <Routes>
           <Route path="medicines" element={<Medicines />} />
           <Route path="orders" element={<Orders />} />
+          <Route path="prescriptions" element={<Prescriptions />} />
         </Routes>
       </Box>
 

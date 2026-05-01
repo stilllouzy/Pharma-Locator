@@ -20,7 +20,7 @@ interface IOrder {
   pharmacy: {
     name: string;
   };
-  riderId?: {
+  rider?: {
     _id: string;
     name: string;
   };
@@ -201,11 +201,11 @@ export default function OrderManagement() {
               )}
 
               {/* RIDER INFO */}
-              {order.riderId && (
-                <Typography variant="caption" sx={{ display: "block", color: "green" }}>
-                  Rider: {order.riderId.name}
-                </Typography>
-              )}
+             {order.rider && (
+  <Typography variant="caption" sx={{ display: "block", color: "green" }}>
+    Rider: {order.rider.name}
+  </Typography>
+)}
 
               <Divider sx={{ my: 1 }} />
 
@@ -247,7 +247,7 @@ export default function OrderManagement() {
                     displayEmpty
                     size="small"
                     fullWidth
-                    value={order.riderId?._id ?? ""}
+                    value={order.rider?._id ?? ""}
                     onChange={(e) => assignRider(order._id, e.target.value)}
                     sx={{ mt: 0.5 }}
                   >

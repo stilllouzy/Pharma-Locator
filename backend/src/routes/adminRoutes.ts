@@ -1,5 +1,6 @@
 import express from "express";
 import { createPharmacyAccount } from "../controllers/adminController";
+import { createNotification } from "../controllers/notificationController";
 import { protect } from "../middleware/authMiddleware";
 import { authorize } from "../middleware/roleMiddleware";
 import User from "../models/User";
@@ -206,7 +207,6 @@ router.post(
 
       res.status(201).json(rider);
     } catch (err) {
-      console.error("CREATE RIDER ERROR:", err); // ✅ add this
       res.status(500).json({ message: "Server error" });
     }
   }
@@ -231,26 +231,34 @@ router.put(
       const order = await Order.findByIdAndUpdate(
         req.params.id,
         {
-          riderId,
+          rider: riderId,
           deliveryStatus: "assigned",
         },
         { new: true }
       )
         .populate("user", "name email")
         .populate("pharmacy", "name")
-        .populate("riderId", "name email");
+        .populate("rider", "name email");
 
       if (!order) {
         return res.status(404).json({ message: "Order not found" });
       }
 
+      // 🔔 NOTIFY RIDER
+      await createNotification(
+        riderId,
+        "New Delivery Assigned",
+        "A new delivery has been assigned to you.",
+        "delivery"
+      );
+
       res.json(order);
     } catch (err) {
+      console.error("ASSIGN RIDER ERROR:", err);
       res.status(500).json({ message: "Server error" });
     }
   }
 );
-
 /* =========================
    MEDICINES (TEMP)
 ========================= */

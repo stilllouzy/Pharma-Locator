@@ -12,7 +12,7 @@ const router = express.Router();
 
 // USER
 router.post("/", protect, authorize("user"), createOrder);
-router.get("/my-orders", protect, authorize("user"), getUserOrders);
+router.get("/user", protect, authorize("user"), getUserOrders);
 
 // PHARMACY
 router.get("/pharmacy", protect, authorize("pharmacy"), getPharmacyOrders);

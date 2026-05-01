@@ -2,6 +2,7 @@ import { Response } from "express";
 import Order from "../models/Order";
 import Medicine from "../models/Medicine";
 import { AuthRequest } from "../middleware/authMiddleware";
+import { createNotification } from "./notificationController";
 
 // CREATE ORDER (Checkout)
 export const createOrder = async (req: AuthRequest, res: Response) => {
@@ -11,7 +12,6 @@ export const createOrder = async (req: AuthRequest, res: Response) => {
     if (!items || items.length === 0)
       return res.status(400).json({ message: "Cart is empty" });
 
-    // Calculate total price & check stock
     let totalPrice = 0;
     const orderItems = [];
 
@@ -22,7 +22,6 @@ export const createOrder = async (req: AuthRequest, res: Response) => {
       if (medicine.stock < item.quantity)
         return res.status(400).json({ message: `Not enough stock for ${medicine.name}` });
 
-      // Update stock
       medicine.stock -= item.quantity;
       await medicine.save();
 
@@ -34,7 +33,6 @@ export const createOrder = async (req: AuthRequest, res: Response) => {
       });
     }
 
-    // Assume all items from same pharmacy
     const pharmacyId = (await Medicine.findById(items[0].medicine))!.pharmacy;
 
     const order = await Order.create({
@@ -45,6 +43,22 @@ export const createOrder = async (req: AuthRequest, res: Response) => {
       deliveryMethod,
       deliveryAddress,
     });
+
+    // 🔔 NOTIFY USER
+    await createNotification(
+      req.user!.id,
+      "Order Placed",
+      "Your order has been placed successfully.",
+      "order"
+    );
+
+    // 🔔 NOTIFY PHARMACY
+    await createNotification(
+      pharmacyId.toString(),
+      "New Order",
+      "A new order has been placed.",
+      "order"
+    );
 
     res.status(201).json(order);
   } catch (error) {
@@ -69,8 +83,8 @@ export const getUserOrders = async (req: AuthRequest, res: Response) => {
 // GET PHARMACY ORDERS
 export const getPharmacyOrders = async (req: AuthRequest, res: Response) => {
   try {
-    console.log("pharmacyId from token:", req.user!.pharmacyId); // 🔍 debug
-    console.log("user id:", req.user!.id); // 🔍 debug
+    console.log("pharmacyId from token:", req.user!.pharmacyId);
+    console.log("user id:", req.user!.id);
 
     const orders = await Order.find({ pharmacy: req.user!.pharmacyId })
       .populate("items.medicine", "name price")
@@ -89,6 +103,17 @@ export const updateOrderStatus = async (req: AuthRequest, res: Response) => {
     const { status } = req.body;
 
     const order = await Order.findByIdAndUpdate(id, { status }, { new: true });
+
+    // 🔔 NOTIFY USER about status change
+    if (order) {
+      await createNotification(
+        order.user.toString(),
+        "Order Status Updated",
+        `Your order status has been updated to: ${status}`,
+        "order"
+      );
+    }
+
     res.json(order);
   } catch (error) {
     res.status(500).json({ message: "Error updating order" });
