@@ -5,8 +5,9 @@ import { AuthRequest } from "../middleware/authMiddleware";
 // GET ASSIGNED DELIVERIES (active)
 export const getMyDeliveries = async (req: AuthRequest, res: Response) => {
   try {
+
     const orders = await Order.find({
-      riderId: req.user!.id,
+      rider: req.user!.id,
       deliveryStatus: { $in: ["assigned", "picked_up", "on_the_way"] },
     })
       .populate("user", "name email")
@@ -25,7 +26,7 @@ export const getMyDeliveries = async (req: AuthRequest, res: Response) => {
 export const getDeliveryHistory = async (req: AuthRequest, res: Response) => {
   try {
     const orders = await Order.find({
-      riderId: req.user!.id,
+      rider: req.user!.id,
       deliveryStatus: { $in: ["delivered"] },
     })
       .populate("user", "name email")
@@ -47,7 +48,7 @@ export const getDeliveryDetails = async (req: AuthRequest, res: Response) => {
 
     const order = await Order.findOne({
       _id: id,
-      riderId: req.user!.id, // 🔐 only the assigned rider can view
+      rider: req.user!.id, // 🔐 only the assigned rider can view
     })
       .populate("user", "name email")
       .populate("pharmacy", "name address")
@@ -72,7 +73,7 @@ export const updateDeliveryStatus = async (req: AuthRequest, res: Response) => {
 
     const order = await Order.findOne({
       _id: id,
-      riderId: req.user!.id, // 🔐 only assigned rider can update
+      rider: req.user!.id, // 🔐 only assigned rider can update
     });
 
     if (!order) {
@@ -99,12 +100,12 @@ export const updateDeliveryStatus = async (req: AuthRequest, res: Response) => {
 export const getRiderDashboard = async (req: AuthRequest, res: Response) => {
   try {
     const assigned = await Order.countDocuments({
-      riderId: req.user!.id,
+      rider: req.user!.id,
       deliveryStatus: { $in: ["assigned", "picked_up", "on_the_way"] },
     });
 
     const completedToday = await Order.countDocuments({
-      riderId: req.user!.id,
+      rider: req.user!.id,
       deliveryStatus: "delivered",
       updatedAt: {
         $gte: new Date(new Date().setHours(0, 0, 0, 0)), // start of today
@@ -112,7 +113,7 @@ export const getRiderDashboard = async (req: AuthRequest, res: Response) => {
     });
 
     const cancelled = await Order.countDocuments({
-      riderId: req.user!.id,
+      rider: req.user!.id,
       status: "cancelled",
     });
 

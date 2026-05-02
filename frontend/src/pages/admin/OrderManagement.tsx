@@ -54,6 +54,7 @@ export default function OrderManagement() {
         headers: { Authorization: `Bearer ${token}` },
         params: { status: statusFilter },
       });
+      console.log("Orders data:", res.data);
       setOrders(res.data);
     } catch (error) {
       console.log("Error fetching orders:", error);

@@ -4,6 +4,7 @@ import { createNotification } from "../controllers/notificationController";
 import { protect } from "../middleware/authMiddleware";
 import { authorize } from "../middleware/roleMiddleware";
 import User from "../models/User";
+import Medicine from "../models/Medicine";
 import Order from "../models/Order";
 const router = express.Router();
 
@@ -28,8 +29,21 @@ router.get(
     try {
       const totalUsers = await User.countDocuments({ role: "user" });
       const totalPharmacies = await User.countDocuments({ role: "pharmacy" });
+      const totalMedicines = await Medicine.countDocuments();
+      const totalOrders = await Order.countDocuments();
+      const lowStock = await Medicine.countDocuments({ stock: { $lt: 10 } });
+      const pendingOrders = await Order.countDocuments({ status: "pending" });
+      const completedOrders = await Order.countDocuments({ status: "delivered" });
 
-      res.json({ totalUsers, totalPharmacies });
+      res.json({
+        users: totalUsers,
+        pharmacies: totalPharmacies,
+        medicines: totalMedicines,
+        orders: totalOrders,
+        lowStock,
+        pendingOrders,
+        completedOrders,
+      });
     } catch (err) {
       res.status(500).json({ message: "Server error" });
     }
@@ -284,7 +298,8 @@ router.get(
       const filter = status ? { status } : {};
       const orders = await Order.find(filter)
         .populate("user", "name email")    
-        .populate("pharmacy", "name")       
+        .populate("pharmacy", "name") 
+        .populate("rider", "name email")      
         .sort({ createdAt: -1 });
       res.json(orders);
     } catch (err) {
