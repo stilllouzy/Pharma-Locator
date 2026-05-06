@@ -24,7 +24,7 @@ app.use("/api/medicines", medicineRoutes);
 app.use("/api/prescriptions", prescriptionRoutes);
 app.use("/api/orders", orderRoutes);
 app.use("/api/rider", riderRoutes);
-app.use("/api/notification", notificationRoutes);
+app.use("/api/notifications", notificationRoutes);
 mongoose
   .connect(process.env.MONGO_URI as string)
   .then(() => console.log("MongoDB Connected"))

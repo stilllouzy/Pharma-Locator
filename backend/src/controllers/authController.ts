@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import User from "../models/User";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import { createNotification } from "./notificationController";
 
 // REGISTER
 export const register = async (req: Request, res: Response) => {
@@ -9,6 +10,7 @@ export const register = async (req: Request, res: Response) => {
     const { name, email, password } = req.body;
 
     const existingUser = await User.findOne({ email });
+
     if (existingUser)
       return res.status(400).json({ message: "User already exists" });
 
@@ -20,8 +22,22 @@ export const register = async (req: Request, res: Response) => {
       password: hashedPassword,
     });
 
+    // 🔔 FIND ADMIN
+    const admin = await User.findOne({ role: "admin" });
+
+    // 🔔 CREATE ADMIN NOTIFICATION
+    if (admin) {
+      await createNotification(
+        admin._id.toString(),
+        "New User Registration",
+        `${user.name} created a new account`,
+        "system"
+      );
+    }
+
     res.status(201).json(user);
   } catch (error) {
+    console.error(error);
     res.status(500).json({ message: "Server Error" });
   }
 };
