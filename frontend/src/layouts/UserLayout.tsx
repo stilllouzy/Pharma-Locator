@@ -7,6 +7,7 @@ import Home from "../pages/user/Home";
 import MapView from "../pages/user/MapView";
 import Orders from "../pages/user/Orders";
 import Prescriptions from "../pages/user/UserPrescriptions";
+import OrderTracking from "../pages/user/OrderTracking";
 export default function UserLayout() {
 
   return (
@@ -27,6 +28,7 @@ export default function UserLayout() {
           />
           <Route path="/orders" element={<Orders />} />
           <Route path="/prescription" element={<Prescriptions />} />
+          <Route path="/track/:id" element={<OrderTracking />} />
         </Routes>
       </Box>
 

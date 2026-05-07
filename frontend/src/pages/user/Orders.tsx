@@ -6,15 +6,17 @@ import {
   Card,
   CardContent,
   Chip,
+  Button,
 } from "@mui/material";
-
+import { useNavigate } from "react-router-dom";
 
 export default function Orders() {
   const [orders, setOrders] = useState<any[]>([]);
   const token = localStorage.getItem("token");
+  const navigate = useNavigate();
 
   const fetchOrders = async () => {
-    const res = await api.get("/orders/user", {
+    const res = await api.get("/orders/user", { 
       headers: { Authorization: `Bearer ${token}` },
     });
     setOrders(res.data);
@@ -26,24 +28,23 @@ export default function Orders() {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case "pending":
-        return "warning";
-      case "paid":
-        return "info";
-      case "delivered":
-        return "success";
-      case "cancelled":
-        return "error";
-      default:
-        return "default";
+      case "pending": return "warning";
+      case "paid": return "info";
+      case "delivered": return "success";
+      case "cancelled": return "error";
+      default: return "default";
     }
   };
 
   return (
-    <Box sx={{p:3}} >
-      <Typography variant="h5" sx={{mb:2}}>
+    <Box sx={{ p: 3 }}>
+      <Typography variant="h5" sx={{ mb: 2 }}>
         My Orders
       </Typography>
+
+      {orders.length === 0 && (
+        <Typography color="gray">No orders yet.</Typography>
+      )}
 
       {orders.map((order) => (
         <Card key={order._id} sx={{ mb: 2 }}>
@@ -63,15 +64,15 @@ export default function Orders() {
             )}
 
             {/* STATUS */}
-            <Box sx={{mt:1}}>
+            <Box sx={{ mt: 1 }}>
               <Chip
                 label={order.status.toUpperCase()}
-                color={getStatusColor(order.status)}
+                color={getStatusColor(order.status) as any}
               />
             </Box>
 
             {/* ITEMS */}
-            <Typography sx={{mt:2}}>
+            <Typography sx={{ mt: 2 }}>
               <strong>Items:</strong>
             </Typography>
 
@@ -80,6 +81,19 @@ export default function Orders() {
                 - {item.medicine?.name} (x{item.quantity})
               </Typography>
             ))}
+
+            {/* TRACK ORDER BUTTON — only for delivery orders */}
+            {order.deliveryMethod === "delivery" && (
+              <Button
+                size="small"
+                variant="outlined"
+                sx={{ mt: 2 }}
+                onClick={() => navigate(`/user/track/${order._id}`)}
+              >
+                Track Order
+              </Button>
+            )}
+
           </CardContent>
         </Card>
       ))}
