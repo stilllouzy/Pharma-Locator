@@ -8,12 +8,64 @@ import {
   Button,
   Divider,
 } from "@mui/material";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import api from "../../api/api";
 
 export default function SettingsModule() {
   const [maintenanceMode, setMaintenanceMode] = useState(false);
   const [emailNotif, setEmailNotif] = useState(true);
   const [allowRegistration, setAllowRegistration] = useState(true);
+  const [profile, setProfile] = useState({
+    name: "",
+    email: "",
+    password: "",
+  });
+
+  const token = localStorage.getItem("token");
+
+  // FETCH ADMIN PROFILE
+  const fetchProfile = async () => {
+    try {
+      const res = await api.get("/auth/me", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setProfile({
+        name: res.data.name,
+        email: res.data.email,
+        password: "",
+      });
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  useEffect(() => {
+    fetchProfile();
+  }, []);
+
+  // UPDATE ADMIN PROFILE
+  const handleUpdateProfile = async () => {
+    try {
+      const updateData: any = {
+        name: profile.name,
+        email: profile.email,
+      };
+
+      if (profile.password) {
+        updateData.password = profile.password;
+      }
+
+      await api.put("/auth/me", updateData, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      alert("Profile updated successfully!");
+      setProfile({ ...profile, password: "" });
+    } catch (error) {
+      console.error(error);
+      alert("Failed to update profile.");
+    }
+  };
 
   return (
     <Box sx={{ p: 3, backgroundColor: "#f5f5f5", minHeight: "100vh" }}>
@@ -28,14 +80,10 @@ export default function SettingsModule() {
         </Typography>
       </Box>
 
-      {/* GRID LAYOUT */}
       <Box
         sx={{
           display: "grid",
-          gridTemplateColumns: {
-            xs: "1fr",
-            md: "1fr 1fr",
-          },
+          gridTemplateColumns: { xs: "1fr", md: "1fr 1fr" },
           gap: 2,
         }}
       >
@@ -43,7 +91,7 @@ export default function SettingsModule() {
         {/* 👤 PROFILE SETTINGS */}
         <Card sx={{ borderRadius: 3 }}>
           <CardContent>
-            <Typography sx={{ fontWeight: "bold", mb: 1 }}>
+            <Typography sx={{ fontWeight: "bold", mb: 2 }}>
               Profile Settings
             </Typography>
 
@@ -52,6 +100,8 @@ export default function SettingsModule() {
               label="Admin Name"
               size="small"
               sx={{ mb: 2 }}
+              value={profile.name}
+              onChange={(e) => setProfile({ ...profile, name: e.target.value })}
             />
 
             <TextField
@@ -59,6 +109,8 @@ export default function SettingsModule() {
               label="Email"
               size="small"
               sx={{ mb: 2 }}
+              value={profile.email}
+              onChange={(e) => setProfile({ ...profile, email: e.target.value })}
             />
 
             <TextField
@@ -66,9 +118,16 @@ export default function SettingsModule() {
               label="New Password"
               type="password"
               size="small"
+              placeholder="Leave blank to keep current"
+              value={profile.password}
+              onChange={(e) => setProfile({ ...profile, password: e.target.value })}
             />
 
-            <Button variant="contained" sx={{ mt: 2 }}>
+            <Button
+              variant="contained"
+              sx={{ mt: 2 }}
+              onClick={handleUpdateProfile}
+            >
               Update Profile
             </Button>
           </CardContent>
@@ -81,45 +140,49 @@ export default function SettingsModule() {
               Security Settings
             </Typography>
 
-            <Typography variant="body2">Enable Email Notifications</Typography>
-            <Switch
-              checked={emailNotif}
-              onChange={() => setEmailNotif(!emailNotif)}
-            />
+            <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+              <Typography variant="body2">Enable Email Notifications</Typography>
+              <Switch
+                checked={emailNotif}
+                onChange={() => setEmailNotif(!emailNotif)}
+              />
+            </Box>
 
             <Divider sx={{ my: 2 }} />
 
-            <Typography variant="body2">Allow User Registration</Typography>
-            <Switch
-              checked={allowRegistration}
-              onChange={() => setAllowRegistration(!allowRegistration)}
-            />
+            <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+              <Typography variant="body2">Allow User Registration</Typography>
+              <Switch
+                checked={allowRegistration}
+                onChange={() => setAllowRegistration(!allowRegistration)}
+              />
+            </Box>
           </CardContent>
         </Card>
 
         {/* ⚙️ SYSTEM CONTROL */}
-        <Card sx={{ borderRadius: 3, gridColumn: "span 2" }}>
+        <Card sx={{ borderRadius: 3, gridColumn: { md: "span 2" } }}>
           <CardContent>
-
             <Typography sx={{ fontWeight: "bold", mb: 1 }}>
               System Control
             </Typography>
 
-            <Typography variant="body2">
-              Maintenance Mode (Disable system access for users)
-            </Typography>
-
-            <Switch
-              checked={maintenanceMode}
-              onChange={() => setMaintenanceMode(!maintenanceMode)}
-            />
+            <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+              <Box>
+                <Typography variant="body2">Maintenance Mode</Typography>
+                <Typography variant="caption" color="gray">
+                  Disable system access for users
+                </Typography>
+              </Box>
+              <Switch
+                checked={maintenanceMode}
+                onChange={() => setMaintenanceMode(!maintenanceMode)}
+              />
+            </Box>
 
             <Divider sx={{ my: 2 }} />
 
-            <Button
-              variant="contained"
-              color="error"
-            >
+            <Button variant="contained" color="error">
               Logout All Users
             </Button>
 
