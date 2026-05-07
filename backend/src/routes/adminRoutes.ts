@@ -2,10 +2,12 @@ import express from "express";
 import { createPharmacyAccount } from "../controllers/adminController";
 import { createNotification } from "../controllers/notificationController";
 import { protect } from "../middleware/authMiddleware";
+import { AuthRequest } from "../middleware/authMiddleware";
 import { authorize } from "../middleware/roleMiddleware";
 import User from "../models/User";
 import Medicine from "../models/Medicine";
 import Order from "../models/Order";
+
 const router = express.Router();
 
 /* =========================
@@ -60,11 +62,9 @@ router.get(
   async (req, res) => {
     try {
       const search = (req.query.search as string) || "";
-
       const users = await User.find({
         name: { $regex: search, $options: "i" },
       });
-
       res.json(users);
     } catch (err) {
       res.status(500).json({ message: "Server error" });
@@ -82,11 +82,20 @@ router.put(
   async (req, res) => {
     try {
       const user = await User.findById(req.params.id);
-
       if (!user) return res.status(404).json({ message: "User not found" });
 
       user.isVerified = !user.isVerified;
       await user.save();
+
+      // 🔔 NOTIFY USER
+      await createNotification(
+        user._id.toString(),
+        user.isVerified ? "Account Verified" : "Account Unverified",
+        user.isVerified
+          ? "Your account has been verified by the admin."
+          : "Your account verification has been revoked by the admin.",
+        "system"
+      );
 
       res.json(user);
     } catch (err) {
@@ -122,12 +131,10 @@ router.get(
   async (req, res) => {
     try {
       const search = (req.query.search as string) || "";
-
       const pharmacies = await User.find({
         role: "pharmacy",
         name: { $regex: search, $options: "i" },
       });
-
       res.json(pharmacies);
     } catch (err) {
       res.status(500).json({ message: "Server error" });
@@ -145,12 +152,21 @@ router.put(
   async (req, res) => {
     try {
       const pharmacy = await User.findById(req.params.id);
-
       if (!pharmacy)
         return res.status(404).json({ message: "Pharmacy not found" });
 
       pharmacy.isActive = !pharmacy.isActive;
       await pharmacy.save();
+
+      // 🔔 NOTIFY PHARMACY
+      await createNotification(
+        pharmacy._id.toString(),
+        pharmacy.isActive ? "Account Activated" : "Account Deactivated",
+        pharmacy.isActive
+          ? "Your pharmacy account has been activated by the admin."
+          : "Your pharmacy account has been deactivated by the admin.",
+        "system"
+      );
 
       res.json(pharmacy);
     } catch (err) {
@@ -221,6 +237,7 @@ router.post(
 
       res.status(201).json(rider);
     } catch (err) {
+      console.error("CREATE RIDER ERROR:", err);
       res.status(500).json({ message: "Server error" });
     }
   }
@@ -233,7 +250,7 @@ router.put(
   "/orders/:id/assign-rider",
   protect,
   authorize("admin"),
-  async (req, res) => {
+  async (req: AuthRequest, res) => {
     try {
       const { riderId } = req.body;
 
@@ -266,6 +283,22 @@ router.put(
         "delivery"
       );
 
+      // 🔔 NOTIFY USER
+      await createNotification(
+        order.user.toString(),
+        "Rider Assigned",
+        `A rider has been assigned to your delivery.`,
+        "delivery"
+      );
+
+      // 🔔 SYSTEM LOG FOR ADMIN
+      await createNotification(
+        req.user!.id,
+        "Rider Assigned",
+        `Rider ${rider.name} has been assigned to an order.`,
+        "system"
+      );
+
       res.json(order);
     } catch (err) {
       console.error("ASSIGN RIDER ERROR:", err);
@@ -273,6 +306,41 @@ router.put(
     }
   }
 );
+
+/* =========================
+   ORDER STATUS UPDATE
+========================= */
+router.put(
+  "/orders/:id/status",
+  protect,
+  authorize("admin"),
+  async (req: AuthRequest, res) => {
+    try {
+      const { status } = req.body;
+
+      const order = await Order.findByIdAndUpdate(
+        req.params.id,
+        { status },
+        { new: true }
+      );
+
+      if (!order) return res.status(404).json({ message: "Order not found" });
+
+     // 🔔 NOTIFY USER
+await createNotification(
+  order.user._id.toString(),  // ✅ use ._id not .toString() directly
+  "Rider Assigned",
+  `A rider has been assigned to your delivery.`,
+  "delivery"
+);
+
+      res.json(order);
+    } catch (err) {
+      res.status(500).json({ message: "Server error" });
+    }
+  }
+);
+
 /* =========================
    MEDICINES (TEMP)
 ========================= */
@@ -286,7 +354,7 @@ router.get(
 );
 
 /* =========================
-   ORDERS (TEMP)
+   ORDERS
 ========================= */
 router.get(
   "/orders",
@@ -297,9 +365,9 @@ router.get(
       const { status } = req.query;
       const filter = status ? { status } : {};
       const orders = await Order.find(filter)
-        .populate("user", "name email")    
-        .populate("pharmacy", "name") 
-        .populate("rider", "name email")      
+        .populate("user", "name email")
+        .populate("pharmacy", "name")
+        .populate("rider", "name email")
         .sort({ createdAt: -1 });
       res.json(orders);
     } catch (err) {
@@ -307,17 +375,7 @@ router.get(
     }
   }
 );
-/* =========================
-   NOTIFICATIONS (TEMP)
-========================= */
-router.get(
-  "/notifications",
-  protect,
-  authorize("admin"),
-  async (req, res) => {
-    res.json([]);
-  }
-);
+
 /* =========================
    ANALYTICS (TEMP)
 ========================= */
@@ -329,4 +387,5 @@ router.get(
     res.json({});
   }
 );
+
 export default router;

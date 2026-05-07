@@ -95,7 +95,7 @@ export const getUnreadCount = async (req: AuthRequest, res: Response) => {
 // ADMIN: GET ALL NOTIFICATIONS
 export const getAllNotifications = async (req: AuthRequest, res: Response) => {
   try {
-    const notifications = await Notification.find()
+    const notifications = await Notification.find({ type: "system" }) // ✅ only system notifications
       .populate("user", "name email role")
       .sort({ createdAt: -1 })
       .limit(50);

@@ -11,8 +11,14 @@ import api from "../../api/api";
 
 interface INotification {
   _id: string;
+  user: {
+    name: string;
+    email: string;
+    role: string;
+  };
+  title: string;
   message: string;
-  type: "system" | "order" | "user" | "pharmacy";
+  type: "order" | "prescription" | "delivery" | "system";
   isRead: boolean;
   createdAt: string;
 }
@@ -23,15 +29,12 @@ export default function Notifications() {
 
   const token = localStorage.getItem("token");
 
-  // 🔔 FETCH NOTIFICATIONS
   const fetchNotifications = async () => {
     setLoading(true);
-
     try {
-      const res = await api.get("/admin/notifications", {
+      const res = await api.get("/notifications", { // ✅ fixed endpoint
         headers: { Authorization: `Bearer ${token}` },
       });
-
       setNotifications(res.data);
     } catch (error) {
       console.log(error);
@@ -45,20 +48,26 @@ export default function Notifications() {
     fetchNotifications();
   }, []);
 
-  // ✔ MARK AS READ
-  const markAsRead = async (id: string) => {
+  const markAllRead = async () => {
     try {
       await api.put(
-        `/admin/notifications/${id}/read`,
+        "/notifications/read-all",
         {},
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
+        { headers: { Authorization: `Bearer ${token}` } }
       );
-
       fetchNotifications();
     } catch (error) {
       console.log(error);
+    }
+  };
+
+  const getTypeColor = (type: string) => {
+    switch (type) {
+      case "order": return "primary";
+      case "prescription": return "warning";
+      case "delivery": return "success";
+      case "system": return "error";
+      default: return "default";
     }
   };
 
@@ -66,13 +75,20 @@ export default function Notifications() {
     <Box sx={{ p: 3, backgroundColor: "#f5f5f5", minHeight: "100vh" }}>
 
       {/* HEADER */}
-      <Box sx={{ mb: 2 }}>
-        <Typography sx={{ fontSize: 24, fontWeight: "bold" }}>
-          Notifications
-        </Typography>
-        <Typography variant="caption" color="gray">
-          System alerts and updates
-        </Typography>
+      <Box sx={{ mb: 2, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+        <Box>
+          <Typography sx={{ fontSize: 24, fontWeight: "bold" }}>
+            Notifications
+          </Typography>
+          <Typography variant="caption" color="gray">
+            System alerts and updates
+          </Typography>
+        </Box>
+        {notifications.length > 0 && (
+          <Button variant="outlined" onClick={markAllRead}>
+            Mark All as Read
+          </Button>
+        )}
       </Box>
 
       {/* LOADING */}
@@ -84,71 +100,69 @@ export default function Notifications() {
 
       {/* EMPTY STATE */}
       {!loading && notifications.length === 0 && (
-        <Typography color="gray">
-          No notifications found.
-        </Typography>
+        <Typography color="gray">No notifications found.</Typography>
       )}
 
       {/* NOTIFICATION LIST */}
-      <Box
-        sx={{
-          display: "grid",
-          gridTemplateColumns: {
-            xs: "1fr",
-            md: "1fr 1fr",
-          },
-          gap: 2,
-        }}
-      >
+      <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
         {notifications.map((notif) => (
           <Card
             key={notif._id}
             sx={{
               borderRadius: 3,
               backgroundColor: notif.isRead ? "white" : "#e3f2fd",
+              borderLeft: notif.isRead ? "none" : "4px solid #2563eb",
             }}
           >
             <CardContent>
+              <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+                <Box sx={{ flex: 1 }}>
 
-              {/* TYPE BADGE */}
-              <Chip
-                label={notif.type.toUpperCase()}
-                size="small"
-                color={
-                  notif.type === "system"
-                    ? "error"
-                    : notif.type === "order"
-                    ? "primary"
-                    : notif.type === "user"
-                    ? "success"
-                    : "warning"
-                }
-                sx={{ mb: 1 }}
-              />
-
-              {/* MESSAGE */}
-              <Typography sx={{ fontWeight: "bold" }}>
-                {notif.message}
-              </Typography>
-
-              {/* DATE */}
-              <Typography variant="caption" color="gray">
-                {new Date(notif.createdAt).toLocaleString()}
-              </Typography>
-
-              {/* ACTION */}
-              {!notif.isRead && (
-                <Box sx={{ mt: 2 }}>
-                  <Button
+                  {/* TYPE BADGE */}
+                  <Chip
+                    label={notif.type.toUpperCase()}
                     size="small"
-                    variant="contained"
-                    onClick={() => markAsRead(notif._id)}
-                  >
-                    Mark as Read
-                  </Button>
-                </Box>
-              )}
+                    color={getTypeColor(notif.type) as any}
+                    sx={{ mb: 1 }}
+                  />
 
+                  {/* TITLE */}
+                  <Typography sx={{ fontWeight: "bold" }}>
+                    {notif.title}
+                  </Typography>
+
+                  {/* MESSAGE */}
+                  <Typography variant="body2" color="gray">
+                    {notif.message}
+                  </Typography>
+
+                  {/* USER INFO */}
+                  {notif.user && (
+                    <Typography variant="caption" color="gray" sx={{ display: "block" }}>
+                      From: {notif.user.name} ({notif.user.role})
+                    </Typography>
+                  )}
+
+                  {/* DATE */}
+                  <Typography variant="caption" color="gray">
+                    {new Date(notif.createdAt).toLocaleString()}
+                  </Typography>
+
+                </Box>
+
+                {/* UNREAD INDICATOR */}
+                {!notif.isRead && (
+                  <Box
+                    sx={{
+                      width: 10,
+                      height: 10,
+                      borderRadius: "50%",
+                      backgroundColor: "#2563eb",
+                      mt: 1,
+                    }}
+                  />
+                )}
+              </Box>
             </CardContent>
           </Card>
         ))}
