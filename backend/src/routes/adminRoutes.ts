@@ -379,12 +379,42 @@ router.get(
 /* =========================
    ANALYTICS (TEMP)
 ========================= */
+/* =========================
+   ANALYTICS
+========================= */
 router.get(
   "/analytics",
   protect,
   authorize("admin"),
   async (req, res) => {
-    res.json({});
+    try {
+      const users = await User.countDocuments({ role: "user" });
+      const pharmacies = await User.countDocuments({ role: "pharmacy" });
+      const orders = await Order.countDocuments();
+      const medicines = await Medicine.countDocuments();
+      const lowStock = await Medicine.countDocuments({ stock: { $lt: 10 } });
+      const completedOrders = await Order.countDocuments({ status: "delivered" });
+      const pendingOrders = await Order.countDocuments({ status: "pending" });
+      const cancelledOrders = await Order.countDocuments({ status: "cancelled" });
+      const totalRevenue = await Order.aggregate([
+        { $match: { status: "delivered" } },
+        { $group: { _id: null, total: { $sum: "$totalPrice" } } },
+      ]);
+
+      res.json({
+        users,
+        pharmacies,
+        orders,
+        medicines,
+        lowStock,
+        completedOrders,
+        pendingOrders,
+        cancelledOrders,
+        totalRevenue: totalRevenue[0]?.total || 0,
+      });
+    } catch (err) {
+      res.status(500).json({ message: "Server error" });
+    }
   }
 );
 

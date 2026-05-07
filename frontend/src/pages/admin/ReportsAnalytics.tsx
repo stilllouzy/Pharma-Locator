@@ -15,6 +15,8 @@ interface Analytics {
   lowStock: number;
   completedOrders: number;
   pendingOrders: number;
+  cancelledOrders: number;
+  totalRevenue: number;
 }
 
 export default function ReportsAnalytics() {
@@ -26,6 +28,8 @@ export default function ReportsAnalytics() {
     lowStock: 0,
     completedOrders: 0,
     pendingOrders: 0,
+    cancelledOrders: 0,
+    totalRevenue: 0,
   });
 
   const token = localStorage.getItem("token");
@@ -52,6 +56,8 @@ export default function ReportsAnalytics() {
         lowStock: 0,
         completedOrders: 0,
         pendingOrders: 0,
+        cancelledOrders: 0,
+        totalRevenue: 0,
       });
     }
   };
@@ -116,15 +122,18 @@ export default function ReportsAnalytics() {
 
       {/* 📦 ORDER ANALYTICS */}
       <Card sx={{ mb: 2, borderRadius: 3 }}>
-        <CardContent>
-          <Typography sx={{ fontWeight: "bold", mb: 1 }}>
-            Order Analytics
-          </Typography>
-
-          <Typography>Completed Orders: {data.completedOrders}</Typography>
-          <Typography>Pending Orders: {data.pendingOrders}</Typography>
-        </CardContent>
-      </Card>
+  <CardContent>
+    <Typography sx={{ fontWeight: "bold", mb: 1 }}>
+      Order Analytics
+    </Typography>
+    <Typography>Completed Orders: {data.completedOrders}</Typography>
+    <Typography>Pending Orders: {data.pendingOrders}</Typography>
+    <Typography>Cancelled Orders: {data.cancelledOrders}</Typography>
+    <Typography>
+      Total Revenue: ₱{data.totalRevenue.toLocaleString()}
+    </Typography>
+  </CardContent>
+</Card>
 
       {/* 📦 INVENTORY ANALYTICS */}
       <Card sx={{ mb: 2, borderRadius: 3 }}>
