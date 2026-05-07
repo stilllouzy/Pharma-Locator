@@ -22,9 +22,6 @@ export const createOrder = async (req: AuthRequest, res: Response) => {
       if (medicine.stock < item.quantity)
         return res.status(400).json({ message: `Not enough stock for ${medicine.name}` });
 
-      medicine.stock -= item.quantity;
-      await medicine.save();
-
       totalPrice += medicine.price * item.quantity;
       orderItems.push({
         medicine: medicine._id,
@@ -42,6 +39,7 @@ export const createOrder = async (req: AuthRequest, res: Response) => {
       totalPrice,
       deliveryMethod,
       deliveryAddress,
+      paymentStatus: "unpaid",
     });
 
     // 🔔 NOTIFY USER
@@ -117,5 +115,97 @@ export const updateOrderStatus = async (req: AuthRequest, res: Response) => {
     res.json(order);
   } catch (error) {
     res.status(500).json({ message: "Error updating order" });
+  }
+};
+export const payOrder = async (
+  req: AuthRequest,
+  res: Response
+) => {
+  try {
+    const { id } = req.params;
+    const { referenceNumber } = req.body;
+
+    const order = await Order.findById(id)
+      .populate("items.medicine");
+
+    if (!order)
+      return res.status(404).json({
+        message: "Order not found",
+      });
+
+    // SECURITY CHECK
+    if (order.user.toString() !== req.user!.id)
+      return res.status(403).json({
+        message: "Unauthorized",
+      });
+
+    // PREVENT DOUBLE PAYMENT
+    if (order.paymentStatus === "paid")
+      return res.status(400).json({
+        message: "Order already paid",
+      });
+
+    // UPDATE PAYMENT
+    order.paymentStatus = "paid";
+    order.referenceNumber = referenceNumber;
+
+    // REDUCE STOCK HERE
+    for (const item of order.items as any[]) {
+      const medicine = await Medicine.findById(
+        item.medicine._id
+      );
+
+      if (!medicine)
+        continue;
+
+      if (medicine.stock < item.quantity)
+        return res.status(400).json({
+          message: `${medicine.name} out of stock`,
+        });
+
+      medicine.stock -= item.quantity;
+      await medicine.save();
+    }
+
+    await order.save();
+
+    res.json({
+      message: "Payment confirmed",
+      order,
+    });
+
+  } catch (error) {
+    console.error(error);
+
+    res.status(500).json({
+      message: "Payment failed",
+    });
+  }
+};
+export const trackOrder = async (
+  req: AuthRequest,
+  res: Response
+) => {
+  try {
+    const order = await Order.findById(req.params.id)
+      .populate("items.medicine")
+      .populate("pharmacy", "name");
+
+    if (!order)
+      return res.status(404).json({
+        message: "Order not found",
+      });
+
+    if (order.user.toString() !== req.user!.id)
+      return res.status(403).json({
+        message: "Unauthorized",
+      });
+
+    res.json(order);
+
+  } catch (error) {
+    res.status(500).json({
+      message: "Error fetching order",
+    });
   }
 };

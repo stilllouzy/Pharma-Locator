@@ -85,7 +85,7 @@ export const updateDeliveryStatus = async (req: AuthRequest, res: Response) => {
     // 🔗 sync status with deliveryStatus
     if (deliveryStatus === "delivered") {
       order.status = "delivered";
-    }
+}
 
     await order.save();
 

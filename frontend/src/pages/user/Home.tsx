@@ -6,6 +6,12 @@ import {
   CardContent,
   IconButton,
   Button,
+  Modal,
+  Radio,
+  RadioGroup,
+  FormControl,
+  FormControlLabel,
+  FormLabel,
 } from "@mui/material";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
@@ -27,7 +33,12 @@ export default function Home() {
   const [medicines, setMedicines] = useState<any[]>([]);
   const [cart, setCart] = useState<any[]>([]);
 
+  const [checkoutOpen, setCheckoutOpen] = useState(false);
+const [deliveryMethod, setDeliveryMethod] = useState("delivery");
+const [deliveryAddress, setDeliveryAddress] = useState("");
+
   const token = localStorage.getItem("token");
+  
 
   // 🔥 DEBOUNCE SEARCH
   useEffect(() => {
@@ -93,25 +104,51 @@ export default function Home() {
   };
 
   // 💳 CHECKOUT
-  const checkout = async () => {
-    await api.post(
+ const checkout = async () => {
+  if (cart.length === 0) return;
+
+  if (
+    deliveryMethod === "delivery" &&
+    !deliveryAddress
+  ) {
+    alert("Please enter a delivery address.");
+    return;
+  }
+
+  try {
+    const res = await api.post(
       "/orders",
       {
         items: cart.map((item) => ({
           medicine: item._id,
           quantity: item.quantity,
         })),
-        deliveryMethod: "delivery",
-        deliveryAddress: "Barangay Emmanuel 1",
+
+        deliveryMethod,
+
+        deliveryAddress:
+          deliveryMethod === "delivery"
+            ? deliveryAddress
+            : "",
       },
       {
-        headers: { Authorization: `Bearer ${token}` },
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       }
     );
 
-    alert("Order placed!");
+    setCheckoutOpen(false);
     setCart([]);
-  };
+
+    // ALWAYS REDIRECT TO GCASH PAYMENT
+    window.location.href = `/user/payment/${res.data._id}`;
+
+  } catch (error) {
+    console.error(error);
+    alert("Failed to place order.");
+  }
+};
 
   return (
     <Box sx={{ backgroundColor: "#f5f5f5", minHeight: "100vh", p: 2 }}>
@@ -227,28 +264,169 @@ export default function Home() {
         </Box>
       </Box>
 
-      {/* CART */}
-      <Box sx={{ p: 2 }}>
-        <Card sx={{ p: 2, borderRadius: 3 }}>
-          <Typography sx={{ fontWeight: "bold" }}>Cart</Typography>
+{/* CART */}
+<Box sx={{ p: 2 }}>
+  <Card sx={{ p: 2, borderRadius: 3 }}>
+    <Typography sx={{ fontWeight: "bold" }}>
+      Cart
+    </Typography>
 
-          {cart.length === 0 ? (
-            <Typography variant="caption">No items yet</Typography>
-          ) : (
-            cart.map((item) => (
-              <Box key={item._id} sx={{ display: "flex", justifyContent: "space-between" }}>
-                <Typography>{item.name}</Typography>
-                <Typography>x{item.quantity}</Typography>
-              </Box>
-            ))
+    {cart.length === 0 ? (
+      <Typography variant="caption">
+        No items yet
+      </Typography>
+    ) : (
+      <>
+        {cart.map((item) => (
+          <Box
+            key={item._id}
+            sx={{
+              display: "flex",
+              justifyContent: "space-between",
+            }}
+          >
+            <Typography>
+              {item.name}
+            </Typography>
+
+            <Typography>
+              x{item.quantity} — ₱
+              {item.price * item.quantity}
+            </Typography>
+          </Box>
+        ))}
+
+        <Typography
+          sx={{ fontWeight: "bold", mt: 1 }}
+        >
+          Total: ₱
+          {cart.reduce(
+            (sum, item) =>
+              sum + item.price * item.quantity,
+            0
           )}
+        </Typography>
+      </>
+    )}
 
-          <Button fullWidth variant="contained" sx={{ mt: 2 }} onClick={checkout}>
-            Checkout
-          </Button>
-        </Card>
+    <Button
+      fullWidth
+      variant="contained"
+      sx={{ mt: 2 }}
+      disabled={cart.length === 0}
+      onClick={() => setCheckoutOpen(true)}
+    >
+      Checkout
+    </Button>
+  </Card>
+</Box>
+
+{/* CHECKOUT MODAL */}
+<Modal
+  open={checkoutOpen}
+  onClose={() => setCheckoutOpen(false)}
+>
+  <Box
+    sx={{
+      width: 400,
+      bgcolor: "white",
+      p: 3,
+      mx: "auto",
+      mt: "10%",
+      borderRadius: 3,
+    }}
+  >
+    <Typography variant="h6" sx={{ mb: 2 }}>
+      Checkout
+    </Typography>
+
+    {/* DELIVERY METHOD */}
+    <FormControl sx={{ mb: 2 }}>
+      <FormLabel>
+        Delivery Method
+      </FormLabel>
+
+      <RadioGroup
+        value={deliveryMethod}
+        onChange={(e) =>
+          setDeliveryMethod(e.target.value)
+        }
+      >
+        <FormControlLabel
+          value="delivery"
+          control={<Radio />}
+          label="Delivery"
+        />
+
+        <FormControlLabel
+          value="pickup"
+          control={<Radio />}
+          label="Pickup"
+        />
+      </RadioGroup>
+    </FormControl>
+
+    {/* DELIVERY ADDRESS */}
+    {deliveryMethod === "delivery" && (
+      <TextField
+        fullWidth
+        label="Delivery Address"
+        value={deliveryAddress}
+        onChange={(e) =>
+          setDeliveryAddress(e.target.value)
+        }
+        sx={{ mb: 2 }}
+      />
+    )}
+
+    
+
+    {/* ORDER SUMMARY */}
+    <Typography
+      sx={{ fontWeight: "bold", mb: 1 }}
+    >
+      Order Summary
+    </Typography>
+
+    {cart.map((item) => (
+      <Box
+        key={item._id}
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+        }}
+      >
+        <Typography variant="body2">
+          {item.name} x{item.quantity}
+        </Typography>
+
+        <Typography variant="body2">
+          ₱{item.price * item.quantity}
+        </Typography>
       </Box>
+    ))}
 
+    <Typography
+      sx={{ fontWeight: "bold", mt: 1 }}
+    >
+      Total: ₱
+      {cart.reduce(
+        (sum, item) =>
+          sum + item.price * item.quantity,
+        0
+      )}
+    </Typography>
+
+    <Button
+      fullWidth
+      variant="contained"
+      sx={{ mt: 2 }}
+      onClick={checkout}
+    >
+      Proceed to GCash Payment
+    </Button>
+  </Box>
+</Modal>
       {/* BOTTOM NAV */}
       <Box
         sx={{

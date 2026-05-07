@@ -12,7 +12,9 @@ export interface IOrder extends Document {
   rider: mongoose.Types.ObjectId;
   items: IOrderItem[];
   totalPrice: number;
+  paymentMethod: "gcash";
   paymentStatus: "unpaid" | "paid" | "refunded";
+  referenceNumber?: string;
   status: "pending" | "preparing" | "delivered" | "cancelled";
   deliveryMethod: "pickup" | "delivery";
   deliveryStatus: "unassigned"| "assigned"| "picked_up"| "on_the_way"| "delivered";
@@ -34,11 +36,19 @@ const OrderSchema: Schema = new Schema(
         quantity: { type: Number, required: true },
         price: { type: Number, required: true },
       },
-    ],
+    ], 
+    paymentMethod: {
+  type: String,
+  enum: ["gcash"],
+  default: "gcash",
+},
     paymentStatus: {
   type: String,
   enum: ["unpaid", "paid", "refunded"],
   default: "unpaid",
+},
+referenceNumber: {
+  type: String,
 },
     totalPrice: { type: Number, required: true },
     status: {
