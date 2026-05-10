@@ -1,6 +1,6 @@
 import { Box } from "@mui/material";
 import { Routes, Route } from "react-router-dom";
-import Sidebar from "../layouts/Navbar/UserSidebar";
+import Sidebar from "./navbar/UserSidebar";
 
 // USER PAGES
 import Home from "../pages/user/Home";

@@ -1,6 +1,6 @@
 import { Box } from "@mui/material";
 import { Routes, Route } from "react-router-dom";
-import Sidebar from "../layouts/Navbar/PharmaSidebar";
+import Sidebar from "./navbar/PharmaSidebar";
 
 //PHARMACY PAGES
 import Medicines from "../pages/pharmacy/Medicines";
