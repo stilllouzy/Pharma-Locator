@@ -1,12 +1,21 @@
-import { Box, Typography, Button, IconButton } from "@mui/material";
-import { NavLink , useNavigate } from "react-router-dom";
-import { useState } from "react";
-import MenuIcon from "@mui/icons-material/Menu";
-import CloseIcon from "@mui/icons-material/Close";
+import { Drawer, Box, Typography, Button, Divider } from "@mui/material";
+import { NavLink, useNavigate } from "react-router-dom";
 
-export default function UserLayout() {
+const DRAWER_WIDTH = 260;
+
+const userLinks = [
+  { label: "Home", path: "/user" },
+  { label: "Map", path: "/user/map" },
+  { label: "Orders", path: "/user/orders" },
+  { label: "Prescriptions", path: "/user/prescription" },
+];
+
+interface SidebarProps {
+  open: boolean;
+}
+
+export default function UserSidebar({ open }: SidebarProps) {
   const navigate = useNavigate();
-  const [open, setOpen] = useState(true);
 
   const handleLogout = () => {
     localStorage.removeItem("token");
@@ -15,81 +24,57 @@ export default function UserLayout() {
   };
 
   return (
-    <Box sx={{ display: "flex" }}>
-
-{/* SIDEBAR */}
-<Box
-  sx={{
-          width: open ? 260 : 60,
-          minWidth: open ? 260 : 60,
+    <Drawer
+      variant="persistent"
+      open={open}
+      sx={{
+        width: open ? DRAWER_WIDTH : 0,
+        flexShrink: 0,
+        "& .MuiDrawer-paper": {
+          width: DRAWER_WIDTH,
+          boxSizing: "border-box",
           backgroundColor: "white",
           borderRight: "1px solid #e5e7eb",
-          p: 2,
-          position: "sticky",   
-          top: 0,
-          height: "100vh",
-          display: "flex",
-          flexDirection: "column",
-          overflow: "hidden",
-          transition: "all 0.3s ease",
-        }}
->
-  {/* TOGGLE BUTTON + BRAND */}
-      <Box sx={{ display: "flex", alignItems: "center", mb: 3, gap: 1 }}>
-        <IconButton onClick={() => setOpen(!open)} size="small">
-          {open ? <CloseIcon /> : <MenuIcon />}
-        </IconButton>
-        {open && (
-          <Typography sx={{ fontWeight: "bold" }}>
-            Pharmacy Locator
-          </Typography>
-        )}
+        },
+      }}
+    >
+      <Box sx={{ display: "flex", flexDirection: "column", height: "100%", p: 2 }}>
+
+        <Typography sx={{ fontWeight: "bold", fontSize: 18, mb: 2 }}>
+          Pharma Locator
+        </Typography>
+
+        <Divider sx={{ mb: 2 }} />
+
+        <Box sx={{ flexGrow: 1 }}>
+          {userLinks.map((item) => (
+            <NavLink
+              key={item.path}
+              to={item.path}
+              style={({ isActive }) => ({
+                textDecoration: "none",
+                color: isActive ? "#2563eb" : "#374151",
+                backgroundColor: isActive ? "#eff6ff" : "transparent",
+                padding: "10px 12px",
+                borderRadius: "8px",
+                fontSize: "14px",
+                fontWeight: isActive ? 600 : 400,
+                display: "block",
+                transition: "all 0.2s",
+                marginBottom: "4px",
+              })}
+            >
+              {item.label}
+            </NavLink>
+          ))}
+        </Box>
+
+        <Divider sx={{ mb: 2 }} />
+
+        <Button fullWidth variant="outlined" color="error" onClick={handleLogout}>
+          Logout
+        </Button>
       </Box>
-
-  {/* NAV LINKS */}
-  <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
-    {[
-      { label: "Home", path: "/user" },
-      { label: "Map", path: "/user/map" },
-      { label: "Orders", path: "/user/orders" },
-      { label: "Prescriptions", path: "/user/prescription" },
-    ].map((item) => (
-      <NavLink
-        key={item.path}
-        to={item.path}
-        style={({ isActive }) => ({
-          textDecoration: "none",
-          color: isActive ? "#2563eb" : "#374151",
-          background: isActive ? "#e5e7eb" : "transparent",
-          padding: "10px",
-          borderRadius: "8px",
-          fontSize: "14px",
-          fontWeight: isActive ? 600 : 400,
-        })}
-      >
-        {item.label}
-      </NavLink>
-    ))}
-  </Box>
-
-  {/* LOGOUT — pushed to bottom */}
- <Box sx={{ mt: "auto", pt: 2 }}>
-         {open ? (
-           <Button
-             fullWidth
-             variant="outlined"
-             color="error"
-             onClick={handleLogout}
-           >
-             Logout
-           </Button>
-         ) : (
-           <IconButton color="error" onClick={handleLogout}>
-             🚪
-           </IconButton>
-         )}
-       </Box>
-     </Box>
-    </Box>
+    </Drawer>
   );
 }

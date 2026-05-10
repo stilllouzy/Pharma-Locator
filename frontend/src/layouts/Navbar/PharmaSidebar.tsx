@@ -1,8 +1,7 @@
-import { Box, Typography, Button, IconButton } from "@mui/material";
+import { Drawer, Box, Typography, Button, Divider } from "@mui/material";
 import { NavLink, useNavigate } from "react-router-dom";
-import { useState } from "react";
-import MenuIcon from "@mui/icons-material/Menu";
-import CloseIcon from "@mui/icons-material/Close";
+
+const DRAWER_WIDTH = 260;
 
 const pharmacyLinks = [
   { label: "Medicines", path: "/pharmacy/medicines" },
@@ -10,9 +9,12 @@ const pharmacyLinks = [
   { label: "Prescriptions", path: "/pharmacy/prescriptions" },
 ];
 
-export default function PharmacyLayout() {
+interface SidebarProps {
+  open: boolean;
+}
+
+export default function PharmacySidebar({ open }: SidebarProps) {
   const navigate = useNavigate();
-  const [open, setOpen] = useState(true);
 
   const handleLogout = () => {
     localStorage.removeItem("token");
@@ -21,38 +23,29 @@ export default function PharmacyLayout() {
   };
 
   return (
-    <Box sx={{ display: "flex" }}>
+    <Drawer
+      variant="persistent"
+      open={open}
+      sx={{
+        width: open ? DRAWER_WIDTH : 0,
+        flexShrink: 0,
+        "& .MuiDrawer-paper": {
+          width: DRAWER_WIDTH,
+          boxSizing: "border-box",
+          backgroundColor: "white",
+          borderRight: "1px solid #e5e7eb",
+        },
+      }}
+    >
+      <Box sx={{ display: "flex", flexDirection: "column", height: "100%", p: 2 }}>
 
-      {/* SIDEBAR */}
-      <Box
-             sx={{
-              width: open ? 260 : 60,
-              minWidth: open ? 260 : 60,
-              backgroundColor: "white",
-              borderRight: "1px solid #e5e7eb",
-              p: 2,
-              position: "sticky",   
-              top: 0,
-              height: "100vh",
-              display: "flex",
-              flexDirection: "column",
-              overflow: "hidden",
-              transition: "all 0.3s ease",
-            }}
-          >
-         {/* TOGGLE BUTTON + BRAND */}
-              <Box sx={{ display: "flex", alignItems: "center", mb: 3, gap: 1 }}>
-                <IconButton onClick={() => setOpen(!open)} size="small">
-                  {open ? <CloseIcon /> : <MenuIcon />}
-                </IconButton>
-                {open && (
-                  <Typography sx={{ fontWeight: "bold" }}>
-                    Pharmacy Panel
-                  </Typography>
-                )}
-              </Box>
+        <Typography sx={{ fontWeight: "bold", fontSize: 18, mb: 2 }}>
+          Pharmacy Panel
+        </Typography>
 
-        <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
+        <Divider sx={{ mb: 2 }} />
+
+        <Box sx={{ flexGrow: 1 }}>
           {pharmacyLinks.map((item) => (
             <NavLink
               key={item.path}
@@ -60,11 +53,14 @@ export default function PharmacyLayout() {
               style={({ isActive }) => ({
                 textDecoration: "none",
                 color: isActive ? "#2563eb" : "#374151",
-                background: isActive ? "#e5e7eb" : "transparent",
-                padding: "10px",
+                backgroundColor: isActive ? "#eff6ff" : "transparent",
+                padding: "10px 12px",
                 borderRadius: "8px",
                 fontSize: "14px",
                 fontWeight: isActive ? 600 : 400,
+                display: "block",
+                transition: "all 0.2s",
+                marginBottom: "4px",
               })}
             >
               {item.label}
@@ -72,25 +68,12 @@ export default function PharmacyLayout() {
           ))}
         </Box>
 
-       {/* LOGOUT — pushed to bottom */}
-            <Box sx={{ mt: "auto", pt: 2 }}>
-              {open ? (
-                <Button
-                  fullWidth
-                  variant="outlined"
-                  color="error"
-                  onClick={handleLogout}
-                >
-                  Logout
-                </Button>
-              ) : (
-                <IconButton color="error" onClick={handleLogout}>
-                  🚪
-                </IconButton>
-              )}
-            </Box>
-          </Box>
+        <Divider sx={{ mb: 2 }} />
 
-    </Box>
+        <Button fullWidth variant="outlined" color="error" onClick={handleLogout}>
+          Logout
+        </Button>
+      </Box>
+    </Drawer>
   );
 }
