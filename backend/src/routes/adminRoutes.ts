@@ -363,7 +363,7 @@ router.get(
   async (req, res) => {
     try {
       const { status } = req.query;
-      const filter = status ? { status } : {};
+      const filter: any = status ? { status: status as string } : {};
       const orders = await Order.find(filter)
         .populate("user", "name email")
         .populate("pharmacy", "name")
