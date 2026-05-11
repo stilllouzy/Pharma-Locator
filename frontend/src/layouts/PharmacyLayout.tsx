@@ -1,7 +1,7 @@
 import { Box, IconButton, AppBar, Toolbar, Typography } from "@mui/material";import { Routes, Route } from "react-router-dom";
 import { useState } from "react";
 import  MenuIcon  from "@mui/icons-material/Menu";
-import Sidebar from "./navbar/PharmaSidebar";
+import Sidebar from "../layouts/navbar/PharmaSidebar";
 
 //PHARMACY PAGES
 import Medicines from "../pages/pharmacy/Medicines";
