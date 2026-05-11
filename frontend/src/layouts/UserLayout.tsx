@@ -2,7 +2,7 @@ import { Box, IconButton, AppBar, Toolbar, Typography } from "@mui/material";
 import { Routes, Route } from "react-router-dom";
 import { useState } from "react";
 import  MenuIcon  from "@mui/icons-material/Menu";
-import Sidebar from "../layouts/navbar/UserSidebar";
+import Sidebar from "../navbar/UserSidebar";
 
 // USER PAGES
 import Home from "../pages/user/Home";
