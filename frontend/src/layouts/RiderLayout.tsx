@@ -16,9 +16,8 @@ import DeliveryMapView from "../pages/rider/DeliveryMapView";
 const DRAWER_WIDTH = 260;
 
 export default function AdminLayout() {
-  const [open, setOpen] = useState(true);
+  const [open, setOpen] = useState(false);
 
-  return (
     <Box sx={{ display: "flex" }}>
 
       {/* TOP APP BAR */}
