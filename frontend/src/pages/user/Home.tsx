@@ -151,8 +151,8 @@ const [deliveryAddress, setDeliveryAddress] = useState("");
       
       {/* HEADER */}
       <Box sx={{ p: 2 }}>
-        <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 2 }}>
-          <Box sx={{ ml: 1 }}>
+        <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", mb: 2 }}>
+    <Box sx={{ textAlign: "center" }}>
             <Typography sx={{ fontWeight: "bold" }}>Home</Typography>
             <Typography variant="caption">Dasmariñas, Cavite</Typography>
           </Box>
