@@ -52,13 +52,10 @@ const [deliveryAddress, setDeliveryAddress] = useState("");
 
     // Search text
     if (debouncedSearch.trim()) {
-      params.search = debouncedSearch;
-    }
-
-    // Pharmacy filter (optional)
-    if (selectedPharmacy || pharmacyId) {
-      params.pharmacyId = selectedPharmacy || pharmacyId;
-    }
+  params.search = debouncedSearch;
+} else if (selectedPharmacy || pharmacyId) {
+  params.pharmacyId = selectedPharmacy || pharmacyId;
+}
 
     const res = await api.get("/medicines", {
       params,
