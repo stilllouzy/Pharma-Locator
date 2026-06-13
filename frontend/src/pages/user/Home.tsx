@@ -46,41 +46,33 @@ const [deliveryAddress, setDeliveryAddress] = useState("");
   }, [search]);
 
   // 🔥 FETCH MEDICINES (ONLY IF PHARMACY SELECTED)
-  const fetchMedicines = async () => {
-    const activePharmacy = selectedPharmacy || pharmacyId;
+ const fetchMedicines = async () => {
+  try {
+    const params: any = {};
 
-    if (!activePharmacy) {
-      setMedicines([]);
-      return;
+    // Search text
+    if (debouncedSearch.trim()) {
+      params.search = debouncedSearch;
     }
 
-    try {
-      setMedicines([]); // clear old data
-
-      const res = await api.get("/medicines", {
-        params: {
-          search: debouncedSearch,
-          pharmacyId: activePharmacy,
-        },
-      });
-
-      setMedicines(res.data || []);
-    } catch (error) {
-      console.error(error);
-      setMedicines([]);
-    }
-  };
-
-  useEffect(() => {
-    const activePharmacy = selectedPharmacy || pharmacyId;
-
-    if (!activePharmacy) {
-      setMedicines([]);
-      return;
+    // Pharmacy filter (optional)
+    if (selectedPharmacy || pharmacyId) {
+      params.pharmacyId = selectedPharmacy || pharmacyId;
     }
 
-    fetchMedicines();
-  }, [debouncedSearch, selectedPharmacy, pharmacyId]);
+    const res = await api.get("/medicines", {
+      params,
+    });
+
+    setMedicines(res.data || []);
+  } catch (error) {
+    console.error(error);
+    setMedicines([]);
+  }
+};
+useEffect(() => {
+  fetchMedicines();
+}, [debouncedSearch, selectedPharmacy, pharmacyId]);
 
   // 🛒 ADD TO CART
   const addToCart = (medicine: any) => {
@@ -208,14 +200,10 @@ const [deliveryAddress, setDeliveryAddress] = useState("");
             </Card>
 
             {/* 🔥 STATES */}
-            {!(selectedPharmacy || pharmacyId) ? (
-              <Typography variant="caption" color="gray">
-                Select a pharmacy from the map to view medicines
-              </Typography>
-            ) : medicines.length === 0 ? (
-              <Typography variant="caption" color="gray">
-                No medicines available for this pharmacy
-              </Typography>
+         {medicines.length === 0 ? (
+  <Typography variant="caption" color="gray">
+    No medicines found
+  </Typography>
             ) : (
               medicines.map((med) => (
                 <Card
