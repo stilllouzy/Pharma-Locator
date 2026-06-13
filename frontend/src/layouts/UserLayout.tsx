@@ -22,17 +22,17 @@ export default function AdminLayout() {
 
       {/* TOP APP BAR */}
       <AppBar
-        position="fixed"
-        sx={{
-          zIndex: (theme) => theme.zIndex.drawer + 1,
-          backgroundColor: "white",
-          color: "black",
-          boxShadow: "0 1px 3px rgba(0,0,0,0.1)",
-          width: open ? `calc(100% - ${DRAWER_WIDTH}px)` : "100%",
-          ml: open ? `${DRAWER_WIDTH}px` : 0,
-          transition: "width 0.3s, margin 0.3s",
-        }}
-      >
+  position="fixed"
+  sx={{
+    zIndex: (theme) => theme.zIndex.drawer + 1,
+    backgroundColor: "white",
+    color: "black",
+    boxShadow: "0 1px 3px rgba(0,0,0,0.1)",
+    width: { xs: "100%", md: open ? `calc(100% - ${DRAWER_WIDTH}px)` : "100%" },
+    ml: { xs: 0, md: open ? `${DRAWER_WIDTH}px` : 0 },
+    transition: "width 0.3s, margin 0.3s",
+  }}
+>
         <Toolbar>
           <IconButton
             edge="start"
@@ -52,16 +52,19 @@ export default function AdminLayout() {
 
       {/* MAIN CONTENT */}
       <Box
-        component="main"
-        sx={{
-          flexGrow: 1,
-          p: 3,
-          backgroundColor: "#f5f5f5",
-          minHeight: "100vh",
-          mt: "64px", // offset for AppBar height
-          transition: "margin 0.3s",
-        }}
-      >
+  component="main"
+  sx={{
+    flexGrow: 1,
+    p: { xs: 1, sm: 2, md: 3 },
+    backgroundColor: "#f5f5f5",
+    minHeight: "100vh",
+    mt: "64px",
+    ml: { xs: 0, md: open ? `${DRAWER_WIDTH}px` : 0 },
+    width: { xs: "100%", md: open ? `calc(100% - ${DRAWER_WIDTH}px)` : "100%" },
+    transition: "margin 0.3s, width 0.3s",
+    overflowX: "hidden",
+  }}
+>
       
         <Routes>
           <Route path="/" element={<Home />} />

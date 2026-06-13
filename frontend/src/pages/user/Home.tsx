@@ -4,7 +4,6 @@ import {
   TextField,
   Card,
   CardContent,
-  IconButton,
   Button,
   Modal,
   Radio,
@@ -13,9 +12,6 @@ import {
   FormControlLabel,
   FormLabel,
 } from "@mui/material";
-import LocationOnIcon from "@mui/icons-material/LocationOn";
-import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
-import TuneIcon from "@mui/icons-material/Tune";
 import { useEffect, useState } from "react";
 import api from "../../api/api";
 import { useSearchParams } from "react-router-dom";
@@ -151,7 +147,7 @@ const [deliveryAddress, setDeliveryAddress] = useState("");
 };
 
   return (
-    <Box sx={{ backgroundColor: "#f5f5f5", minHeight: "100vh", p: 2 }}>
+<Box sx={{ backgroundColor: "#f5f5f5", minHeight: "100vh", p: { xs: 1, sm: 2 } }}>
       
       {/* HEADER */}
       <Box sx={{ p: 2 }}>
@@ -177,14 +173,14 @@ const [deliveryAddress, setDeliveryAddress] = useState("");
       <Box
         sx={{
           display: "grid",
-          gridTemplateColumns: "2fr 1fr",
+         gridTemplateColumns: { xs: "1fr", md: "2fr 1fr" },
           gap: 2,
         }}
       >
 
         {/* MAP */}
-        <Box sx={{ px: 2 }}>
-          <Card sx={{ borderRadius: 3, height: "60vh" }}>
+        <Box>
+          <Card sx={{ borderRadius: 3, height: { xs: "40vh", md: "60vh" } }}>
             <MapView onSelectPharmacy={setSelectedPharmacy} />
 
             <CardContent>
@@ -199,8 +195,14 @@ const [deliveryAddress, setDeliveryAddress] = useState("");
         </Box>
 
         {/* MEDICINES */}
-        <Box sx={{ p: 2 }}>
-          <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+        <Box>
+          <Box
+  sx={{
+    display: "grid",
+    gridTemplateColumns: { xs: "repeat(2, 1fr)", sm: "repeat(2, 1fr)", md: "1fr" },
+    gap: 2,
+  }}
+>
             <Card sx={{ p: 2, borderRadius: 3 }}>
               <Typography sx={{ fontWeight: "bold" }}>Medicines</Typography>
             </Card>
@@ -218,7 +220,7 @@ const [deliveryAddress, setDeliveryAddress] = useState("");
               medicines.map((med) => (
                 <Card
                   key={med._id}
-                  sx={{ minWidth: 150, borderRadius: 3, p: 1 }}
+                  sx={{ borderRadius: 3, p: 1 }}
                 >
                   <Box
                     sx={{
@@ -321,16 +323,18 @@ const [deliveryAddress, setDeliveryAddress] = useState("");
   open={checkoutOpen}
   onClose={() => setCheckoutOpen(false)}
 >
-  <Box
-    sx={{
-      width: 400,
-      bgcolor: "white",
-      p: 3,
-      mx: "auto",
-      mt: "10%",
-      borderRadius: 3,
-    }}
-  >
+ <Box
+  sx={{
+    width: { xs: "90%", sm: 400 },
+    maxHeight: "85vh",
+    overflowY: "auto",
+    bgcolor: "white",
+    p: { xs: 2, sm: 3 },
+    mx: "auto",
+    mt: "10%",
+    borderRadius: 3,
+  }}
+>
     <Typography variant="h6" sx={{ mb: 2 }}>
       Checkout
     </Typography>
