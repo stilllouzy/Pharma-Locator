@@ -156,12 +156,10 @@ const [deliveryAddress, setDeliveryAddress] = useState("");
       {/* HEADER */}
       <Box sx={{ p: 2 }}>
         <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 2 }}>
-          <LocationOnIcon color="primary" />
           <Box sx={{ ml: 1 }}>
             <Typography sx={{ fontWeight: "bold" }}>Home</Typography>
             <Typography variant="caption">Dasmariñas, Cavite</Typography>
           </Box>
-          <FavoriteBorderIcon />
         </Box>
 
         {/* SEARCH */}
@@ -172,9 +170,6 @@ const [deliveryAddress, setDeliveryAddress] = useState("");
             onChange={(e) => setSearch(e.target.value)}
             sx={{ backgroundColor: "white", borderRadius: 5 }}
           />
-          <IconButton>
-            <TuneIcon />
-          </IconButton>
         </Box>
       </Box>
 
@@ -427,23 +422,6 @@ const [deliveryAddress, setDeliveryAddress] = useState("");
     </Button>
   </Box>
 </Modal>
-      {/* BOTTOM NAV */}
-      <Box
-        sx={{
-          position: "fixed",
-          bottom: 0,
-          width: "100%",
-          backgroundColor: "white",
-          display: "flex",
-          justifyContent: "space-around",
-          p: 1,
-          boxShadow: 3,
-        }}
-      >
-        <Typography>🏠</Typography>
-        <Typography>🔔</Typography>
-        <Typography>👤</Typography>
-      </Box>
     </Box>
   );
 }
