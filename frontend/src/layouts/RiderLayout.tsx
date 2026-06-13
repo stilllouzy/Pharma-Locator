@@ -17,8 +17,8 @@ const DRAWER_WIDTH = 260;
 
 export default function AdminLayout() {
   const [open, setOpen] = useState(false);
-
-    <Box sx={{ display: "flex" }}>
+ return(
+   <Box sx={{ display: "flex" }}>
 
       {/* TOP APP BAR */}
       <AppBar
