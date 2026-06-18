@@ -8,6 +8,7 @@ const userLinks = [
   { label: "Map", path: "/user/map" },
   { label: "Orders", path: "/user/orders" },
   { label: "Prescriptions", path: "/user/prescription" },
+  { label: "Notifications", path: "/user/notifications" },
 ];
 
 interface SidebarProps {
