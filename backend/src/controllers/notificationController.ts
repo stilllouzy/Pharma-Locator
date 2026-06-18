@@ -51,8 +51,10 @@ export const markAsRead = async (req: AuthRequest, res: Response) => {
 // MARK ALL AS READ
 export const markAllAsRead = async (req: AuthRequest, res: Response) => {
   try {
+    const isAdmin = req.user!.role === "admin";
+
     await Notification.updateMany(
-      { user: req.user!.id, isRead: false },
+      isAdmin ? { isRead: false } : { user: req.user!.id, isRead: false },
       { isRead: true }
     );
 
@@ -95,7 +97,7 @@ export const getUnreadCount = async (req: AuthRequest, res: Response) => {
 // ADMIN: GET ALL NOTIFICATIONS
 export const getAllNotifications = async (req: AuthRequest, res: Response) => {
   try {
-    const notifications = await Notification.find({ type: "system" }) // ✅ only system notifications
+    const notifications = await Notification.find({}) // ✅ only system notifications
       .populate("user", "name email role")
       .sort({ createdAt: -1 })
       .limit(50);
