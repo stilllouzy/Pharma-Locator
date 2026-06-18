@@ -61,7 +61,7 @@ export default function AdminLayout() {
       >
  
         <Routes>
-          <Route path="medicines" element={<Medicines />} />
+          <Route path="/" element={<Medicines />} />
           <Route path="orders" element={<Orders />} />
           <Route path="prescriptions" element={<Prescriptions />} />
         </Routes>

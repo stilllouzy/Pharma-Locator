@@ -63,7 +63,7 @@ export default function AdminLayout() {
         }}
       >
         <Routes>
-          <Route path="dashboard" element={<Dashboard />} />
+          <Route path="/" element={<Dashboard />} />
           <Route path="deliveries" element={<MyDeliveries />} />
           <Route path="history" element={<DeliveryHistory />} />
           <Route path="profile" element={<Profile />} />
