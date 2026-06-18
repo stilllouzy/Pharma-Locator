@@ -209,3 +209,35 @@ export const trackOrder = async (
     });
   }
 };
+export const uploadProofOfDelivery = async (req: AuthRequest, res: Response) => {
+  try {
+    const { id } = req.params;
+    const { imageUrl } = req.body;
+
+    const order = await Order.findById(id);
+    if (!order) return res.status(404).json({ message: "Order not found" });
+    if (!imageUrl) return res.status(400).json({ message: "No image provided" });
+
+    order.proofOfDelivery = {
+      imageUrl,
+      uploadedAt: new Date(),
+    };
+    order.deliveryStatus = "delivered";
+    order.status = "delivered";
+
+    await order.save();
+
+    // 🔔 NOTIFY USER
+    await createNotification(
+      order.user.toString(),
+      "Order Delivered",
+      "Your order has been delivered successfully.",
+      "order"
+    );
+
+    res.status(200).json({ message: "Proof of delivery uploaded", order });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server error", error });
+  }
+};

@@ -6,6 +6,7 @@ import {
   Button,
   Chip,
   Divider,
+  CircularProgress,
 } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
@@ -34,6 +35,10 @@ interface IDelivery {
   paymentStatus: string;
   deliveryMethod: string;
   createdAt: string;
+  proofOfDelivery?: {          // ← ADD THIS to interface
+    imageUrl: string | null;
+    uploadedAt: string | null;
+  };
 }
 
 export default function DeliveryDetails() {
@@ -41,6 +46,9 @@ export default function DeliveryDetails() {
   const navigate = useNavigate();
   const [delivery, setDelivery] = useState<IDelivery | null>(null);
   const [loading, setLoading] = useState(false);
+ const [podBase64, setPodBase64] = useState<string>("");
+const [podPreview, setPodPreview] = useState<string>("");
+const [uploading, setUploading] = useState(false);               // ← ADD
   const token = localStorage.getItem("token");
 
   const fetchDetails = async () => {
@@ -60,6 +68,40 @@ export default function DeliveryDetails() {
   useEffect(() => {
     fetchDetails();
   }, [id]);
+
+  // ── ADD THESE TWO HANDLERS ──────────────────────────────────────
+ const handlePodImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const file = e.target.files?.[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onloadend = () => {
+    const base64 = reader.result as string;
+    setPodBase64(base64);
+    setPodPreview(base64);
+  };
+  reader.readAsDataURL(file);
+};
+
+const handleUploadAndDeliver = async () => {
+  if (!podBase64) return alert("Please select an image first.");
+  setUploading(true);
+  try {
+    await api.patch(
+      `/orders/${id}/proof-of-delivery`,
+      { imageUrl: podBase64 },
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+    alert("Proof of delivery uploaded! Order marked as delivered.");
+    fetchDetails();
+  } catch (error) {
+    console.error(error);
+    alert("Upload failed. Please try again.");
+  } finally {
+    setUploading(false);
+  }
+};
+  // ───────────────────────────────────────────────────────────────
 
   if (loading) return <Typography sx={{ p: 3 }}>Loading...</Typography>;
   if (!delivery) return <Typography sx={{ p: 3 }}>Delivery not found.</Typography>;
@@ -117,7 +159,6 @@ export default function DeliveryDetails() {
           <Typography sx={{ fontWeight: "bold" }}>Deliver To</Typography>
           <Typography variant="body2">{delivery.deliveryAddress}</Typography>
 
-          {/* GET DIRECTIONS BUTTON */}
           <Button
             variant="outlined"
             size="small"
@@ -151,9 +192,7 @@ export default function DeliveryDetails() {
           {/* TOTAL */}
           <Box sx={{ display: "flex", justifyContent: "space-between" }}>
             <Typography sx={{ fontWeight: "bold" }}>Total</Typography>
-            <Typography sx={{ fontWeight: "bold" }}>
-              ₱{delivery.totalPrice}
-            </Typography>
+            <Typography sx={{ fontWeight: "bold" }}>₱{delivery.totalPrice}</Typography>
           </Box>
 
           <Typography variant="caption" color="gray" sx={{ display: "block", mt: 1 }}>
@@ -163,6 +202,70 @@ export default function DeliveryDetails() {
           <Typography variant="caption" color="gray" sx={{ display: "block" }}>
             Ordered: {new Date(delivery.createdAt).toLocaleDateString()}
           </Typography>
+
+          {/* ── PROOF OF DELIVERY SECTION ─────────────────────────── */}
+          {delivery.deliveryStatus === "on_the_way" && (
+            <>
+              <Divider sx={{ my: 2 }} />
+              <Typography sx={{ fontWeight: "bold", mb: 1 }}>
+                Proof of Delivery
+              </Typography>
+              <Typography variant="body2" color="gray" sx={{ mb: 1 }}>
+                Take a photo of the delivered package and upload it to complete the delivery.
+              </Typography>
+
+              <Button variant="outlined" component="label" size="small" sx={{ mb: 1 }}>
+                Choose Photo
+                <input
+                  type="file"
+                  accept="image/*"
+                  hidden
+                  onChange={handlePodImageChange}
+                />
+              </Button>
+
+              {/* IMAGE PREVIEW */}
+              {podPreview && (
+                <Box sx={{ my: 1 }}>
+                  <img
+                    src={podPreview}
+                    alt="Preview"
+                    style={{ width: "100%", maxHeight: 200, objectFit: "cover", borderRadius: 8 }}
+                  />
+                </Box>
+              )}
+
+              <Button
+                variant="contained"
+                color="success"
+                fullWidth
+                onClick={handleUploadAndDeliver}
+                disabled={!podBase64 || uploading}
+                sx={{ mt: 1 }}
+              >
+                {uploading ? <CircularProgress size={20} color="inherit" /> : "Upload & Mark as Delivered"}
+              </Button>
+            </>
+          )}
+
+          {/* ALREADY DELIVERED — show the uploaded proof */}
+          {delivery.deliveryStatus === "delivered" && delivery.proofOfDelivery?.imageUrl && (
+            <>
+              <Divider sx={{ my: 2 }} />
+              <Typography sx={{ fontWeight: "bold", mb: 1 }}>Proof of Delivery</Typography>
+              <img
+                src={delivery.proofOfDelivery.imageUrl}
+                alt="Proof of Delivery"
+                style={{ width: "100%", maxHeight: 200, objectFit: "cover", borderRadius: 8 }}
+              />
+              {delivery.proofOfDelivery.uploadedAt && (
+                <Typography variant="caption" color="gray" sx={{ display: "block", mt: 0.5 }}>
+                  Uploaded: {new Date(delivery.proofOfDelivery.uploadedAt).toLocaleString()}
+                </Typography>
+              )}
+            </>
+          )}
+          {/* ─────────────────────────────────────────────────────── */}
 
         </CardContent>
       </Card>

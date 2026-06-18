@@ -6,6 +6,7 @@ import {
   updateOrderStatus,
   payOrder,
   trackOrder,
+  uploadProofOfDelivery,
 } from "../controllers/orderController";
 import { protect } from "../middleware/authMiddleware";
 import { authorize } from "../middleware/roleMiddleware";
@@ -33,4 +34,7 @@ router.post(
   authorize("user"),
   payOrder
 );
+
+// RIDER - Proof of Delivery
+router.patch("/:id/proof-of-delivery", protect, authorize("rider"), uploadProofOfDelivery);
 export default router;
