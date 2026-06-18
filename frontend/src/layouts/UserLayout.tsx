@@ -11,7 +11,7 @@ import Orders from "../pages/user/Orders";
 import Prescriptions from "../pages/user/UserPrescriptions";
 import OrderTracking from "../pages/user/OrderTracking";
 import Payment from "../pages/user/Payment"
-import Notifications from "../pages/user/Notifications";
+import Notifications from "../pages/user/UserNotification";
 
 const DRAWER_WIDTH = 260;
 
