@@ -162,21 +162,21 @@ export default function MyDeliveries() {
                   </Button>
                 )}
 
-                {delivery.deliveryStatus === "on_the_way" && (
-                  <Button
-                    size="small"
-                    variant="contained"
-                    color="success"
-                    onClick={() => updateStatus(delivery._id, "delivered")}
-                  >
-                    Delivered
-                  </Button>
-                )}
+         {delivery.deliveryStatus === "on_the_way" && (
+  <Button
+    size="small"
+    variant="contained"
+    color="success"
+    onClick={() => navigate(`/rider/detail/${delivery._id}`)}
+  >
+    Upload Proof & Deliver
+  </Button>
+)}
 
                 <Button
                   size="small"
                   variant="outlined"
-                  onClick={() => navigate(`/rider/details/${delivery._id}`)}
+                  onClick={() => navigate(`/rider/detail/${delivery._id}`)}
                 >
                   View Details
                 </Button>
