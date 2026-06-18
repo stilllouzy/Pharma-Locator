@@ -19,6 +19,10 @@ export interface IOrder extends Document {
   deliveryMethod: "pickup" | "delivery";
   deliveryStatus: "unassigned"| "assigned"| "picked_up"| "on_the_way"| "delivered";
   deliveryAddress?: string;
+  proofOfDelivery?: {
+  imageUrl: string | null;
+  uploadedAt: Date | null;
+};
   createdAt: Date;
 }
 
@@ -67,6 +71,10 @@ referenceNumber: {
   default: "unassigned",
 },
     deliveryAddress: String,
+    proofOfDelivery: {
+  imageUrl: { type: String, default: null },
+  uploadedAt: { type: Date, default: null },
+},
   },
   { timestamps: true }
 );

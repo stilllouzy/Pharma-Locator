@@ -214,7 +214,7 @@ export const uploadProofOfDelivery = async (req: AuthRequest, res: Response) => 
     const { id } = req.params;
     const { imageUrl } = req.body;
 
-    const order = await Order.findById(id);
+    const order = await Order.findById(id) as any;
     if (!order) return res.status(404).json({ message: "Order not found" });
     if (!imageUrl) return res.status(400).json({ message: "No image provided" });
 
