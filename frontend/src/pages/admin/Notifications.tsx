@@ -137,11 +137,14 @@ export default function Notifications() {
                   </Typography>
 
                   {/* USER INFO */}
-                  {notif.user && (
-                    <Typography variant="caption" color="gray" sx={{ display: "block" }}>
-                      From: {notif.user.name} ({notif.user.role})
-                    </Typography>
-                  )}
+                {notif.user && notif.user.role !== "admin" && (
+  <Typography variant="caption" color="gray" sx={{ display: "block" }}>
+    From: {notif.user.name} ({notif.user.role})
+  </Typography>
+)}
+This hides the "From" line when the notification was sent to the admin themselves. Done!
+
+
 
                   {/* DATE */}
                   <Typography variant="caption" color="gray">
