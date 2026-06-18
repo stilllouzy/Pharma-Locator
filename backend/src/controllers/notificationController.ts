@@ -1,6 +1,7 @@
 import { Response } from "express";
 import Notification from "../models/Notification";
 import { AuthRequest } from "../middleware/authMiddleware";
+import User from "../models/User";
 
 // CREATE NOTIFICATION (internal helper function)
 export const createNotification = async (
@@ -97,7 +98,8 @@ export const getUnreadCount = async (req: AuthRequest, res: Response) => {
 // ADMIN: GET ALL NOTIFICATIONS
 export const getAllNotifications = async (req: AuthRequest, res: Response) => {
   try {
-    const notifications = await Notification.find({}) // ✅ only system notifications
+    const admin = await User.findOne({ role: "admin" });
+const notifications = await Notification.find({ user: admin?._id })
       .populate("user", "name email role")
       .sort({ createdAt: -1 })
       .limit(50);

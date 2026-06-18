@@ -11,6 +11,7 @@ import Orders from "../pages/user/Orders";
 import Prescriptions from "../pages/user/UserPrescriptions";
 import OrderTracking from "../pages/user/OrderTracking";
 import Payment from "../pages/user/Payment"
+import Notifications from "../pages/user/Notifications";
 
 const DRAWER_WIDTH = 260;
 
@@ -78,6 +79,7 @@ export default function AdminLayout() {
           <Route path="/prescription" element={<Prescriptions />} />
           <Route path="/track/:id" element={<OrderTracking />} />
           <Route path="/payment/:id" element={<Payment />} />
+          <Route path="/notifications" element={<Notifications />} />
         </Routes>
       </Box>
 

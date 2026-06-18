@@ -1,5 +1,6 @@
 import { Response } from "express";
 import Order from "../models/Order";
+import User from "../models/User";
 import Medicine from "../models/Medicine";
 import { AuthRequest } from "../middleware/authMiddleware";
 import { createNotification } from "./notificationController";
@@ -228,13 +229,24 @@ export const uploadProofOfDelivery = async (req: AuthRequest, res: Response) => 
     await order.save();
 
     // 🔔 NOTIFY USER
-    await createNotification(
-      order.user.toString(),
-      "Order Delivered",
-      "Your order has been delivered successfully.",
-      "order"
-    );
+    // 🔔 NOTIFY USER
+await createNotification(
+  order.user.toString(),
+  "Order Delivered",
+  "Your order has been delivered successfully.",
+  "order"
+);
 
+// 🔔 NOTIFY ADMIN
+const admin = await User.findOne({ role: "admin" });
+if (admin) {
+  await createNotification(
+    admin._id.toString(),
+    "Order Delivered",
+    `Order #${order._id} has been delivered by the rider.`,
+    "delivery"
+  );
+}
     res.status(200).json({ message: "Proof of delivery uploaded", order });
   } catch (error) {
     console.error(error);
