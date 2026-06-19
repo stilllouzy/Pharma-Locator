@@ -239,13 +239,15 @@ await createNotification(
 );
 
 // 🔔 NOTIFY PHARMACY
-await createNotification(
-  order.pharmacy.toString(),
-  "Proof of Delivery Received",
-  imageUrl,        // ← store the base64 image as the message
-  "delivery"
-);
-
+const pharmacyOwner = await User.findOne({ pharmacyId: order.pharmacy });
+if (pharmacyOwner) {
+  await createNotification(
+    pharmacyOwner._id.toString(),
+    "Proof of Delivery Received",
+    imageUrl,
+    "delivery"
+  );
+}
 // 🔔 NOTIFY ADMIN
 const admin = await User.findOne({ role: "admin" });
 if (admin) {
