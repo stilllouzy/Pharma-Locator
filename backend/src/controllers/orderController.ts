@@ -229,12 +229,21 @@ export const uploadProofOfDelivery = async (req: AuthRequest, res: Response) => 
     await order.save();
 
     // 🔔 NOTIFY USER
-    // 🔔 NOTIFY USER
+
+// 🔔 NOTIFY USER
 await createNotification(
   order.user.toString(),
   "Order Delivered",
   "Your order has been delivered successfully.",
   "order"
+);
+
+// 🔔 NOTIFY PHARMACY
+await createNotification(
+  order.pharmacy.toString(),
+  "Proof of Delivery Received",
+  imageUrl,        // ← store the base64 image as the message
+  "delivery"
 );
 
 // 🔔 NOTIFY ADMIN

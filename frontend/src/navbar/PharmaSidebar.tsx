@@ -7,6 +7,7 @@ const pharmacyLinks = [
   { label: "Medicines", path: "/pharmacy/medicines" },
   { label: "Orders", path: "/pharmacy/orders" },
   { label: "Prescriptions", path: "/pharmacy/prescriptions" },
+  { label: "Proof of Delivery", path: "/pharamcy/pod"},
 ];
 
 interface SidebarProps {

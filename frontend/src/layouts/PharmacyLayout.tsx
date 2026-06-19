@@ -7,6 +7,7 @@ import Sidebar from "../navbar/PharmaSidebar";
 import Medicines from "../pages/pharmacy/Medicines";
 import Orders from "../pages/pharmacy/Orders";
 import Prescriptions from "../pages/pharmacy/PharmaPrescriptions";
+import ProofOfDelivery from "../pages/pharmacy/ProofOfDelivery"
 
 
 const DRAWER_WIDTH = 260;
@@ -64,6 +65,7 @@ export default function AdminLayout() {
           <Route path="/" element={<Medicines />} />
           <Route path="orders" element={<Orders />} />
           <Route path="prescriptions" element={<Prescriptions />} />
+          <Route path="pod" element={<ProofOfDelivery/>} />
         </Routes>
       </Box>
 
