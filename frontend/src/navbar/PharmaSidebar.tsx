@@ -33,14 +33,14 @@ export default function PharmacySidebar({ open }: SidebarProps) {
         "& .MuiDrawer-paper": {
           width: DRAWER_WIDTH,
           boxSizing: "border-box",
-          backgroundColor: "white",
+          backgroundColor: "primary.main",
           borderRight: "1px solid #e5e7eb",
         },
       }}
     >
       <Box sx={{ display: "flex", flexDirection: "column", height: "100%", p: 2 }}>
 
-        <Typography sx={{ fontWeight: "bold", fontSize: 18, mb: 2 }}>
+        <Typography sx={{ fontWeight: "bold", fontSize: 18, mb: 2,  color : "white" }}>
           Pharmacy Panel
         </Typography>
 
