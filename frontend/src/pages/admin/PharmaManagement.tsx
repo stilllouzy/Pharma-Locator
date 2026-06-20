@@ -66,7 +66,7 @@ export default function PharmaManagement() {
     setLoading(true);
     try {
       const res = await api.get("/admin/pharmacies", {
-        headers: { Authorization: Bearer ${token} },
+        headers: { Authorization: 'Bearer ${token}' },
         params: { search },
       });
       setPharmacies(res.data);
