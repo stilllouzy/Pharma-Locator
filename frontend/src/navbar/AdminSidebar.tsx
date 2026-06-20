@@ -76,7 +76,7 @@ export default function Sidebar({ open }: SidebarProps) {
           Admin Panel
         </Typography>
 
-        <Divider sx={{ mb: 2, color: "primary.main"}} />
+        <Divider sx={{ mb: 2, backgroundColor: "primary.main"}} />
 
         {/* SECTIONS */}
         <Box sx={{ flexGrow: 1 }}>
