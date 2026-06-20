@@ -89,7 +89,7 @@ const regPasswordRef = useRef<HTMLInputElement>(null);
           borderRadius: 3,
         }}
       >
-        <Typography variant="h5" sx={{ textAlign: "center", mb: 2 }}>
+        <Typography variant="h5" sx={{ textAlign: "center", mb: 2 , fontWeight : 700, color: "primary.main"}}>
           Pharma Locator System
         </Typography>
 
