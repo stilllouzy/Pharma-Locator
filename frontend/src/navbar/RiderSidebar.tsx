@@ -4,7 +4,7 @@ import { NavLink, useNavigate } from "react-router-dom";
 const DRAWER_WIDTH = 260;
 
 const riderLinks = [
-  { label: "Dashboard", path: "/rider/dashboard" },
+  { label: "Dashboard", path: "/rider" },
   { label: "My Deliveries", path: "/rider/deliveries" },
   { label: "Delivery History", path: "/rider/history" },
   { label: "Delivery Map", path: "/rider/map" },

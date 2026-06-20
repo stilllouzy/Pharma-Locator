@@ -4,7 +4,7 @@ import { NavLink, useNavigate } from "react-router-dom";
 const DRAWER_WIDTH = 260;
 
 const pharmacyLinks = [
-  { label: "Medicines", path: "/pharmacy/medicines" },
+  { label: "Medicines", path: "/pharmacy" },
   { label: "Orders", path: "/pharmacy/orders" },
   { label: "Prescriptions", path: "/pharmacy/prescriptions" },
   { label: "Proof of Delivery", path: "/pharmacy/pod"},
