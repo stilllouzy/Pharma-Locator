@@ -88,7 +88,7 @@ export default function PharmaManagement() {
       await api.put(
         /admin/pharmacies/${id}/toggle,
         {},
-        { headers: { Authorization: Bearer ${token} } }
+        { headers: { Authorization: 'Bearer ${token}' } }
       );
       fetchPharmacies();
     } catch (error) {
@@ -100,7 +100,7 @@ export default function PharmaManagement() {
   const deletePharmacy = async (id: string) => {
     try {
       await api.delete(/admin/pharmacies/${id}, {
-        headers: { Authorization: Bearer ${token} },
+        headers: { Authorization: 'Bearer ${token}' },
       });
       fetchPharmacies();
     } catch (error) {
@@ -177,7 +177,7 @@ export default function PharmaManagement() {
           lat: Number(form.lat),
           lng: Number(form.lng),
         },
-        { headers: { Authorization: Bearer ${token} } }
+        { headers: { Authorization: 'Bearer ${token}' } }
       );
 
       handleCloseModal();
