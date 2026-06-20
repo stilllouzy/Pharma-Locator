@@ -66,7 +66,7 @@ export default function PharmaManagement() {
     setLoading(true);
     try {
       const res = await api.get("/admin/pharmacies", {
-        headers: { Authorization: 'Bearer ${token}' },
+        headers: { Authorization: `Bearer ${token}` },
         params: { search },
       });
       setPharmacies(res.data);
@@ -86,9 +86,9 @@ export default function PharmaManagement() {
   const toggleStatus = async (id: string) => {
     try {
       await api.put(
-        '/admin/pharmacies/${id}/toggle',
+        `/admin/pharmacies/${id}/toggle`,
         {},
-        { headers: { Authorization: 'Bearer ${token}' } }
+        { headers: { Authorization: `Bearer ${token}` } }
       );
       fetchPharmacies();
     } catch (error) {
@@ -99,8 +99,8 @@ export default function PharmaManagement() {
   // 🔷 DELETE PHARMACY
   const deletePharmacy = async (id: string) => {
     try {
-      await api.delete('/admin/pharmacies/${id}', {
-        headers: { Authorization: 'Bearer ${token}' },
+      await api.delete(`/admin/pharmacies/${id}`, {
+        headers: { Authorization: `Bearer ${token}` },
       });
       fetchPharmacies();
     } catch (error) {
@@ -177,7 +177,7 @@ export default function PharmaManagement() {
           lat: Number(form.lat),
           lng: Number(form.lng),
         },
-        { headers: { Authorization: 'Bearer ${token}' } }
+        { headers: { Authorization: `Bearer ${token}` } }
       );
 
       handleCloseModal();
@@ -295,7 +295,7 @@ export default function PharmaManagement() {
         onClose={handleCloseModal}
         fullWidth
         maxWidth="sm"
-        PaperProps={{ sx: { borderRadius: 3 } }}
+        slotProps={{ paper: { sx: { borderRadius: 3 } } }}  
       >
         <DialogTitle sx={{ fontWeight: "bold", pr: 6 }}>
           Add New Pharmacy
@@ -312,7 +312,7 @@ export default function PharmaManagement() {
         <DialogContent sx={{ pt: 2, display: "flex", flexDirection: "column", gap: 2 }}>
 
           {/* OWNER ACCOUNT */}
-          <Typography variant="caption" color="text.secondary" fontWeight="bold">
+          <Typography variant="caption" color="text.secondary" sx={{ fontWeight: "bold" }}> 
             OWNER ACCOUNT
           </Typography>
 
@@ -354,7 +354,7 @@ export default function PharmaManagement() {
           <Divider sx={{ mt: 1 }} />
 
           {/* PHARMACY DETAILS */}
-          <Typography variant="caption" color="text.secondary" fontWeight="bold">
+          <Typography variant="caption" color="text.secondary" sx={{ fontWeight: "bold" }}> 
             PHARMACY DETAILS
           </Typography>
 
