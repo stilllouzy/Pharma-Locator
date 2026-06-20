@@ -44,7 +44,7 @@ export default function AdminLayout() {
           >
             <MenuIcon />
           </IconButton>
-          <Typography sx={{ fontWeight: "bold" }}>
+          <Typography sx={{ fontWeight: "bold", color : "primary.main" }}>
             Pharma Locator — Admin
           </Typography>
         </Toolbar>

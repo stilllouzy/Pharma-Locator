@@ -72,7 +72,7 @@ export default function Sidebar({ open }: SidebarProps) {
         }}
       >
         {/* BRAND */}
-        <Typography sx={{ fontWeight: "bold", fontSize: 18, mb: 2 }}>
+        <Typography sx={{ fontWeight: "bold", fontSize: 18, mb: 2 , color : "primary.main" }}>
           Admin Panel
         </Typography>
 

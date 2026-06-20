@@ -41,7 +41,7 @@ export default function RiderSidebar({ open }: SidebarProps) {
     >
       <Box sx={{ display: "flex", flexDirection: "column", height: "100%", p: 2 }}>
 
-        <Typography sx={{ fontWeight: "bold", fontSize: 18, mb: 2 }}>
+        <Typography sx={{ fontWeight: "bold", fontSize: 18, mb: 2, color : "primary.main" }}>
           Rider Panel
         </Typography>
 
