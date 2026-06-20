@@ -86,7 +86,7 @@ export default function PharmaManagement() {
   const toggleStatus = async (id: string) => {
     try {
       await api.put(
-        /admin/pharmacies/${id}/toggle,
+        '/admin/pharmacies/${id}/toggle',
         {},
         { headers: { Authorization: 'Bearer ${token}' } }
       );
@@ -99,7 +99,7 @@ export default function PharmaManagement() {
   // 🔷 DELETE PHARMACY
   const deletePharmacy = async (id: string) => {
     try {
-      await api.delete(/admin/pharmacies/${id}, {
+      await api.delete('/admin/pharmacies/${id}', {
         headers: { Authorization: 'Bearer ${token}' },
       });
       fetchPharmacies();
