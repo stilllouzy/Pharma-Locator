@@ -142,7 +142,7 @@ useEffect(() => {
       <Box sx={{ p: 2 }}>
         <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", mb: 2 }}>
     <Box sx={{ textAlign: "center" }}>
-            <Typography sx={{ fontWeight: "bold" }}>Home</Typography>
+            <Typography sx={{ fontWeight: "bold", color : "primary.main"  }}>Home</Typography>
             <Typography variant="caption">Dasmariñas, Cavite</Typography>
           </Box>
         </Box>

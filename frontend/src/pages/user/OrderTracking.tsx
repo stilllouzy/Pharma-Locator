@@ -114,7 +114,7 @@ export default function OrderTracking() {
         ← Back to Orders
       </Button>
 
-      <Typography sx={{ fontSize: 24, fontWeight: "bold", mb: 2 }}>
+      <Typography sx={{ fontSize: 24, fontWeight: "bold", mb: 2, color : "primary.main"  }}>
         Order Tracking
       </Typography>
 

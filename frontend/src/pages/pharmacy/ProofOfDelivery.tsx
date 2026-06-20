@@ -49,7 +49,7 @@ export default function ProofOfDelivery() {
 
       {/* HEADER */}
       <Box sx={{ mb: 3 }}>
-        <Typography sx={{ fontSize: 24, fontWeight: "bold" }}>
+        <Typography sx={{ fontSize: 24, fontWeight: "bold", color : "primary.main"}}>
           Proof of Delivery
         </Typography>
         <Typography variant="caption" color="gray">

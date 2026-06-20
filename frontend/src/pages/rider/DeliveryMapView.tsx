@@ -61,7 +61,7 @@ export default function DeliveryMapView() {
   return (
     <Box>
       <Box sx={{ mb: 2 }}>
-        <Typography sx={{ fontSize: 24, fontWeight: "bold" }}>
+        <Typography sx={{ fontSize: 24, fontWeight: "bold", color : "primary.main"  }}>
           Delivery Map
         </Typography>
         <Typography variant="caption" color="gray">

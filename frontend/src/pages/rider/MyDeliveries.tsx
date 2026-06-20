@@ -82,7 +82,7 @@ export default function MyDeliveries() {
   return (
     <Box>
       <Box sx={{ mb: 3 }}>
-        <Typography sx={{ fontSize: 24, fontWeight: "bold" }}>
+        <Typography sx={{ fontSize: 24, fontWeight: "bold", color : "primary.main"  }}>
           My Deliveries
         </Typography>
         <Typography variant="caption" color="gray">

@@ -55,7 +55,7 @@ export default function DeliveryHistory() {
   return (
     <Box>
       <Box sx={{ mb: 3 }}>
-        <Typography sx={{ fontSize: 24, fontWeight: "bold" }}>
+        <Typography sx={{ fontSize: 24, fontWeight: "bold", color : "primary.main" }}>
           Delivery History
         </Typography>
         <Typography variant="caption" color="gray">

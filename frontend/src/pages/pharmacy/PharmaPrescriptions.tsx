@@ -70,7 +70,7 @@ export default function Prescriptions() {
 
       {/* HEADER */}
       <Box sx={{ mb: 3 }}>
-        <Typography sx={{ fontSize: 24, fontWeight: "bold" }}>
+        <Typography sx={{ fontSize: 24, fontWeight: "bold", color : "primary.main" }}>
           Prescription Verification
         </Typography>
         <Typography variant="caption" color="gray">

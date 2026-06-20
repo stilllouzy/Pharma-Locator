@@ -38,7 +38,7 @@ export default function Orders() {
 
   return (
     <Box sx={{ p: 3 }}>
-      <Typography variant="h5" sx={{ mb: 2 }}>
+      <Typography variant="h5" sx={{ mb: 2 , color : "primary.main"  }}>
         My Orders
       </Typography>
 

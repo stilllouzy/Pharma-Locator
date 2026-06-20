@@ -107,7 +107,7 @@ const columns: GridColDef[] = [
 
   return (
 <Box sx={{ p: 3 }}>
-      <Typography variant="h5">Medicines</Typography>
+      <Typography variant="h5" sx={{color : "primary.main"}}>Medicines</Typography>
 
       <Button variant="contained" sx={{ my: 2 }} onClick={() => setOpen(true)}>
         Add Medicine

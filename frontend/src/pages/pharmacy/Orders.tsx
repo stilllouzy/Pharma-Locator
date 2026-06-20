@@ -39,7 +39,7 @@ export default function Orders() {
 
   return (
     <Box sx={{p:3}}>
-      <Typography variant="h5">
+      <Typography variant="h5" sx={{color : "primary.main"}}>
         Orders
       </Typography>
 

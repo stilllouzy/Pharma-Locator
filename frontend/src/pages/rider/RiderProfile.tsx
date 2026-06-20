@@ -71,7 +71,7 @@ export default function RiderProfile() {
   return (
     <Box>
       <Box sx={{ mb: 3 }}>
-        <Typography sx={{ fontSize: 24, fontWeight: "bold" }}>
+        <Typography sx={{ fontSize: 24, fontWeight: "bold", color : "primary.main"  }}>
           Profile
         </Typography>
         <Typography variant="caption" color="gray">

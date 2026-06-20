@@ -118,7 +118,7 @@ const handleUploadAndDeliver = async () => {
         ← Back to Deliveries
       </Button>
 
-      <Typography sx={{ fontSize: 24, fontWeight: "bold", mb: 2 }}>
+      <Typography sx={{ fontSize: 24, fontWeight: "bold", mb: 2, color : "primary.main" }}>
         Delivery Details
       </Typography>
 
