@@ -58,7 +58,7 @@ export default function Sidebar({ open }: SidebarProps) {
         "& .MuiDrawer-paper": {
           width: DRAWER_WIDTH,
           boxSizing: "border-box",
-          backgroundColor: "primary.main",
+          backgroundColor: "white",
           borderRight: "1px solid #e5e7eb",
         },
       }}
@@ -72,7 +72,7 @@ export default function Sidebar({ open }: SidebarProps) {
         }}
       >
         {/* BRAND */}
-        <Typography sx={{ fontWeight: "bold", fontSize: 18, mb: 2 , color : "white" }}>
+        <Typography sx={{ fontWeight: "bold", fontSize: 18, mb: 2 , color : "primary.main" }}>
           Admin Panel
         </Typography>
 

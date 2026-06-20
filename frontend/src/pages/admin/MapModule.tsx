@@ -99,7 +99,7 @@ export default function MapModule() {
 
       {/* HEADER */}
       <Box sx={{ mb: 2 }}>
-        <Typography sx={{ fontSize: 24, fontWeight: "bold" }}>
+        <Typography sx={{ fontSize: 24, fontWeight: "bold", color : "primary.main" }}>
           Pharmacy Location Management
         </Typography>
         <Typography variant="caption" color="gray">

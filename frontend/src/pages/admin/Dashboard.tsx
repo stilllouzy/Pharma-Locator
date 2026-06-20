@@ -39,7 +39,7 @@ export default function Dashboard() {
 
       {/* HEADER */}
       <Box sx={{ mb: 3 }}>
-        <Typography sx={{ fontSize: 24, fontWeight: "bold" }}>
+        <Typography sx={{ fontSize: 24, fontWeight: "bold", color : "primary.main" }}>
           Admin Dashboard
         </Typography>
         <Typography variant="caption" color="gray">

@@ -72,7 +72,7 @@ export default function SettingsModule() {
 
       {/* HEADER */}
       <Box sx={{ mb: 3 }}>
-        <Typography sx={{ fontSize: 24, fontWeight: "bold" }}>
+        <Typography sx={{ fontSize: 24, fontWeight: "bold" , color : "primary.main" }}>
           System Settings
         </Typography>
         <Typography variant="caption" color="gray">

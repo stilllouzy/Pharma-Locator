@@ -205,7 +205,7 @@ export default function PharmaManagement() {
         }}
       >
         <Box>
-          <Typography sx={{ fontSize: 24, fontWeight: "bold" }}>
+          <Typography sx={{ fontSize: 24, fontWeight: "bold", color : "primary.main" }}>
             Pharmacy Management
           </Typography>
           <Typography variant="caption" color="gray">
