@@ -28,8 +28,8 @@ export default function AdminLayout() {
         position="fixed"
         sx={{
           zIndex: (theme) => theme.zIndex.drawer + 1,
-          backgroundColor: "white",
-          color: "black",
+          backgroundColor: "primary.main",
+          color: "white",
           boxShadow: "0 1px 3px rgba(0,0,0,0.1)",
           width: open ? `calc(100% - ${DRAWER_WIDTH}px)` : "100%",
           ml: open ? `${DRAWER_WIDTH}px` : 0,

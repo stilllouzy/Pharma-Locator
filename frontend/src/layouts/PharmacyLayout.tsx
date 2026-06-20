@@ -23,7 +23,7 @@ export default function AdminLayout() {
         position="fixed"
         sx={{
           zIndex: (theme) => theme.zIndex.drawer + 1,
-          backgroundColor: "white",
+          backgroundColor: "primary.main",
           color: "black",
           boxShadow: "0 1px 3px rgba(0,0,0,0.1)",
           width: open ? `calc(100% - ${DRAWER_WIDTH}px)` : "100%",
@@ -39,7 +39,7 @@ export default function AdminLayout() {
           >
             <MenuIcon />
           </IconButton>
-          <Typography sx={{ fontWeight: "bold", color : "white" }}>
+          <Typography sx={{ fontWeight: "bold", color : "primary.main" }}>
             Pharma Locator — Pharmacy side
           </Typography>
         </Toolbar>
