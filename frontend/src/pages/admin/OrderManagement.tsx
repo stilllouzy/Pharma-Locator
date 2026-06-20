@@ -114,7 +114,7 @@ export default function OrderManagement() {
 
       {/* HEADER */}
       <Box sx={{ mb: 3 }}>
-        <Typography sx={{ fontSize: 24, fontWeight: "bold" }}>
+        <Typography sx={{ fontSize: 24, fontWeight: "bold", color : "primary.main" }}>
           Order & Reservation Management
         </Typography>
         <Typography variant="caption" color="gray">
