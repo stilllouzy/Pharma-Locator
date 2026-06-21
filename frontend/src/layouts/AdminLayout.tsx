@@ -8,11 +8,9 @@ import Dashboard from "../pages/admin/Dashboard";
 import Users from "../pages/admin/UserManagement";
 import Pharmacies from "../pages/admin/PharmaManagement";
 import Medicines from "../pages/admin/MedManagement";
-import Orders from "../pages/admin/OrderManagement";
-import MapModule from "../pages/admin/MapModule";
+import Orders from "../pages/admin/OrderManagement";;
 import Notifications from "../pages/admin/Notifications";
 import Reports from "../pages/admin/ReportsAnalytics";
-import Roles from "../pages/admin/RoleAccessControl";
 import Settings from "../pages/admin/SettingsModule";
 
 const DRAWER_WIDTH = 260;
