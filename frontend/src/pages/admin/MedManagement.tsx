@@ -12,7 +12,7 @@ import {
 import SearchIcon from "@mui/icons-material/Search";
 import MedicalServicesIcon from "@mui/icons-material/MedicalServices";
 import LocalPharmacyIcon from "@mui/icons-material/LocalPharmacy";
-import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
+import DeleteIcon from "@mui/icons-material/Delete";
 import { useEffect, useState } from "react";
 import api from "../../api/api";
 
@@ -227,7 +227,7 @@ export default function MedManagement() {
                     size="small"
                     color="error"
                     variant="outlined"
-                    startIcon={<DeleteOutlineIcon sx={{ fontSize: "16px !important" }} />}
+                    startIcon={<Delete sx={{ fontSize: "16px !important" }} />}
                     onClick={() => deleteMedicine(med._id)}
                     sx={{
                       borderRadius: "8px",

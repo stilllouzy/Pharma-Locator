@@ -21,7 +21,7 @@ import SearchIcon from "@mui/icons-material/Search";
 import LocalPharmacyIcon from "@mui/icons-material/LocalPharmacy";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import PhoneIcon from "@mui/icons-material/Phone";
-import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
+import DeleteIconfrom "@mui/icons-material/Delete";
 import { useEffect, useState } from "react";
 import api from "../../api/api";
 
@@ -370,7 +370,7 @@ export default function PharmaManagement() {
                     size="small"
                     variant="outlined"
                     color="error"
-                    startIcon={<DeleteOutlineIcon sx={{ fontSize: "15px !important" }} />}
+                    startIcon={<DeleteIcon sx={{ fontSize: "15px !important" }} />}
                     onClick={() => deletePharmacy(pharmacy._id)}
                     sx={{ borderRadius: "8px", fontSize: "0.75rem", borderWidth: "0.5px", px: 1.5 }}
                   >

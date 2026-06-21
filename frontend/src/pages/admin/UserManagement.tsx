@@ -32,7 +32,7 @@ import TwoWheelerIcon from "@mui/icons-material/TwoWheeler";
 import ShieldIcon from "@mui/icons-material/Shield";
 import AddIcon from "@mui/icons-material/Add";
 import CloseIcon from "@mui/icons-material/Close";
-import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
+import DeleteIcon from "@mui/icons-material/Delete";
 import EmailIcon from "@mui/icons-material/Email";
 import { useEffect, useState } from "react";
 import api from "../../api/api";
@@ -190,7 +190,7 @@ function UserCard({
             onClick={() => onDelete(user._id)}
             sx={{ flexShrink: 0 }}
           >
-            <DeleteOutlineIcon sx={{ fontSize: 18 }} />
+            <DeleteIcon sx={{ fontSize: 18 }} />
           </IconButton>
         )}
       </CardContent>
