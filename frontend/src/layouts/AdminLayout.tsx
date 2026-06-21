@@ -69,10 +69,8 @@ export default function AdminLayout() {
           <Route path="pharmacies" element={<Pharmacies />} />
           <Route path="medicines" element={<Medicines />} />
           <Route path="orders" element={<Orders />} />
-          <Route path="map" element={<MapModule />} />
           <Route path="notifications" element={<Notifications />} />
           <Route path="reports" element={<Reports />} />
-          <Route path="roles" element={<Roles />} />
           <Route path="settings" element={<Settings />} />
         </Routes>
       </Box>
