@@ -9,7 +9,38 @@ import Medicine from "../models/Medicine";
 import Order from "../models/Order";
 
 const router = express.Router();
+/* =========================
+   CREATE ADMIN ACCOUNT
+========================= */
+router.post(
+  "/create-admin",
+  protect,
+  authorize("admin"),
+  async (req, res) => {
+    try {
+      const { name, email, password } = req.body;
 
+      const existingUser = await User.findOne({ email });
+      if (existingUser) {
+        return res.status(400).json({ message: "User already exists" });
+      }
+
+      const bcrypt = await import("bcryptjs");
+      const hashedPassword = await bcrypt.hash(password, 10);
+
+      const admin = await User.create({
+        name,
+        email,
+        password: hashedPassword,
+        role: "admin",
+      });
+
+      res.status(201).json(admin);
+    } catch (err) {
+      res.status(500).json({ message: "Server error" });
+    }
+  }
+);
 /* =========================
    CREATE PHARMACY ACCOUNT
 ========================= */

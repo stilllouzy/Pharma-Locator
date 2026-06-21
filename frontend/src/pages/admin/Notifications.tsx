@@ -5,7 +5,15 @@ import {
   CardContent,
   Button,
   Chip,
+  Skeleton,
 } from "@mui/material";
+import NotificationsNoneIcon from "@mui/icons-material/NotificationsNone";
+import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
+import MedicalServicesIcon from "@mui/icons-material/MedicalServices";
+import TwoWheelerIcon from "@mui/icons-material/TwoWheeler";
+import SettingsIcon from "@mui/icons-material/Settings";
+import DoneAllIcon from "@mui/icons-material/DoneAll";
+import PersonIcon from "@mui/icons-material/Person";
 import { useEffect, useState } from "react";
 import api from "../../api/api";
 
@@ -23,6 +31,68 @@ interface INotification {
   createdAt: string;
 }
 
+// ─── Type config ──────────────────────────────────────────────────────────────
+const TYPE_CONFIG: Record<
+  string,
+  {
+    label: string;
+    color: "info" | "warning" | "success" | "error";
+    icon: React.ReactNode;
+    iconBg: string;
+    iconColor: string;
+  }
+> = {
+  order: {
+    label: "Order",
+    color: "info",
+    icon: <ShoppingCartIcon sx={{ fontSize: 16 }} />,
+    iconBg: "#E3F2FD",
+    iconColor: "#1565C0",
+  },
+  prescription: {
+    label: "Prescription",
+    color: "warning",
+    icon: <MedicalServicesIcon sx={{ fontSize: 16 }} />,
+    iconBg: "#FFF8E1",
+    iconColor: "#F57F17",
+  },
+  delivery: {
+    label: "Delivery",
+    color: "success",
+    icon: <TwoWheelerIcon sx={{ fontSize: 16 }} />,
+    iconBg: "#E8F5E9",
+    iconColor: "#2E7D32",
+  },
+  system: {
+    label: "System",
+    color: "error",
+    icon: <SettingsIcon sx={{ fontSize: 16 }} />,
+    iconBg: "#FFEBEE",
+    iconColor: "#C62828",
+  },
+};
+
+const DEFAULT_CONFIG = {
+  label: "Notice",
+  color: "info" as const,
+  icon: <NotificationsNoneIcon sx={{ fontSize: 16 }} />,
+  iconBg: "#EEF4FB",
+  iconColor: "#0D3B6E",
+};
+
+// ─── Relative time ────────────────────────────────────────────────────────────
+function relativeTime(dateStr: string): string {
+  const diff = Date.now() - new Date(dateStr).getTime();
+  const mins = Math.floor(diff / 60000);
+  if (mins < 1) return "Just now";
+  if (mins < 60) return `${mins}m ago`;
+  const hrs = Math.floor(mins / 60);
+  if (hrs < 24) return `${hrs}h ago`;
+  const days = Math.floor(hrs / 24);
+  if (days < 7) return `${days}d ago`;
+  return new Date(dateStr).toLocaleDateString();
+}
+
 export default function Notifications() {
   const [notifications, setNotifications] = useState<INotification[]>([]);
   const [loading, setLoading] = useState(false);
@@ -32,7 +102,7 @@ export default function Notifications() {
   const fetchNotifications = async () => {
     setLoading(true);
     try {
-      const res = await api.get("/notifications", { // ✅ fixed endpoint
+      const res = await api.get("/notifications", {
         headers: { Authorization: `Bearer ${token}` },
       });
       setNotifications(res.data);
@@ -61,115 +131,199 @@ export default function Notifications() {
     }
   };
 
-  const getTypeColor = (type: string) => {
-    switch (type) {
-      case "order": return "primary";
-      case "prescription": return "warning";
-      case "delivery": return "success";
-      case "system": return "error";
-      default: return "default";
-    }
-  };
+  const unreadCount = notifications.filter((n) => !n.isRead).length;
 
   return (
-    <Box sx={{ p: 3, backgroundColor: "#f5f5f5", minHeight: "100vh" }}>
+    <Box sx={{ p: 3, minHeight: "100vh" }}>
 
-      {/* HEADER */}
-      <Box sx={{ mb: 2, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+      {/* Header */}
+      <Box
+        sx={{
+          mb: 3,
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "flex-start",
+          flexWrap: "wrap",
+          gap: 1,
+        }}
+      >
         <Box>
-          <Typography sx={{ fontSize: 24, fontWeight: "bold", color : "primary.main" }}>
-            Notifications
-          </Typography>
-          <Typography variant="caption" color="gray">
+          <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 0.25 }}>
+            <Typography variant="h2" sx={{ fontSize: "1.4rem" }}>
+              Notifications
+            </Typography>
+            {unreadCount > 0 && (
+              <Chip
+                label={`${unreadCount} unread`}
+                size="small"
+                sx={{
+                  backgroundColor: "#0D3B6E",
+                  color: "#fff",
+                  fontWeight: 600,
+                  fontSize: "0.68rem",
+                  height: 20,
+                }}
+              />
+            )}
+          </Box>
+          <Typography variant="subtitle1" sx={{ fontSize: "0.83rem" }}>
             System alerts and updates
           </Typography>
         </Box>
+
         {notifications.length > 0 && (
-          <Button variant="outlined" onClick={markAllRead}>
-            Mark All as Read
+          <Button
+            variant="outlined"
+            startIcon={<DoneAllIcon />}
+            onClick={markAllRead}
+            size="small"
+            sx={{ mt: 0.5 }}
+          >
+            Mark all as read
           </Button>
         )}
       </Box>
 
-      {/* LOADING */}
+      {/* Loading skeletons */}
       {loading && (
-        <Typography color="gray" sx={{ mb: 2 }}>
-          Loading notifications...
-        </Typography>
+        <Box sx={{ display: "flex", flexDirection: "column", gap: 1.5 }}>
+          {Array.from({ length: 4 }).map((_, i) => (
+            <Skeleton key={i} variant="rounded" height={90} />
+          ))}
+        </Box>
       )}
 
-      {/* EMPTY STATE */}
+      {/* Empty state */}
       {!loading && notifications.length === 0 && (
-        <Typography color="gray">No notifications found.</Typography>
+        <Box
+          sx={{
+            py: 8,
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            gap: 1,
+          }}
+        >
+          <NotificationsNoneIcon sx={{ fontSize: 40, color: "text.disabled" }} />
+          <Typography variant="body2" color="text.secondary">
+            No notifications yet.
+          </Typography>
+        </Box>
       )}
 
-      {/* NOTIFICATION LIST */}
-      <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
-        {notifications.map((notif) => (
-          <Card
-            key={notif._id}
-            sx={{
-              borderRadius: 3,
-              backgroundColor: notif.isRead ? "white" : "#e3f2fd",
-              borderLeft: notif.isRead ? "none" : "4px solid #2563eb",
-            }}
-          >
-            <CardContent>
-              <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
-                <Box sx={{ flex: 1 }}>
+      {/* Notification list */}
+      {!loading && (
+        <Box sx={{ display: "flex", flexDirection: "column", gap: 1.5 }}>
+          {notifications.map((notif) => {
+            const config = TYPE_CONFIG[notif.type] ?? DEFAULT_CONFIG;
 
-                  {/* TYPE BADGE */}
-                  <Chip
-                    label={notif.type.toUpperCase()}
-                    size="small"
-                    color={getTypeColor(notif.type) as any}
-                    sx={{ mb: 1 }}
-                  />
+            return (
+              <Card
+                key={notif._id}
+                sx={{
+                  borderLeft: notif.isRead
+                    ? "3px solid transparent"
+                    : "3px solid #0D3B6E",
+                  backgroundColor: notif.isRead ? "background.paper" : "#F0F5FF",
+                  transition: "background-color 0.2s ease",
+                }}
+              >
+                <CardContent sx={{ px: "20px !important", py: "14px !important" }}>
+                  <Box sx={{ display: "flex", gap: 2, alignItems: "flex-start" }}>
 
-                  {/* TITLE */}
-                  <Typography sx={{ fontWeight: "bold" }}>
-                    {notif.title}
-                  </Typography>
+                    {/* Icon */}
+                    <Box
+                      sx={{
+                        width: 38,
+                        height: 38,
+                        borderRadius: "10px",
+                        backgroundColor: config.iconBg,
+                        color: config.iconColor,
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        flexShrink: 0,
+                        mt: 0.25,
+                      }}
+                    >
+                      {config.icon}
+                    </Box>
 
-                  {/* MESSAGE */}
-                  <Typography variant="body2" color="gray">
-                    {notif.message}
-                  </Typography>
+                    {/* Content */}
+                    <Box sx={{ flex: 1, minWidth: 0 }}>
 
-                  {/* USER INFO */}
-                {notif.user && notif.user.role !== "admin" && (
-  <Typography variant="caption" color="gray" sx={{ display: "block" }}>
-    From: {notif.user.name} ({notif.user.role})
-  </Typography>
-)}
-This hides the "From" line when the notification was sent to the admin themselves. Done!
+                      {/* Top row: type chip + time + unread dot */}
+                      <Box
+                        sx={{
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "space-between",
+                          mb: 0.5,
+                          gap: 1,
+                        }}
+                      >
+                        <Box sx={{ display: "flex", alignItems: "center", gap: 0.75 }}>
+                          <Chip
+                            label={config.label}
+                            color={config.color}
+                            size="small"
+                            sx={{ height: 18, fontSize: "0.65rem", fontWeight: 600 }}
+                          />
+                          <Typography variant="caption" color="text.disabled">
+                            {relativeTime(notif.createdAt)}
+                          </Typography>
+                        </Box>
+                        {!notif.isRead && (
+                          <Box
+                            sx={{
+                              width: 8,
+                              height: 8,
+                              borderRadius: "50%",
+                              backgroundColor: "#0D3B6E",
+                              flexShrink: 0,
+                            }}
+                          />
+                        )}
+                      </Box>
 
+                      {/* Title */}
+                      <Typography
+                        sx={{
+                          fontWeight: notif.isRead ? 500 : 600,
+                          fontSize: "0.88rem",
+                          color: "text.primary",
+                          mb: 0.25,
+                        }}
+                      >
+                        {notif.title}
+                      </Typography>
 
+                      {/* Message */}
+                      <Typography
+                        variant="body2"
+                        color="text.secondary"
+                        sx={{ lineHeight: 1.5, mb: notif.user && notif.user.role !== "admin" ? 0.75 : 0 }}
+                      >
+                        {notif.message}
+                      </Typography>
 
-                  {/* DATE */}
-                  <Typography variant="caption" color="gray">
-                    {new Date(notif.createdAt).toLocaleString()}
-                  </Typography>
-
-                </Box>
-
-                {/* UNREAD INDICATOR */}
-                {!notif.isRead && (
-                  <Box
-                    sx={{
-                      width: 10,
-                      height: 10,
-                      borderRadius: "50%",
-                      backgroundColor: "#2563eb",
-                      mt: 1,
-                    }}
-                  />
-                )}
-              </Box>
-            </CardContent>
-          </Card>
-        ))}
-      </Box>
+                      {/* From (non-admin senders only) */}
+                      {notif.user && notif.user.role !== "admin" && (
+                        <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
+                          <PersonIcon sx={{ fontSize: 12, color: "text.disabled" }} />
+                          <Typography variant="caption" color="text.secondary">
+                            {notif.user.name} · {notif.user.role}
+                          </Typography>
+                        </Box>
+                      )}
+                    </Box>
+                  </Box>
+                </CardContent>
+              </Card>
+            );
+          })}
+        </Box>
+      )}
     </Box>
   );
 }
