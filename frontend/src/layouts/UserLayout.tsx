@@ -1,6 +1,6 @@
-import { Box, IconButton, AppBar, Toolbar, Typography } from "@mui/material";
+import { Box, IconButton, AppBar, Toolbar, Typography, useMediaQuery, type Theme } from "@mui/material";
 import { Routes, Route, useLocation, Link as RouterLink } from "react-router-dom";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import MenuOpenIcon from "@mui/icons-material/MenuOpen";
 import MenuIcon from "@mui/icons-material/Menu";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
@@ -43,14 +43,24 @@ function useBreadcrumbs() {
 }
 
 export default function UserLayout() {
-  const [open, setOpen] = useState(true);
+  const isMobile = useMediaQuery((theme: Theme) => theme.breakpoints.down("md"));
+  // Desktop: sidebar starts expanded. Mobile: sidebar starts closed (overlay, hidden by default).
+  const [open, setOpen] = useState(!isMobile);
   const crumbs = useBreadcrumbs();
 
+  // Keep `open` in sync if the viewport crosses the breakpoint after mount
+  // (e.g. resizing the browser window, or rotating a tablet).
+  useEffect(() => {
+    setOpen(!isMobile);
+  }, [isMobile]);
+
   const sidebarWidth = open ? DRAWER_WIDTH : RAIL_WIDTH;
+  // On mobile the sidebar is an overlay — it never pushes content over.
+  const contentOffset = isMobile ? 0 : sidebarWidth;
 
   return (
     <Box sx={{ display: "flex" }}>
-      <Sidebar open={open} />
+      <Sidebar open={open} onClose={() => setOpen(false)} />
 
       {/* TOP APP BAR */}
       <AppBar
@@ -62,14 +72,14 @@ export default function UserLayout() {
           color: "text.primary",
           borderBottom: "0.5px solid rgba(13,59,110,0.12)",
           boxShadow: "none",
-          width: { xs: "100%", md: `calc(100% - ${sidebarWidth}px)` },
-          ml: { xs: 0, md: `${sidebarWidth}px` },
+          width: `calc(100% - ${contentOffset}px)`,
+          ml: `${contentOffset}px`,
           transition: "width 0.25s ease, margin 0.25s ease",
         }}
       >
         <Toolbar sx={{ minHeight: 64, gap: 1.5 }}>
           <IconButton onClick={() => setOpen(!open)} sx={{ color: "#0D3B6E" }}>
-            {open ? <MenuOpenIcon /> : <MenuIcon />}
+            {open && !isMobile ? <MenuOpenIcon /> : <MenuIcon />}
           </IconButton>
 
           {/* Breadcrumbs */}
@@ -133,13 +143,14 @@ export default function UserLayout() {
           flexGrow: 1,
           minHeight: "100vh",
           backgroundColor: "#F4F7FB",
-          ml: { xs: 0, md: `${sidebarWidth}px` },
+          ml: `${contentOffset}px`,
           mt: "64px",
           transition: "margin 0.25s ease",
           overflowX: "hidden",
+          width: `calc(100% - ${contentOffset}px)`,
         }}
       >
-        <Box sx={{ p: { xs: 1, sm: 2, md: 3 } }}>
+        <Box sx={{ p: { xs: 1.5, sm: 2, md: 3 } }}>
           <Routes>
             <Route path="/" element={<Home />} />
             <Route

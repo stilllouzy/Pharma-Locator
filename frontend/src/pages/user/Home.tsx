@@ -249,7 +249,7 @@ export default function Home() {
 
       {/* MAP */}
       <Card sx={{ borderRadius: "12px", mb: 2.5, overflow: "hidden" }}>
-        <Box sx={{ height: { xs: "38vh", md: "46vh" } }}>
+        <Box sx={{ height: { xs: "32vh", sm: "38vh", md: "46vh" } }}>
           <MapView
             onSelectPharmacy={(id) => handleSelectPharmacy(id)}
           />

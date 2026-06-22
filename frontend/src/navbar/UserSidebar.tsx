@@ -1,4 +1,4 @@
-import { Box, Typography, IconButton, Tooltip } from "@mui/material";
+import { Box, Typography, IconButton, Tooltip, Drawer, useMediaQuery, type Theme } from "@mui/material";
 import { NavLink, useNavigate, useLocation } from "react-router-dom";
 import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
 import MapOutlinedIcon from "@mui/icons-material/MapOutlined";
@@ -9,6 +9,7 @@ import LogoutOutlinedIcon from "@mui/icons-material/LogoutOutlined";
 
 export const DRAWER_WIDTH = 248;
 export const RAIL_WIDTH = 72;
+export const MOBILE_DRAWER_WIDTH = 260;
 
 // Resident role accent (from design system role-coding: resident = purple)
 const ACCENT = "#6A1B9A";
@@ -30,11 +31,13 @@ const links: NavLinkItem[] = [
 
 interface SidebarProps {
   open: boolean;
+  onClose?: () => void;
 }
 
-export default function UserSidebar({ open }: SidebarProps) {
+export default function UserSidebar({ open, onClose }: SidebarProps) {
   const navigate = useNavigate();
   const location = useLocation();
+  const isMobile = useMediaQuery((theme: Theme) => theme.breakpoints.down("md"));
 
   const handleLogout = () => {
     localStorage.removeItem("token");
@@ -45,21 +48,17 @@ export default function UserSidebar({ open }: SidebarProps) {
   const isLinkActive = (path: string, end?: boolean) =>
     end ? location.pathname === path : location.pathname.startsWith(path);
 
-  return (
+  // On mobile, the rail-collapsed state doesn't apply — the drawer is either
+  // fully open (overlay) or fully closed, so links always render expanded.
+  const showLabels = isMobile || open;
+
+  const content = (
     <Box
-      component="nav"
       sx={{
-        width: open ? DRAWER_WIDTH : RAIL_WIDTH,
-        flexShrink: 0,
-        height: "100vh",
-        position: "fixed",
-        top: 0,
-        left: 0,
-        zIndex: (theme) => theme.zIndex.drawer,
+        height: "100%",
         backgroundColor: "#0D3B6E",
         display: "flex",
         flexDirection: "column",
-        transition: "width 0.25s ease",
         overflow: "hidden",
       }}
     >
@@ -70,21 +69,13 @@ export default function UserSidebar({ open }: SidebarProps) {
           alignItems: "center",
           gap: 1.25,
           height: 64,
-          px: open ? 2.5 : 0,
-          justifyContent: open ? "flex-start" : "center",
+          px: showLabels ? 2.5 : 0,
+          justifyContent: showLabels ? "flex-start" : "center",
           flexShrink: 0,
         }}
       >
-        <Box
-          sx={{
-            width: 8,
-            height: 8,
-            borderRadius: "50%",
-            backgroundColor: ACCENT,
-            flexShrink: 0,
-          }}
-        />
-        {open && (
+        <Box sx={{ width: 8, height: 8, borderRadius: "50%", backgroundColor: ACCENT, flexShrink: 0 }} />
+        {showLabels && (
           <Typography sx={{ fontSize: 14, fontWeight: 500, color: "#fff", whiteSpace: "nowrap" }}>
             Pharma Locator
           </Typography>
@@ -98,13 +89,13 @@ export default function UserSidebar({ open }: SidebarProps) {
         sx={{
           flexGrow: 1,
           overflowY: "auto",
-          px: open ? 1.5 : 1,
+          px: showLabels ? 1.5 : 1,
           py: 1.5,
           "&::-webkit-scrollbar": { width: 4 },
           "&::-webkit-scrollbar-thumb": { backgroundColor: "rgba(255,255,255,0.15)", borderRadius: 4 },
         }}
       >
-        {open && (
+        {showLabels && (
           <Typography
             sx={{
               fontSize: 10,
@@ -126,15 +117,21 @@ export default function UserSidebar({ open }: SidebarProps) {
             const active = isLinkActive(item.path, item.end);
 
             const navItem = (
-              <NavLink key={item.path} to={item.path} end={item.end} style={{ textDecoration: "none" }}>
+              <NavLink
+                key={item.path}
+                to={item.path}
+                end={item.end}
+                style={{ textDecoration: "none" }}
+                onClick={isMobile ? onClose : undefined}
+              >
                 <Box
                   sx={{
                     display: "flex",
                     alignItems: "center",
                     gap: 1.25,
-                    px: open ? 1.25 : 0,
+                    px: showLabels ? 1.25 : 0,
                     py: 1,
-                    justifyContent: open ? "flex-start" : "center",
+                    justifyContent: showLabels ? "flex-start" : "center",
                     borderRadius: "8px",
                     position: "relative",
                     color: active ? "#fff" : "rgba(255,255,255,0.62)",
@@ -160,7 +157,7 @@ export default function UserSidebar({ open }: SidebarProps) {
                     />
                   )}
                   <Icon sx={{ fontSize: 19, flexShrink: 0 }} />
-                  {open && (
+                  {showLabels && (
                     <Typography sx={{ fontSize: 13.5, fontWeight: active ? 600 : 400, whiteSpace: "nowrap" }}>
                       {item.label}
                     </Typography>
@@ -169,7 +166,7 @@ export default function UserSidebar({ open }: SidebarProps) {
               </NavLink>
             );
 
-            return open ? (
+            return showLabels ? (
               navItem
             ) : (
               <Tooltip key={item.path} title={item.label} placement="right" arrow>
@@ -183,8 +180,8 @@ export default function UserSidebar({ open }: SidebarProps) {
       <Box sx={{ borderTop: "0.5px solid rgba(255,255,255,0.12)" }} />
 
       {/* LOGOUT */}
-      <Box sx={{ p: open ? 1.5 : 1, flexShrink: 0 }}>
-        {open ? (
+      <Box sx={{ p: showLabels ? 1.5 : 1, flexShrink: 0 }}>
+        {showLabels ? (
           <Box
             onClick={handleLogout}
             sx={{
@@ -214,6 +211,46 @@ export default function UserSidebar({ open }: SidebarProps) {
           </Tooltip>
         )}
       </Box>
+    </Box>
+  );
+
+  // MOBILE — full overlay drawer, hidden by default, dims background, closes on backdrop/link tap.
+  if (isMobile) {
+    return (
+      <Drawer
+        variant="temporary"
+        open={open}
+        onClose={onClose}
+        ModalProps={{ keepMounted: true }}
+        sx={{
+          "& .MuiDrawer-paper": {
+            width: MOBILE_DRAWER_WIDTH,
+            boxSizing: "border-box",
+            border: "none",
+          },
+        }}
+      >
+        {content}
+      </Drawer>
+    );
+  }
+
+  // DESKTOP — fixed sidebar, rail-collapsible.
+  return (
+    <Box
+      component="nav"
+      sx={{
+        width: open ? DRAWER_WIDTH : RAIL_WIDTH,
+        flexShrink: 0,
+        height: "100vh",
+        position: "fixed",
+        top: 0,
+        left: 0,
+        zIndex: (theme) => theme.zIndex.drawer,
+        transition: "width 0.25s ease",
+      }}
+    >
+      {content}
     </Box>
   );
 }
