@@ -14,11 +14,14 @@ import Prescriptions from "../pages/user/UserPrescriptions";
 import OrderTracking from "../pages/user/OrderTracking";
 import Payment from "../pages/user/Payment";
 import Notifications from "../pages/user/UserNotification";
+import Results from "../pages/user/Result";
 
 // Maps a route segment to a readable label for the breadcrumb trail.
 const LABELS: Record<string, string> = {
   user: "Home",
   map: "Map",
+  favorites: "Favorites",
+  results: "Search results",
   orders: "Orders",
   prescription: "Prescriptions",
   track: "Order tracking",
@@ -78,7 +81,13 @@ export default function UserLayout() {
         }}
       >
         <Toolbar sx={{ minHeight: 64, gap: 1.5 }}>
-          <IconButton onClick={() => setOpen(!open)} sx={{ color: "#0D3B6E" }}>
+          <IconButton
+            onClick={(e) => {
+              e.currentTarget.blur();
+              setOpen(!open);
+            }}
+            sx={{ color: "#0D3B6E" }}
+          >
             {open && !isMobile ? <MenuOpenIcon /> : <MenuIcon />}
           </IconButton>
 
@@ -158,6 +167,8 @@ export default function UserLayout() {
               element={<MapView onSelectPharmacy={(id) => console.log("Selected pharmacy:", id)} />}
             />
             <Route path="/orders" element={<Orders />} />
+            <Route path="/favorites" element={<Favorites />} />
+            <Route path="/results" element={<Results />} />
             <Route path="/prescription" element={<Prescriptions />} />
             <Route path="/track/:id" element={<OrderTracking />} />
             <Route path="/payment/:id" element={<Payment />} />

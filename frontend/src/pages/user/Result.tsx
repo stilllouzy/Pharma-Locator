@@ -13,7 +13,7 @@ import NearMeOutlinedIcon from "@mui/icons-material/NearMeOutlined";
 import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import api from "../../api/api";
-import { isNearestQuery } from "../../utils/searchIntent";
+import { isNearestQuery } from "../../utils/searchintent";
 
 interface IMedicineResult {
   _id: string;
