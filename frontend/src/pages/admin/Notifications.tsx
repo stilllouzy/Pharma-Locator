@@ -14,7 +14,8 @@ import TwoWheelerIcon from "@mui/icons-material/TwoWheeler";
 import SettingsIcon from "@mui/icons-material/Settings";
 import DoneAllIcon from "@mui/icons-material/DoneAll";
 import PersonIcon from "@mui/icons-material/Person";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import api from "../../api/api";
 
 interface INotification {
@@ -96,6 +97,10 @@ function relativeTime(dateStr: string): string {
 export default function Notifications() {
   const [notifications, setNotifications] = useState<INotification[]>([]);
   const [loading, setLoading] = useState(false);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const highlightId = searchParams.get("highlight");
+  const highlightRef = useRef<HTMLDivElement>(null);
+  const hasScrolledRef = useRef(false);
 
   const token = localStorage.getItem("token");
 
@@ -117,6 +122,29 @@ export default function Notifications() {
   useEffect(() => {
     fetchNotifications();
   }, []);
+
+  // Scroll the highlighted notification into view once it's rendered.
+  useEffect(() => {
+    if (!highlightId || hasScrolledRef.current || loading) return;
+    if (highlightRef.current) {
+      highlightRef.current.scrollIntoView({ behavior: "smooth", block: "center" });
+      hasScrolledRef.current = true;
+    }
+  }, [highlightId, loading, notifications]);
+
+  // Drop the highlight after a few seconds so it doesn't linger forever,
+  // and clean the query param out of the URL.
+  useEffect(() => {
+    if (!highlightId) return;
+    const timeout = setTimeout(() => {
+      setSearchParams((prev) => {
+        const next = new URLSearchParams(prev);
+        next.delete("highlight");
+        return next;
+      });
+    }, 4000);
+    return () => clearTimeout(timeout);
+  }, [highlightId, setSearchParams]);
 
   const markAllRead = async () => {
     try {
@@ -216,16 +244,21 @@ export default function Notifications() {
         <Box sx={{ display: "flex", flexDirection: "column", gap: 1.5 }}>
           {notifications.map((notif) => {
             const config = TYPE_CONFIG[notif.type] ?? DEFAULT_CONFIG;
+            const isHighlighted = notif._id === highlightId;
 
             return (
               <Card
                 key={notif._id}
+                ref={isHighlighted ? highlightRef : undefined}
                 sx={{
                   borderLeft: notif.isRead
                     ? "3px solid transparent"
                     : "3px solid #0D3B6E",
                   backgroundColor: notif.isRead ? "background.paper" : "#F0F5FF",
-                  transition: "background-color 0.2s ease",
+                  transition: "background-color 0.2s ease, box-shadow 0.3s ease",
+                  ...(isHighlighted && {
+                    boxShadow: "0 0 0 2px #5BC4A0",
+                  }),
                 }}
               >
                 <CardContent sx={{ px: "20px !important", py: "14px !important" }}>

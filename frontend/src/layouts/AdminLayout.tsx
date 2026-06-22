@@ -1,11 +1,11 @@
-import { Box, IconButton, AppBar, Toolbar, Typography, Badge } from "@mui/material";
+import { Box, IconButton, AppBar, Toolbar, Typography } from "@mui/material";
 import { Routes, Route, useLocation, Link as RouterLink } from "react-router-dom";
 import { useState } from "react";
 import MenuOpenIcon from "@mui/icons-material/MenuOpen";
 import MenuIcon from "@mui/icons-material/Menu";
-import NotificationsNoneOutlinedIcon from "@mui/icons-material/NotificationsNoneOutlined";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import Sidebar, { DRAWER_WIDTH, RAIL_WIDTH } from "../navbar/AdminSidebar";
+import NotificationBell from "../pages/admin/NotificationBell";
 
 import Dashboard from "../pages/admin/Dashboard";
 import Users from "../pages/admin/UserManagement";
@@ -114,19 +114,7 @@ export default function AdminLayout() {
 
           {/* Right cluster */}
           <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
-            <IconButton
-              sx={{
-                width: 36,
-                height: 36,
-                border: "0.5px solid rgba(13,59,110,0.16)",
-                borderRadius: "8px",
-                color: "text.secondary",
-              }}
-            >
-              <Badge color="error" variant="dot" overlap="circular">
-                <NotificationsNoneOutlinedIcon sx={{ fontSize: 19 }} />
-              </Badge>
-            </IconButton>
+            <NotificationBell />
             <Box
               sx={{
                 width: 34,
