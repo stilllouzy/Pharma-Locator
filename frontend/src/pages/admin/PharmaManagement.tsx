@@ -21,7 +21,7 @@ import SearchIcon from "@mui/icons-material/Search";
 import LocalPharmacyIcon from "@mui/icons-material/LocalPharmacy";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import PhoneIcon from "@mui/icons-material/Phone";
-import DeleteIcon from "@mui/icons-material/DeleteOutline";
+import DeleteIcon from "@mui/icons-material/Delete";
 import { useEffect, useState } from "react";
 import api from "../../api/api";
 
@@ -239,7 +239,7 @@ export default function PharmaManagement() {
         placeholder="Search by name or address..."
         onChange={(e) => setSearch(e.target.value)}
         sx={{ mb: 2.5 }}
-        InputProps={{
+        slotProps={{
           startAdornment: (
             <InputAdornment position="start">
               <SearchIcon sx={{ fontSize: 18, color: "text.secondary" }} />

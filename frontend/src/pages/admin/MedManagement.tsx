@@ -86,7 +86,7 @@ export default function MedManagement() {
       </Box>
 
       {/* Search */}
-      <Input
+      <TextField
         fullWidth
         placeholder="Search by name, category, or pharmacy..."
         onChange={(e) => setSearch(e.target.value)}

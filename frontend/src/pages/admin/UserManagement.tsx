@@ -351,7 +351,7 @@ export default function UserManagement() {
       </Box>
 
       {/* Search */}
-      <Input
+      <TextField
         fullWidth
         placeholder="Search by name or email..."
         onChange={(e) => setSearch(e.target.value)}
