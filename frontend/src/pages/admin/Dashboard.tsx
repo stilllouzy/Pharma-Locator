@@ -48,16 +48,31 @@ function KpiCard({ label, value, icon, accent = "default", to, hint }: {
         transition: "box-shadow 0.2s ease, transform 0.15s ease",
         "&:hover": { boxShadow: "0 6px 24px rgba(13,59,110,0.12)", transform: "translateY(-2px)", "& .arrow-icon": { opacity: 1 } },
       }}>
-        <CardContent sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
+        <CardContent sx={{ display: "flex", alignItems: "center", gap: 1.5, minHeight: 88 }}>
           <IconPill icon={icon} bg={C.bg} color={C.color} />
           <Box sx={{ flex: 1, minWidth: 0 }}>
-            <Typography variant="overline" sx={{ display: "block", lineHeight: 1.3 }}>{label}</Typography>
-            <Typography sx={{ fontSize: "1.4rem", fontWeight: 700, lineHeight: 1.2,
-              color: accent === "warning" ? "warning.main" : "text.primary" }}>
+            <Typography sx={{
+              display: "block",
+              fontSize: "0.65rem",
+              fontWeight: 700,
+              letterSpacing: "0.08em",
+              textTransform: "uppercase",
+              color: "text.secondary",
+              whiteSpace: "nowrap",
+              lineHeight: 1.4,
+            }}>
+              {label}
+            </Typography>
+            <Typography sx={{
+              fontSize: "1.5rem",
+              fontWeight: 700,
+              lineHeight: 1.2,
+              color: accent === "warning" ? "warning.main" : "text.primary",
+            }}>
               {value}
             </Typography>
           </Box>
-          <ChevronRight className="arrow-icon" sx={{ fontSize: 18, color: "text.disabled", opacity: 0, transition: "opacity 0.15s", flexShrink: 0 }} />
+          <ChevronRight className="arrow-icon" sx={{ fontSize: 16, color: "text.disabled", opacity: 0, transition: "opacity 0.15s", flexShrink: 0 }} />
         </CardContent>
       </Card>
     </Tooltip>

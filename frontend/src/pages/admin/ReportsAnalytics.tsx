@@ -60,11 +60,11 @@ function StatCard({
 }) {
   return (
     <Card>
-      <CardContent sx={{ display: "flex", alignItems: "center", gap: 2, py: "18px !important" }}>
+      <CardContent sx={{ display: "flex", alignItems: "center", gap: 1.5, minHeight: 88 }}>
         <Box
           sx={{
-            width: 44,
-            height: 44,
+            width: 40,
+            height: 40,
             borderRadius: "10px",
             backgroundColor: iconBg,
             color: iconColor,
@@ -77,10 +77,19 @@ function StatCard({
           {icon}
         </Box>
         <Box>
-          <Typography variant="overline" sx={{ lineHeight: 1.2, display: "block" }}>
+          <Typography sx={{
+            display: "block",
+            fontSize: "0.65rem",
+            fontWeight: 700,
+            letterSpacing: "0.08em",
+            textTransform: "uppercase",
+            color: "text.secondary",
+            whiteSpace: "nowrap",
+            lineHeight: 1.4,
+          }}>
             {label}
           </Typography>
-          <Typography sx={{ fontSize: "1.5rem", fontWeight: 600, color: "text.primary", lineHeight: 1.3 }}>
+          <Typography sx={{ fontSize: "1.5rem", fontWeight: 700, color: "text.primary", lineHeight: 1.2 }}>
             {value}
           </Typography>
         </Box>
@@ -247,7 +256,7 @@ export default function ReportsAnalytics() {
             color: "#fff",
           }}
         >
-          <CardContent sx={{ py: "20px !important" }}>
+          <CardContent sx={{ }}>
             <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 1 }}>
               <AttachMoneyIcon sx={{ fontSize: 18, color: "rgba(255,255,255,0.7)" }} />
               <Typography variant="overline" sx={{ color: "rgba(255,255,255,0.7)", lineHeight: 1 }}>
@@ -265,7 +274,7 @@ export default function ReportsAnalytics() {
 
         {/* Derived metrics */}
         <Card>
-          <CardContent sx={{ px: "20px !important", py: "20px !important" }}>
+          <CardContent sx={{ }}>
             <Box sx={{ display: "flex", alignItems: "center", gap: 1.5, mb: 1.5 }}>
               <Box sx={{ width: 38, height: 38, borderRadius: "10px", backgroundColor: "#EEF4FB", color: "#0D3B6E", display: "flex", alignItems: "center", justifyContent: "center" }}>
                 <InsightsIcon sx={{ fontSize: 18 }} />
@@ -304,7 +313,7 @@ export default function ReportsAnalytics() {
 
       {/* Order breakdown */}
       <Card sx={{ mb: 2 }}>
-        <CardContent sx={{ px: "20px !important", py: "20px !important" }}>
+        <CardContent sx={{ }}>
           <Box sx={{ display: "flex", alignItems: "center", gap: 1.5, mb: 2.5 }}>
             <Box sx={{ width: 38, height: 38, borderRadius: "10px", backgroundColor: "#E3F2FD", color: "#1565C0", display: "flex", alignItems: "center", justifyContent: "center" }}>
               <ShoppingCartIcon sx={{ fontSize: 18 }} />
@@ -345,7 +354,7 @@ export default function ReportsAnalytics() {
 
       {/* Inventory insights */}
       <Card>
-        <CardContent sx={{ px: "20px !important", py: "20px !important" }}>
+        <CardContent sx={{ }}>
           <Box sx={{ display: "flex", alignItems: "center", gap: 1.5, mb: 1.5 }}>
             <Box sx={{ width: 38, height: 38, borderRadius: "10px", backgroundColor: data.lowStock > 0 ? "#FFF8E1" : "#E8F5E9", color: data.lowStock > 0 ? "#F57F17" : "#2E7D32", display: "flex", alignItems: "center", justifyContent: "center" }}>
               <WarningAmberIcon sx={{ fontSize: 18 }} />
