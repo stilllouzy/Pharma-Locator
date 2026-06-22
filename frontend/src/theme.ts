@@ -115,12 +115,14 @@ const theme = createTheme({
     MuiButton: {
       defaultProps: { disableElevation: true },
       styleOverrides: {
-        root: { borderRadius: 8, padding: "8px 18px", fontWeight: 600, fontSize: "0.82rem" },
-        containedPrimary:  { backgroundColor: NAVY,  "&:hover": { backgroundColor: NAVY_DARK } },
-        containedSecondary:{ backgroundColor: TEAL,  color: "#fff", "&:hover": { backgroundColor: TEAL_DARK } },
-        outlined:          { borderWidth: "0.5px", "&:hover": { borderWidth: "0.5px" } },
-        outlinedPrimary:   { borderColor: NAVY, color: NAVY, "&:hover": { backgroundColor: alpha(NAVY, 0.05) } },
-        text:              { "&:hover": { backgroundColor: alpha(NAVY, 0.05) } },
+        root: {
+          borderRadius: 8, padding: "8px 18px", fontWeight: 600, fontSize: "0.82rem",
+          "&.MuiButton-containedPrimary":   { backgroundColor: NAVY, "&:hover": { backgroundColor: NAVY_DARK } },
+          "&.MuiButton-containedSecondary": { backgroundColor: TEAL, color: "#fff", "&:hover": { backgroundColor: TEAL_DARK } },
+          "&.MuiButton-outlinedPrimary":    { borderColor: NAVY, color: NAVY, "&:hover": { backgroundColor: alpha(NAVY, 0.05) } },
+        },
+        outlined: { borderWidth: "0.5px", "&:hover": { borderWidth: "0.5px" } },
+        text:     { "&:hover": { backgroundColor: alpha(NAVY, 0.05) } },
       },
     },
 
@@ -230,11 +232,15 @@ const theme = createTheme({
 
     MuiAlert: {
       styleOverrides: {
-        root:            { borderRadius: 10, fontSize: "0.82rem", alignItems: "center" },
-        standardSuccess: { backgroundColor: SUCCESS_BG, color: SUCCESS },
-        standardWarning: { backgroundColor: WARNING_BG, color: WARNING },
-        standardError:   { backgroundColor: ERROR_BG,   color: ERROR   },
-        standardInfo:    { backgroundColor: INFO_BG,    color: INFO    },
+        root: {
+          borderRadius: 10,
+          fontSize: "0.82rem",
+          alignItems: "center",
+          "&.MuiAlert-standardSuccess": { backgroundColor: SUCCESS_BG, color: SUCCESS },
+          "&.MuiAlert-standardWarning": { backgroundColor: WARNING_BG, color: WARNING },
+          "&.MuiAlert-standardError":   { backgroundColor: ERROR_BG,   color: ERROR   },
+          "&.MuiAlert-standardInfo":    { backgroundColor: INFO_BG,    color: INFO    },
+        },
       },
     },
 
