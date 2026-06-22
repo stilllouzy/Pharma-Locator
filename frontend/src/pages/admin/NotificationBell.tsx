@@ -15,7 +15,7 @@ import ShoppingBagOutlinedIcon from "@mui/icons-material/ShoppingBagOutlined";
 import ReceiptLongOutlinedIcon from "@mui/icons-material/ReceiptLongOutlined";
 import LocalShippingOutlinedIcon from "@mui/icons-material/LocalShippingOutlined";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
-import api from "../api/api";
+import api from "../../api/api";
 
 interface INotification {
   _id: string;
