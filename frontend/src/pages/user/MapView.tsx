@@ -1,10 +1,11 @@
-import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
+import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
 import { useEffect, useState } from "react";
 import api from "../../api/api";
 import L from "leaflet";
 import { useNavigate } from "react-router-dom";
 import { useMediaQuery, type Theme } from "@mui/material";
 import "./mapPopup.css";
+import { isPharmacyFavorited, toggleFavoritePharmacy, notifyFavoritesChanged } from "../../utils/favorites";
 
 // Fix Leaflet's default marker icon paths, which break under bundlers like Vite.
 import markerIcon2x from "leaflet/dist/images/marker-icon-2x.png";
@@ -31,17 +32,55 @@ interface IPharmacy {
 
 interface MapViewProps {
   onSelectPharmacy: (id: string, name?: string) => void;
+  // When set, the map re-centers on this pharmacy and opens its popup
+  // automatically — used when arriving from a search result.
+  focusPharmacyId?: string | null;
+  // When true, finds the closest pharmacy to the user's current location,
+  // centers on it, and opens its popup — used for "near me" searches.
+  findNearest?: boolean;
 }
 
-export default function MapView({ onSelectPharmacy }: MapViewProps) {
+// Haversine distance in kilometers between two lat/lng points.
+function distanceKm(a: [number, number], b: [number, number]): number {
+  const R = 6371;
+  const dLat = ((b[0] - a[0]) * Math.PI) / 180;
+  const dLng = ((b[1] - a[1]) * Math.PI) / 180;
+  const lat1 = (a[0] * Math.PI) / 180;
+  const lat2 = (b[0] * Math.PI) / 180;
+  const h =
+    Math.sin(dLat / 2) ** 2 + Math.cos(lat1) * Math.cos(lat2) * Math.sin(dLng / 2) ** 2;
+  return 2 * R * Math.asin(Math.sqrt(h));
+}
+
+// Imperatively recenters the map — react-leaflet's MapContainer only applies
+// `center`/`zoom` props on initial mount, so changes afterward need this.
+function MapRecenter({ position, zoom }: { position: [number, number] | null; zoom?: number }) {
+  const map = useMap();
+  useEffect(() => {
+    if (position) {
+      map.flyTo(position, zoom ?? map.getZoom());
+    }
+  }, [position, zoom, map]);
+  return null;
+}
+
+export default function MapView({ onSelectPharmacy, focusPharmacyId, findNearest }: MapViewProps) {
   const [pharmacies, setPharmacies] = useState<IPharmacy[]>([]);
   const [userLocation, setUserLocation] = useState<[number, number] | null>(null);
   const [selected, setSelected] = useState<IPharmacy | null>(null);
+  const [recenterTo, setRecenterTo] = useState<[number, number] | null>(null);
+  const [, setFavoritesVersion] = useState(0);
 
   const navigate = useNavigate();
   const isMobile = useMediaQuery((theme: Theme) => theme.breakpoints.down("sm"));
   const popupMaxWidth = isMobile ? 200 : 260;
   const popupMinWidth = isMobile ? 160 : 200;
+
+  const handleToggleFavoritePharmacy = (pharmacy: IPharmacy) => {
+    toggleFavoritePharmacy({ _id: pharmacy._id, name: pharmacy.name, address: pharmacy.address });
+    notifyFavoritesChanged();
+    setFavoritesVersion((v) => v + 1);
+  };
 
   // Get the user's current location, falling back silently if denied.
   useEffect(() => {
@@ -64,6 +103,38 @@ export default function MapView({ onSelectPharmacy }: MapViewProps) {
     fetchPharmacies();
   }, []);
 
+  // Focus on a specific pharmacy when arriving from a search result.
+  useEffect(() => {
+    if (!focusPharmacyId || pharmacies.length === 0) return;
+    const match = pharmacies.find((p) => p._id === focusPharmacyId);
+    if (match) {
+      setSelected(match);
+      setRecenterTo([match.location.lat, match.location.lng]);
+    }
+  }, [focusPharmacyId, pharmacies]);
+
+  // Find and focus the nearest pharmacy when arriving from a "near me" search.
+  useEffect(() => {
+    if (!findNearest || !userLocation || pharmacies.length === 0) return;
+
+    let closest: IPharmacy | null = null;
+    let closestDist = Infinity;
+    for (const pharmacy of pharmacies) {
+      const dist = distanceKm(userLocation, [pharmacy.location.lat, pharmacy.location.lng]);
+      if (dist < closestDist) {
+        closestDist = dist;
+        closest = pharmacy;
+      }
+    }
+
+    if (closest) {
+      setSelected(closest);
+      setRecenterTo([closest.location.lat, closest.location.lng]);
+      onSelectPharmacy(closest._id, closest.name);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [findNearest, userLocation, pharmacies]);
+
   return (
     <div style={{ height: "100%", width: "100%" }}>
       <MapContainer
@@ -71,6 +142,7 @@ export default function MapView({ onSelectPharmacy }: MapViewProps) {
         zoom={13}
         style={{ height: "100%", width: "100%" }}
       >
+        <MapRecenter position={recenterTo} zoom={16} />
         <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
 
         {userLocation && (
@@ -106,7 +178,16 @@ export default function MapView({ onSelectPharmacy }: MapViewProps) {
             eventHandlers={{ remove: () => setSelected(null) }}
           >
             <div className="pl-popup">
-              <p className="pl-popup__name">{selected.name}</p>
+              <div className="pl-popup__header">
+                <p className="pl-popup__name">{selected.name}</p>
+                <button
+                  className="pl-popup__heart"
+                  onClick={() => handleToggleFavoritePharmacy(selected)}
+                  aria-label="Toggle favorite pharmacy"
+                >
+                  {isPharmacyFavorited(selected._id) ? "♥" : "♡"}
+                </button>
+              </div>
               <p className="pl-popup__address">{selected.address}</p>
 
               <div className="pl-popup__actions">

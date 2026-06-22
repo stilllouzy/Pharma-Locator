@@ -17,20 +17,32 @@ import {
   Collapse,
   Skeleton,
   Divider,
+  Snackbar,
+  Alert,
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import CloseIcon from "@mui/icons-material/Close";
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
+import AddShoppingCartIcon from "@mui/icons-material/AddShoppingCart";
 import ShoppingBagOutlinedIcon from "@mui/icons-material/ShoppingBagOutlined";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import MedicalServicesOutlinedIcon from "@mui/icons-material/MedicalServicesOutlined";
 import LocalPharmacyOutlinedIcon from "@mui/icons-material/LocalPharmacyOutlined";
+import FavoriteIcon from "@mui/icons-material/Favorite";
+import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import api from "../../api/api";
 import MapView from "../user/MapView";
+import {
+  isMedicineFavorited,
+  isPharmacyFavorited,
+  toggleFavoriteMedicine,
+  toggleFavoritePharmacy,
+  notifyFavoritesChanged,
+} from "../../utils/favorites";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 interface IMedicine {
@@ -80,12 +92,13 @@ export default function Home() {
   const navigate = useNavigate();
   const [params] = useSearchParams();
   const pharmacyIdFromMap = params.get("pharmacy");
+  const addMedicineId = params.get("addMedicine");
+  const nearestRequested = params.get("nearest") === "true";
 
   const [selectedPharmacy, setSelectedPharmacy] = useState<string | null>(null);
   const [selectedPharmacyName, setSelectedPharmacyName] = useState<string | null>(null);
 
   const [search, setSearch] = useState("");
-  const [debouncedSearch, setDebouncedSearch] = useState("");
 
   const [medicines, setMedicines] = useState<IMedicine[]>([]);
   const [loadingMedicines, setLoadingMedicines] = useState(false);
@@ -93,12 +106,17 @@ export default function Home() {
 
   const [cart, setCart] = useState<ICartItem[]>(() => loadCart());
   const [cartExpanded, setCartExpanded] = useState(false);
+  const [favoritesVersion, setFavoritesVersion] = useState(0);
 
   const [checkoutOpen, setCheckoutOpen] = useState(false);
   const [deliveryMethod, setDeliveryMethod] = useState("delivery");
   const [deliveryAddress, setDeliveryAddress] = useState("");
   const [placingOrder, setPlacingOrder] = useState(false);
   const [checkoutError, setCheckoutError] = useState("");
+  const [snackbar, setSnackbar] = useState<{ open: boolean; message: string }>({
+    open: false,
+    message: "",
+  });
 
   const token = localStorage.getItem("token");
   const activePharmacyId = selectedPharmacy || pharmacyIdFromMap;
@@ -108,17 +126,11 @@ export default function Home() {
     saveCart(cart);
   }, [cart]);
 
-  // Debounce search input.
-  useEffect(() => {
-    const timer = setTimeout(() => setDebouncedSearch(search), 500);
-    return () => clearTimeout(timer);
-  }, [search]);
-
-  // Fetch medicines whenever search or pharmacy filter changes.
+  // Fetch medicines whenever the selected pharmacy filter changes.
+  // Free-text search no longer filters here — it navigates to /user/results instead.
   useEffect(() => {
     const fetchMedicines = async () => {
-      const trimmed = debouncedSearch.trim();
-      if (!trimmed && !activePharmacyId) {
+      if (!activePharmacyId) {
         setMedicines([]);
         setHasSearchedOrFiltered(false);
         return;
@@ -127,11 +139,7 @@ export default function Home() {
       setHasSearchedOrFiltered(true);
       setLoadingMedicines(true);
       try {
-        const queryParams: Record<string, string> = {};
-        if (trimmed) queryParams.search = trimmed;
-        else if (activePharmacyId) queryParams.pharmacyId = activePharmacyId;
-
-        const res = await api.get("/medicines", { params: queryParams });
+        const res = await api.get("/medicines", { params: { pharmacyId: activePharmacyId } });
         setMedicines(res.data || []);
       } catch (error) {
         console.error(error);
@@ -142,7 +150,7 @@ export default function Home() {
     };
 
     fetchMedicines();
-  }, [debouncedSearch, activePharmacyId]);
+  }, [activePharmacyId]);
 
   const handleSelectPharmacy = (id: string, name?: string) => {
     setSelectedPharmacy(id);
@@ -152,6 +160,63 @@ export default function Home() {
   const clearPharmacyFilter = () => {
     setSelectedPharmacy(null);
     setSelectedPharmacyName(null);
+  };
+
+  // If we arrived from a search result with ?addMedicine=<id>, fetch that
+  // medicine, add it to cart, confirm via snackbar, then strip the param so
+  // refreshing the page doesn't re-add it.
+  useEffect(() => {
+    if (!addMedicineId) return;
+
+    const addFromResult = async () => {
+      try {
+        const res = await api.get(`/medicines/${addMedicineId}`);
+        const medicine: IMedicine = res.data;
+        setCart((prev) => {
+          const existing = prev.find((item) => item._id === medicine._id);
+          if (existing) {
+            return prev.map((item) =>
+              item._id === medicine._id ? { ...item, quantity: item.quantity + 1 } : item
+            );
+          }
+          return [...prev, { ...medicine, quantity: 1 }];
+        });
+        setSnackbar({ open: true, message: `${medicine.name} added to your cart.` });
+      } catch (error) {
+        console.error(error);
+        setSnackbar({ open: true, message: "Couldn't add that medicine. Try again from the list." });
+      } finally {
+        const next = new URLSearchParams(params);
+        next.delete("addMedicine");
+        navigate(`/user?${next.toString()}`, { replace: true });
+      }
+    };
+
+    addFromResult();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [addMedicineId]);
+
+  const handleToggleFavoriteMedicine = (medicine: IMedicine, pharmacyName: string) => {
+    toggleFavoriteMedicine({
+      _id: medicine._id,
+      name: medicine.name,
+      price: medicine.price,
+      category: medicine.category,
+      pharmacyName,
+    });
+    notifyFavoritesChanged();
+    setFavoritesVersion((v) => v + 1);
+  };
+
+  const handleToggleFavoritePharmacy = () => {
+    if (!selectedPharmacy) return;
+    toggleFavoritePharmacy({
+      _id: selectedPharmacy,
+      name: selectedPharmacyName ?? "Selected pharmacy",
+      address: "",
+    });
+    notifyFavoritesChanged();
+    setFavoritesVersion((v) => v + 1);
   };
 
   // ─── Cart actions ───────────────────────────────────────────────────────────
@@ -222,14 +287,19 @@ export default function Home() {
           Find medicine near you
         </Typography>
         <Typography variant="body2" color="text.secondary" sx={{ mb: 1.5 }}>
-          Search by name, or pick a pharmacy on the map to browse what they stock.
+          Search a medicine or pharmacy, or try "pharmacy near me".
         </Typography>
 
         <TextField
           fullWidth
-          placeholder="Search for medicine (e.g., Paracetamol)"
+          placeholder="Search medicine, pharmacy, or 'near me'"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" && search.trim()) {
+              navigate(`/user/results?q=${encodeURIComponent(search.trim())}`);
+            }
+          }}
           sx={{
             backgroundColor: "#fff",
             borderRadius: "10px",
@@ -251,7 +321,9 @@ export default function Home() {
       <Card sx={{ borderRadius: "12px", mb: 2.5, overflow: "hidden" }}>
         <Box sx={{ height: { xs: "32vh", sm: "38vh", md: "46vh" } }}>
           <MapView
-            onSelectPharmacy={(id) => handleSelectPharmacy(id)}
+            onSelectPharmacy={(id, name) => handleSelectPharmacy(id, name)}
+            focusPharmacyId={pharmacyIdFromMap}
+            findNearest={nearestRequested}
           />
         </Box>
         <CardContent sx={{ py: "12px !important" }}>
@@ -271,7 +343,7 @@ export default function Home() {
 
       {/* CONTEXT CHIP — shown once a pharmacy filter is active */}
       {selectedPharmacy && (
-        <Box sx={{ mb: 2 }}>
+        <Box sx={{ mb: 2, display: "flex", alignItems: "center", gap: 1 }}>
           <Chip
             label={`Browsing: ${selectedPharmacyName ?? "Selected pharmacy"}`}
             onDelete={clearPharmacyFilter}
@@ -282,6 +354,13 @@ export default function Home() {
               fontSize: "0.78rem",
             }}
           />
+          <IconButton size="small" onClick={handleToggleFavoritePharmacy}>
+            {isPharmacyFavorited(selectedPharmacy) ? (
+              <FavoriteIcon sx={{ fontSize: 18, color: "#E0457B" }} />
+            ) : (
+              <FavoriteBorderIcon sx={{ fontSize: 18, color: "text.disabled" }} />
+            )}
+          </IconButton>
         </Box>
       )}
 
@@ -357,67 +436,99 @@ export default function Home() {
             {medicines.map((med) => {
               const pharmacyName = med.pharmacy?.name ?? med.pharmacyId?.name ?? "Unknown pharmacy";
               const outOfStock = med.stock === 0;
+              const favorited = isMedicineFavorited(med._id);
               return (
-                <Card key={med._id} sx={{ borderRadius: "12px", display: "flex", flexDirection: "column" }}>
-                  <Box
-                    sx={{
-                      height: 72,
-                      backgroundColor: "#EEF4FB",
-                      borderRadius: "10px 10px 0 0",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      color: "#0D3B6E",
-                    }}
+                <Card key={med._id} sx={{ borderRadius: "12px", position: "relative" }}>
+                  <IconButton
+                    size="small"
+                    onClick={() => handleToggleFavoriteMedicine(med, pharmacyName)}
+                    sx={{ position: "absolute", top: 4, right: 4, zIndex: 1, p: 0.5 }}
                   >
-                    <MedicalServicesOutlinedIcon sx={{ fontSize: 26 }} />
-                  </Box>
-                  <CardContent sx={{ p: "12px !important", flex: 1, display: "flex", flexDirection: "column" }}>
-                    <Typography
-                      sx={{
-                        fontSize: "0.8rem",
-                        fontWeight: 600,
-                        color: "text.primary",
-                        whiteSpace: "nowrap",
-                        overflow: "hidden",
-                        textOverflow: "ellipsis",
-                      }}
-                    >
-                      {med.name}
-                    </Typography>
-                    <Typography sx={{ fontSize: "0.78rem", color: "#0D3B6E", fontWeight: 600, mt: 0.25 }}>
-                      ₱{med.price.toFixed(2)}
-                    </Typography>
-                    <Typography
-                      variant="caption"
-                      color="text.secondary"
-                      sx={{ whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", mt: 0.25 }}
-                    >
-                      {pharmacyName}
-                    </Typography>
-                    <Typography
-                      variant="caption"
-                      sx={{ color: outOfStock ? "#C62828" : "text.disabled", mt: 0.25 }}
-                    >
-                      {outOfStock ? "Out of stock" : `${med.stock} in stock`}
-                    </Typography>
+                    {favorited ? (
+                      <FavoriteIcon sx={{ fontSize: 16, color: "#E0457B" }} />
+                    ) : (
+                      <FavoriteBorderIcon sx={{ fontSize: 16, color: "text.disabled" }} />
+                    )}
+                  </IconButton>
 
-                    <Button
-                      size="small"
-                      variant="contained"
-                      disabled={outOfStock}
-                      onClick={() => addToCart(med)}
-                      sx={{
-                        mt: 1.25,
-                        backgroundColor: "#0D3B6E",
-                        "&:hover": { backgroundColor: "#0A2E55" },
-                        borderRadius: "8px",
-                        fontSize: "0.72rem",
-                        boxShadow: "none",
-                      }}
-                    >
-                      {outOfStock ? "Unavailable" : "Add to cart"}
-                    </Button>
+                  <CardContent sx={{ p: "10px 12px !important" }}>
+                    <Box sx={{ display: "flex", alignItems: "center", gap: 0.75, mb: 0.5, pr: 2.5 }}>
+                      <Box
+                        sx={{
+                          width: 24,
+                          height: 24,
+                          borderRadius: "6px",
+                          backgroundColor: "#EEF4FB",
+                          color: "#0D3B6E",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          flexShrink: 0,
+                        }}
+                      >
+                        <MedicalServicesOutlinedIcon sx={{ fontSize: 14 }} />
+                      </Box>
+                      <Typography
+                        sx={{
+                          fontSize: "0.8rem",
+                          fontWeight: 600,
+                          color: "text.primary",
+                          whiteSpace: "nowrap",
+                          overflow: "hidden",
+                          textOverflow: "ellipsis",
+                          flex: 1,
+                          minWidth: 0,
+                        }}
+                      >
+                        {med.name}
+                      </Typography>
+                    </Box>
+
+                    <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", mb: 0.25 }}>
+                      <Typography sx={{ fontSize: "0.78rem", color: "#0D3B6E", fontWeight: 600 }}>
+                        ₱{med.price.toFixed(2)}
+                      </Typography>
+                      <Typography
+                        variant="caption"
+                        sx={{ color: outOfStock ? "#C62828" : "text.disabled", fontSize: "0.68rem" }}
+                      >
+                        {outOfStock ? "Out of stock" : `${med.stock} left`}
+                      </Typography>
+                    </Box>
+
+                    <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 1 }}>
+                      <Typography
+                        variant="caption"
+                        color="text.secondary"
+                        sx={{
+                          whiteSpace: "nowrap",
+                          overflow: "hidden",
+                          textOverflow: "ellipsis",
+                          fontSize: "0.68rem",
+                          flex: 1,
+                          minWidth: 0,
+                        }}
+                      >
+                        {pharmacyName}
+                      </Typography>
+
+                      <IconButton
+                        size="small"
+                        disabled={outOfStock}
+                        onClick={() => addToCart(med)}
+                        sx={{
+                          backgroundColor: outOfStock ? "rgba(0,0,0,0.06)" : "#0D3B6E",
+                          color: "#fff",
+                          width: 26,
+                          height: 26,
+                          flexShrink: 0,
+                          "&:hover": { backgroundColor: outOfStock ? "rgba(0,0,0,0.06)" : "#0A2E55" },
+                          "&.Mui-disabled": { color: "text.disabled" },
+                        }}
+                      >
+                        <AddShoppingCartIcon sx={{ fontSize: 14 }} />
+                      </IconButton>
+                    </Box>
                   </CardContent>
                 </Card>
               );
@@ -640,6 +751,23 @@ export default function Home() {
           </Button>
         </Box>
       </Modal>
+
+      {/* SEARCH-RESULT FEEDBACK */}
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={3000}
+        onClose={() => setSnackbar({ open: false, message: "" })}
+        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+      >
+        <Alert
+          severity="success"
+          variant="filled"
+          onClose={() => setSnackbar({ open: false, message: "" })}
+          sx={{ borderRadius: "10px" }}
+        >
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 }
