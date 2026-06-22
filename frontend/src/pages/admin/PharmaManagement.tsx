@@ -3,7 +3,7 @@ import {
   Typography,
   Card,
   CardContent,
-  TextField,
+  Input,
   Button,
   Dialog,
   DialogTitle,
@@ -234,7 +234,7 @@ export default function PharmaManagement() {
       </Box>
 
       {/* Search */}
-      <TextField
+      <Input
         fullWidth
         placeholder="Search by name or address..."
         onChange={(e) => setSearch(e.target.value)}
@@ -401,7 +401,7 @@ export default function PharmaManagement() {
 
           <ModalSection>Owner account</ModalSection>
 
-          <TextField
+          <Input
             label="Owner full name"
             name="ownerName"
             value={form.ownerName}
@@ -410,7 +410,7 @@ export default function PharmaManagement() {
             helperText={formErrors.ownerName}
             fullWidth
           />
-          <TextField
+          <Input
             label="Owner email"
             name="email"
             type="email"
@@ -420,7 +420,7 @@ export default function PharmaManagement() {
             helperText={formErrors.email || "Used to log in as the pharmacy owner."}
             fullWidth
           />
-          <TextField
+          <Input
             label="Password"
             name="password"
             type="password"
@@ -435,7 +435,7 @@ export default function PharmaManagement() {
 
           <ModalSection>Pharmacy details</ModalSection>
 
-          <TextField
+          <Input
             label="Pharmacy name"
             name="pharmacyName"
             value={form.pharmacyName}
@@ -444,7 +444,7 @@ export default function PharmaManagement() {
             helperText={formErrors.pharmacyName}
             fullWidth
           />
-          <TextField
+          <Input
             label="Address"
             name="address"
             value={form.address}
@@ -453,7 +453,7 @@ export default function PharmaManagement() {
             helperText={formErrors.address}
             fullWidth
           />
-          <TextField
+          <Input
             label="Contact number"
             name="contactNumber"
             value={form.contactNumber}
@@ -463,7 +463,7 @@ export default function PharmaManagement() {
             fullWidth
           />
           <Box sx={{ display: "flex", gap: 2 }}>
-            <TextField
+            <Input
               label="Latitude"
               name="lat"
               value={form.lat}
@@ -472,7 +472,7 @@ export default function PharmaManagement() {
               helperText={formErrors.lat || "e.g. 14.3294"}
               fullWidth
             />
-            <TextField
+            <Input
               label="Longitude"
               name="lng"
               value={form.lng}

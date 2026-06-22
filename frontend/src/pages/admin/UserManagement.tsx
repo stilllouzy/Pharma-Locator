@@ -3,7 +3,7 @@ import {
   Typography,
   Card,
   CardContent,
-  TextField,
+  Input,
   Button,
   Chip,
   InputAdornment,
@@ -351,7 +351,7 @@ export default function UserManagement() {
       </Box>
 
       {/* Search */}
-      <TextField
+      <Input
         fullWidth
         placeholder="Search by name or email..."
         onChange={(e) => setSearch(e.target.value)}
@@ -492,7 +492,7 @@ export default function UserManagement() {
             Account details
           </Typography>
 
-          <TextField
+          <Input
             label="Full name"
             value={form.name}
             onChange={(e) => handleFormChange("name", e.target.value)}
@@ -500,7 +500,7 @@ export default function UserManagement() {
             helperText={formErrors.name}
             fullWidth
           />
-          <TextField
+          <Input
             label="Email"
             type="email"
             value={form.email}
@@ -509,7 +509,7 @@ export default function UserManagement() {
             helperText={formErrors.email || "This will be used to log in."}
             fullWidth
           />
-          <TextField
+          <Input
             label="Password"
             type="password"
             value={form.password}

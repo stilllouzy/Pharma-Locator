@@ -3,7 +3,7 @@ import {
   Typography,
   Card,
   CardContent,
-  TextField,
+  Input,
   Button,
   Chip,
   InputAdornment,
@@ -86,7 +86,7 @@ export default function MedManagement() {
       </Box>
 
       {/* Search */}
-      <TextField
+      <Input
         fullWidth
         placeholder="Search by name, category, or pharmacy..."
         onChange={(e) => setSearch(e.target.value)}

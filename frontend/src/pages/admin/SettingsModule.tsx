@@ -10,7 +10,7 @@ import {
   Alert,
   Collapse,
 } from "@mui/material";
-import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
+import PersonIcon from "@mui/icons-material/Person";
 import SecurityIcon from "@mui/icons-material/Security";
 import BuildIcon from "@mui/icons-material/Build";
 import EmailIcon from "@mui/icons-material/Email";
@@ -188,7 +188,7 @@ export default function SettingsModule() {
         <Card>
           <CardContent sx={{ px: "20px !important", py: "20px !important" }}>
             <CardSection
-              icon={<PersonOutlineIcon sx={{ fontSize: 18 }} />}
+              icon={<PersonIcon sx={{ fontSize: 18 }} />}
               title="Profile settings"
               subtitle="Update your admin account details"
             />
