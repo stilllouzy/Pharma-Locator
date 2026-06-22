@@ -91,13 +91,15 @@ export default function MedManagement() {
         placeholder="Search by name, category, or pharmacy..."
         onChange={(e) => setSearch(e.target.value)}
         sx={{ mb: 2.5 }}
-        slotProps={{
-          startAdornment: (
-            <InputAdornment position="start">
-              <SearchIcon sx={{ fontSize: 18, color: "text.secondary" }} />
-            </InputAdornment>
-          ),
-        }}
+     slotProps={{
+  input: {
+    startAdornment: (
+      <InputAdornment position="start">
+        <SearchIcon sx={{ fontSize: 18, color: "text.secondary" }} />
+      </InputAdornment>
+    ),
+  },
+}}
       />
 
       {/* Loading skeletons */}

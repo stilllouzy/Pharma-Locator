@@ -3,7 +3,7 @@ import {
   Typography,
   Card,
   CardContent,
-  Input,
+  TextField,
   Button,
   Chip,
   InputAdornment,
@@ -351,18 +351,20 @@ export default function UserManagement() {
       </Box>
 
       {/* Search */}
-      <Input
+      <TextField
         fullWidth
         placeholder="Search by name or email..."
         onChange={(e) => setSearch(e.target.value)}
         sx={{ mb: 2 }}
         slotProps={{
-          startAdornment: (
-            <InputAdornment position="start">
-              <SearchIcon sx={{ fontSize: 18, color: "text.secondary" }} />
-            </InputAdornment>
-          ),
-        }}
+  input: {
+    startAdornment: (
+      <InputAdornment position="start">
+        <SearchIcon sx={{ fontSize: 18, color: "text.secondary" }} />
+      </InputAdornment>
+    ),
+  },
+}}
       />
 
       {/* Role tabs */}
@@ -492,7 +494,7 @@ export default function UserManagement() {
             Account details
           </Typography>
 
-          <Input
+          <TextField
             label="Full name"
             value={form.name}
             onChange={(e) => handleFormChange("name", e.target.value)}
@@ -500,7 +502,7 @@ export default function UserManagement() {
             helperText={formErrors.name}
             fullWidth
           />
-          <Input
+          <TextField
             label="Email"
             type="email"
             value={form.email}
@@ -509,7 +511,7 @@ export default function UserManagement() {
             helperText={formErrors.email || "This will be used to log in."}
             fullWidth
           />
-          <Input
+          <TextField
             label="Password"
             type="password"
             value={form.password}
