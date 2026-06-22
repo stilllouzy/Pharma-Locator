@@ -1,21 +1,38 @@
-import { Drawer, Box, Typography, Button, Divider } from "@mui/material";
-import { NavLink, useNavigate } from "react-router-dom";
+import { Box, Typography, IconButton, Tooltip } from "@mui/material";
+import { NavLink, useNavigate, useLocation } from "react-router-dom";
+import MedicationOutlinedIcon from "@mui/icons-material/MedicationOutlined";
+import ReceiptLongOutlinedIcon from "@mui/icons-material/ReceiptLongOutlined";
+import DescriptionOutlinedIcon from "@mui/icons-material/DescriptionOutlined";
+import TaskAltOutlinedIcon from "@mui/icons-material/TaskAltOutlined";
+import LogoutOutlinedIcon from "@mui/icons-material/LogoutOutlined";
 
-const DRAWER_WIDTH = 260;
+export const DRAWER_WIDTH = 248;
+export const RAIL_WIDTH = 72;
 
-const pharmacyLinks = [
-  { label: "Medicines", path: "/pharmacy" },
-  { label: "Orders", path: "/pharmacy/orders" },
-  { label: "Prescriptions", path: "/pharmacy/prescriptions" },
-  { label: "Proof of Delivery", path: "/pharmacy/pod"},
+// Pharmacy role accent (from design system role-coding: pharmacy staff = green)
+const ACCENT = "#5BC4A0";
+
+interface NavLinkItem {
+  label: string;
+  path: string;
+  icon: typeof MedicationOutlinedIcon;
+  end?: boolean;
+}
+
+const links: NavLinkItem[] = [
+  { label: "Medicines", path: "/pharmacy", icon: MedicationOutlinedIcon, end: true },
+  { label: "Orders", path: "/pharmacy/orders", icon: ReceiptLongOutlinedIcon },
+  { label: "Prescriptions", path: "/pharmacy/prescriptions", icon: DescriptionOutlinedIcon },
+  { label: "Proof of delivery", path: "/pharmacy/pod", icon: TaskAltOutlinedIcon },
 ];
 
 interface SidebarProps {
   open: boolean;
 }
 
-export default function PharmacySidebar({ open }: SidebarProps) {
+export default function PharmaSidebar({ open }: SidebarProps) {
   const navigate = useNavigate();
+  const location = useLocation();
 
   const handleLogout = () => {
     localStorage.removeItem("token");
@@ -23,58 +40,178 @@ export default function PharmacySidebar({ open }: SidebarProps) {
     navigate("/");
   };
 
+  const isLinkActive = (path: string, end?: boolean) =>
+    end ? location.pathname === path : location.pathname.startsWith(path);
+
   return (
-    <Drawer
-      variant="persistent"
-      open={open}
+    <Box
+      component="nav"
       sx={{
-        width: open ? DRAWER_WIDTH : 0,
+        width: open ? DRAWER_WIDTH : RAIL_WIDTH,
         flexShrink: 0,
-        "& .MuiDrawer-paper": {
-          width: DRAWER_WIDTH,
-          boxSizing: "border-box",
-          backgroundColor: "white",
-          borderRight: "1px solid #e5e7eb",
-        },
+        height: "100vh",
+        position: "fixed",
+        top: 0,
+        left: 0,
+        zIndex: (theme) => theme.zIndex.drawer,
+        backgroundColor: "#0D3B6E",
+        display: "flex",
+        flexDirection: "column",
+        transition: "width 0.25s ease",
+        overflow: "hidden",
       }}
     >
-      <Box sx={{ display: "flex", flexDirection: "column", height: "100%", p: 2 }}>
-
-        <Typography sx={{ fontWeight: "bold", fontSize: 18, mb: 2,  color : "primary.main" }}>
-          Pharmacy Panel
-        </Typography>
-
-        <Divider sx={{ mb: 2 }} />
-
-        <Box sx={{ flexGrow: 1 }}>
-          {pharmacyLinks.map((item) => (
-            <NavLink
-              key={item.path}
-              to={item.path}
-              style={({ isActive }) => ({
-                textDecoration: "none",
-                color: isActive ? "#2563eb" : "#374151",
-                backgroundColor: isActive ? "#eff6ff" : "transparent",
-                padding: "10px 12px",
-                borderRadius: "8px",
-                fontSize: "14px",
-                fontWeight: isActive ? 600 : 400,
-                display: "block",
-                transition: "all 0.2s",
-                marginBottom: "4px",
-              })}
-            >
-              {item.label}
-            </NavLink>
-          ))}
-        </Box>
-
-        <Divider sx={{ mb: 2 }} />
-
-        <Button fullWidth variant="outlined" color="error" onClick={handleLogout}>
-          Logout
-        </Button>
+      {/* BRAND */}
+      <Box
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          gap: 1.25,
+          height: 64,
+          px: open ? 2.5 : 0,
+          justifyContent: open ? "flex-start" : "center",
+          flexShrink: 0,
+        }}
+      >
+        <Box
+          sx={{
+            width: 8,
+            height: 8,
+            borderRadius: "50%",
+            backgroundColor: ACCENT,
+            flexShrink: 0,
+          }}
+        />
+        {open && (
+          <Typography sx={{ fontSize: 14, fontWeight: 500, color: "#fff", whiteSpace: "nowrap" }}>
+            Pharma Locator
+          </Typography>
+        )}
       </Box>
-    </Drawer>
+
+      <Box sx={{ borderTop: "0.5px solid rgba(255,255,255,0.12)" }} />
+
+      {/* NAV LINKS */}
+      <Box
+        sx={{
+          flexGrow: 1,
+          overflowY: "auto",
+          px: open ? 1.5 : 1,
+          py: 1.5,
+          "&::-webkit-scrollbar": { width: 4 },
+          "&::-webkit-scrollbar-thumb": { backgroundColor: "rgba(255,255,255,0.15)", borderRadius: 4 },
+        }}
+      >
+        {open && (
+          <Typography
+            sx={{
+              fontSize: 10,
+              fontWeight: 500,
+              color: "rgba(255,255,255,0.32)",
+              letterSpacing: "0.08em",
+              textTransform: "uppercase",
+              px: 1.25,
+              mb: 0.5,
+            }}
+          >
+            Pharmacy
+          </Typography>
+        )}
+
+        <Box sx={{ display: "flex", flexDirection: "column", gap: 0.25 }}>
+          {links.map((item) => {
+            const Icon = item.icon;
+            const active = isLinkActive(item.path, item.end);
+
+            const navItem = (
+              <NavLink key={item.path} to={item.path} end={item.end} style={{ textDecoration: "none" }}>
+                <Box
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 1.25,
+                    px: open ? 1.25 : 0,
+                    py: 1,
+                    justifyContent: open ? "flex-start" : "center",
+                    borderRadius: "8px",
+                    position: "relative",
+                    color: active ? "#fff" : "rgba(255,255,255,0.62)",
+                    backgroundColor: active ? "rgba(255,255,255,0.12)" : "transparent",
+                    "&:hover": {
+                      backgroundColor: active ? "rgba(255,255,255,0.12)" : "rgba(255,255,255,0.06)",
+                      color: "#fff",
+                    },
+                    transition: "background-color 0.15s, color 0.15s",
+                  }}
+                >
+                  {active && (
+                    <Box
+                      sx={{
+                        position: "absolute",
+                        left: 0,
+                        top: "20%",
+                        bottom: "20%",
+                        width: 3,
+                        borderRadius: "0 3px 3px 0",
+                        backgroundColor: ACCENT,
+                      }}
+                    />
+                  )}
+                  <Icon sx={{ fontSize: 19, flexShrink: 0 }} />
+                  {open && (
+                    <Typography sx={{ fontSize: 13.5, fontWeight: active ? 600 : 400, whiteSpace: "nowrap" }}>
+                      {item.label}
+                    </Typography>
+                  )}
+                </Box>
+              </NavLink>
+            );
+
+            return open ? (
+              navItem
+            ) : (
+              <Tooltip key={item.path} title={item.label} placement="right" arrow>
+                {navItem}
+              </Tooltip>
+            );
+          })}
+        </Box>
+      </Box>
+
+      <Box sx={{ borderTop: "0.5px solid rgba(255,255,255,0.12)" }} />
+
+      {/* LOGOUT */}
+      <Box sx={{ p: open ? 1.5 : 1, flexShrink: 0 }}>
+        {open ? (
+          <Box
+            onClick={handleLogout}
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              gap: 1.25,
+              px: 1.25,
+              py: 1,
+              borderRadius: "8px",
+              cursor: "pointer",
+              color: "rgba(255,255,255,0.62)",
+              "&:hover": { backgroundColor: "rgba(255,255,255,0.06)", color: "#fff" },
+              transition: "background-color 0.15s, color 0.15s",
+            }}
+          >
+            <LogoutOutlinedIcon sx={{ fontSize: 19 }} />
+            <Typography sx={{ fontSize: 13.5 }}>Log out</Typography>
+          </Box>
+        ) : (
+          <Tooltip title="Log out" placement="right" arrow>
+            <IconButton
+              onClick={handleLogout}
+              sx={{ color: "rgba(255,255,255,0.62)", "&:hover": { color: "#fff" }, mx: "auto", display: "flex" }}
+            >
+              <LogoutOutlinedIcon sx={{ fontSize: 19 }} />
+            </IconButton>
+          </Tooltip>
+        )}
+      </Box>
+    </Box>
   );
 }

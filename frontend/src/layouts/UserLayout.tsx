@@ -1,8 +1,10 @@
 import { Box, IconButton, AppBar, Toolbar, Typography } from "@mui/material";
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, useLocation, Link as RouterLink } from "react-router-dom";
 import { useState } from "react";
-import  MenuIcon  from "@mui/icons-material/Menu";
-import Sidebar from "../navbar/UserSidebar";
+import MenuOpenIcon from "@mui/icons-material/MenuOpen";
+import MenuIcon from "@mui/icons-material/Menu";
+import ChevronRightIcon from "@mui/icons-material/ChevronRight";
+import Sidebar, { DRAWER_WIDTH, RAIL_WIDTH } from "../navbar/UserSidebar";
 
 // USER PAGES
 import Home from "../pages/user/Home";
@@ -10,79 +12,148 @@ import MapView from "../pages/user/MapView";
 import Orders from "../pages/user/Orders";
 import Prescriptions from "../pages/user/UserPrescriptions";
 import OrderTracking from "../pages/user/OrderTracking";
-import Payment from "../pages/user/Payment"
+import Payment from "../pages/user/Payment";
 import Notifications from "../pages/user/UserNotification";
 
-const DRAWER_WIDTH = 260;
+// Maps a route segment to a readable label for the breadcrumb trail.
+const LABELS: Record<string, string> = {
+  user: "Home",
+  map: "Map",
+  orders: "Orders",
+  prescription: "Prescriptions",
+  track: "Order tracking",
+  payment: "Payment",
+  notifications: "Notifications",
+};
 
-export default function AdminLayout() {
-  const [open, setOpen] = useState(false);
+function useBreadcrumbs() {
+  const { pathname } = useLocation();
+  const segments = pathname.split("/").filter(Boolean);
+
+  let path = "";
+  const crumbs = segments.map((seg) => {
+    path += `/${seg}`;
+    return { label: LABELS[seg] ?? seg, path };
+  });
+
+  if (crumbs.length === 0) {
+    crumbs.push({ label: "Home", path: "/user" });
+  }
+  return crumbs;
+}
+
+export default function UserLayout() {
+  const [open, setOpen] = useState(true);
+  const crumbs = useBreadcrumbs();
+
+  const sidebarWidth = open ? DRAWER_WIDTH : RAIL_WIDTH;
 
   return (
     <Box sx={{ display: "flex" }}>
+      <Sidebar open={open} />
 
       {/* TOP APP BAR */}
       <AppBar
-  position="fixed"
-  sx={{
-    zIndex: (theme) => theme.zIndex.drawer + 1,
-    backgroundColor: "primary.main",
-    color: "white",
-    boxShadow: "0 1px 3px rgba(0,0,0,0.1)",
-    width: { xs: "100%", md: open ? `calc(100% - ${DRAWER_WIDTH}px)` : "100%" },
-    ml: { xs: 0, md: open ? `${DRAWER_WIDTH}px` : 0 },
-    transition: "width 0.3s, margin 0.3s",
-  }}
->
-        <Toolbar>
-          <IconButton
-            edge="start"
-            onClick={() => setOpen(!open)}
-            sx={{ mr: 2 }}
-          >
-            <MenuIcon />
+        position="fixed"
+        elevation={0}
+        sx={{
+          zIndex: (theme) => theme.zIndex.drawer + 1,
+          backgroundColor: "#fff",
+          color: "text.primary",
+          borderBottom: "0.5px solid rgba(13,59,110,0.12)",
+          boxShadow: "none",
+          width: { xs: "100%", md: `calc(100% - ${sidebarWidth}px)` },
+          ml: { xs: 0, md: `${sidebarWidth}px` },
+          transition: "width 0.25s ease, margin 0.25s ease",
+        }}
+      >
+        <Toolbar sx={{ minHeight: 64, gap: 1.5 }}>
+          <IconButton onClick={() => setOpen(!open)} sx={{ color: "#0D3B6E" }}>
+            {open ? <MenuOpenIcon /> : <MenuIcon />}
           </IconButton>
-          <Typography sx={{ fontWeight: "bold", color : "white" }}>
-            Pharma Locator
-          </Typography>
+
+          {/* Breadcrumbs */}
+          <Box sx={{ display: "flex", alignItems: "center", flexGrow: 1, minWidth: 0 }}>
+            <Box sx={{ display: "flex", alignItems: "center", gap: 0.5, flexWrap: "wrap" }}>
+              {crumbs.map((crumb, i) => {
+                const isLast = i === crumbs.length - 1;
+                return (
+                  <Box key={crumb.path} sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
+                    {i > 0 && <ChevronRightIcon sx={{ fontSize: 15, color: "text.disabled" }} />}
+                    {isLast ? (
+                      <Typography sx={{ fontSize: "0.95rem", fontWeight: 600, color: "text.primary" }}>
+                        {crumb.label}
+                      </Typography>
+                    ) : (
+                      <Typography
+                        component={RouterLink}
+                        to={crumb.path}
+                        sx={{
+                          fontSize: "0.95rem",
+                          fontWeight: 500,
+                          color: "text.secondary",
+                          textDecoration: "none",
+                          "&:hover": { color: "#0D3B6E" },
+                        }}
+                      >
+                        {crumb.label}
+                      </Typography>
+                    )}
+                  </Box>
+                );
+              })}
+            </Box>
+          </Box>
+
+          {/* Right cluster */}
+          <Box
+            sx={{
+              width: 34,
+              height: 34,
+              borderRadius: "50%",
+              backgroundColor: "#0D3B6E",
+              color: "#fff",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              fontSize: 12.5,
+              fontWeight: 600,
+              flexShrink: 0,
+            }}
+          >
+            US
+          </Box>
         </Toolbar>
       </AppBar>
 
-      {/* SIDEBAR */}
-      <Sidebar open={open} />
-
       {/* MAIN CONTENT */}
       <Box
-  component="main"
-  sx={{
-    flexGrow: 1,
-    p: { xs: 1, sm: 2, md: 3 },
-    backgroundColor: "#f5f5f5",
-    minHeight: "100vh",
-    mt: "64px",
-    ml: { xs: 0, md: open ? `${DRAWER_WIDTH}px` : 0 },
-    width: { xs: "100%", md: open ? `calc(100% - ${DRAWER_WIDTH}px)` : "100%" },
-    transition: "margin 0.3s, width 0.3s",
-    overflowX: "hidden",
-  }}
->
-      
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route
-            path="/map"
-            element={
-              <MapView onSelectPharmacy={(id) => console.log("Selected pharmacy:", id)} />
-            }
-          />
-          <Route path="/orders" element={<Orders />} />
-          <Route path="/prescription" element={<Prescriptions />} />
-          <Route path="/track/:id" element={<OrderTracking />} />
-          <Route path="/payment/:id" element={<Payment />} />
-          <Route path="/notifications" element={<Notifications />} />
-        </Routes>
+        component="main"
+        sx={{
+          flexGrow: 1,
+          minHeight: "100vh",
+          backgroundColor: "#F4F7FB",
+          ml: { xs: 0, md: `${sidebarWidth}px` },
+          mt: "64px",
+          transition: "margin 0.25s ease",
+          overflowX: "hidden",
+        }}
+      >
+        <Box sx={{ p: { xs: 1, sm: 2, md: 3 } }}>
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route
+              path="/map"
+              element={<MapView onSelectPharmacy={(id) => console.log("Selected pharmacy:", id)} />}
+            />
+            <Route path="/orders" element={<Orders />} />
+            <Route path="/prescription" element={<Prescriptions />} />
+            <Route path="/track/:id" element={<OrderTracking />} />
+            <Route path="/payment/:id" element={<Payment />} />
+            <Route path="/notifications" element={<Notifications />} />
+          </Routes>
+        </Box>
       </Box>
-
     </Box>
   );
 }
