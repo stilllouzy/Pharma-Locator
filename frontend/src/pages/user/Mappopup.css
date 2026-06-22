@@ -1,0 +1,90 @@
+/* Leaflet popup overrides — Pharma Locator design system
+   Leaflet renders popups as raw HTML outside React's styling system,
+   so these need to be plain CSS rather than MUI sx props. */
+
+.leaflet-popup-content-wrapper {
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(13, 59, 110, 0.18);
+  padding: 0;
+}
+
+.leaflet-popup-content {
+  margin: 0;
+  width: 100% !important;
+}
+
+.leaflet-popup-tip {
+  box-shadow: 0 4px 8px rgba(13, 59, 110, 0.1);
+}
+
+.pl-popup {
+  padding: 14px 16px;
+  font-family: inherit;
+}
+
+.pl-popup__name {
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: #0d3b6e;
+  margin: 0 0 4px 0;
+  line-height: 1.3;
+}
+
+.pl-popup__address {
+  font-size: 0.78rem;
+  color: #5a6b7d;
+  margin: 0 0 10px 0;
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.pl-popup__actions {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.pl-popup__button {
+  background-color: #0d3b6e;
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  padding: 7px 12px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background-color 0.15s ease;
+}
+
+.pl-popup__button:hover {
+  background-color: #0a2e55;
+}
+
+.pl-popup__link {
+  font-size: 0.76rem;
+  color: #5bc4a0;
+  font-weight: 600;
+  text-decoration: none;
+  text-align: center;
+}
+
+.pl-popup__link:hover {
+  text-decoration: underline;
+}
+
+/* Tighter popup on small screens so it doesn't dominate a short map container. */
+@media (max-width: 480px) {
+  .pl-popup {
+    padding: 12px 14px;
+  }
+  .pl-popup__name {
+    font-size: 0.86rem;
+  }
+  .pl-popup__address {
+    font-size: 0.74rem;
+  }
+}
