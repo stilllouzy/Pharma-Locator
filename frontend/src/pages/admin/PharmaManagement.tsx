@@ -239,7 +239,7 @@ export default function PharmaManagement() {
         placeholder="Search by name or address..."
         onChange={(e) => setSearch(e.target.value)}
         sx={{ mb: 2.5 }}
-        InputProps={{
+        slotProps={{
           startAdornment: (
             <InputAdornment position="start">
               <SearchIcon sx={{ fontSize: 18, color: "text.secondary" }} />

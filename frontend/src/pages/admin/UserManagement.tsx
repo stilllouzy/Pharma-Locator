@@ -356,7 +356,7 @@ export default function UserManagement() {
         placeholder="Search by name or email..."
         onChange={(e) => setSearch(e.target.value)}
         sx={{ mb: 2 }}
-        InputProps={{
+        slotProps={{
           startAdornment: (
             <InputAdornment position="start">
               <SearchIcon sx={{ fontSize: 18, color: "text.secondary" }} />

@@ -91,7 +91,7 @@ export default function MedManagement() {
         placeholder="Search by name, category, or pharmacy..."
         onChange={(e) => setSearch(e.target.value)}
         sx={{ mb: 2.5 }}
-        InputProps={{
+        slotProps={{
           startAdornment: (
             <InputAdornment position="start">
               <SearchIcon sx={{ fontSize: 18, color: "text.secondary" }} />
@@ -227,7 +227,7 @@ export default function MedManagement() {
                     size="small"
                     color="error"
                     variant="outlined"
-                    startIcon={<Delete sx={{ fontSize: "16px !important" }} />}
+                    startIcon={<DeleteIcon sx={{ fontSize: "16px !important" }} />}
                     onClick={() => deleteMedicine(med._id)}
                     sx={{
                       borderRadius: "8px",
