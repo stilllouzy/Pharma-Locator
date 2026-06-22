@@ -21,7 +21,7 @@ import SearchIcon from "@mui/icons-material/Search";
 import LocalPharmacyIcon from "@mui/icons-material/LocalPharmacy";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import PhoneIcon from "@mui/icons-material/Phone";
-import DeleteIconfrom "@mui/icons-material/DeleteOutline";
+import DeleteIcon from "@mui/icons-material/DeleteOutline";
 import { useEffect, useState } from "react";
 import api from "../../api/api";
 
