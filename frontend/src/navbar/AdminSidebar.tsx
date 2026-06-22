@@ -13,7 +13,19 @@ import LogoutOutlinedIcon from "@mui/icons-material/LogoutOutlined";
 export const DRAWER_WIDTH = 248;
 export const RAIL_WIDTH = 72;
 
-const sections = [
+interface NavLinkItem {
+  label: string;
+  path: string;
+  icon: typeof DashboardOutlinedIcon;
+  end?: boolean;
+}
+
+interface NavSection {
+  title: string;
+  links: NavLinkItem[];
+}
+
+const sections: NavSection[] = [
   {
     title: "Overview",
     links: [{ label: "Dashboard", path: "/admin", icon: DashboardOutlinedIcon, end: true }],

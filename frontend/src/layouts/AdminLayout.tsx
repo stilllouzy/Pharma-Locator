@@ -26,8 +26,6 @@ const LABELS: Record<string, string> = {
   notifications: "Notifications",
   reports: "Reports",
   settings: "Settings",
-  map: "Map",
-  roles: "Roles & access",
 };
 
 function useBreadcrumbs() {
