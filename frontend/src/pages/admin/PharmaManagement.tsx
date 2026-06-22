@@ -3,7 +3,7 @@ import {
   Typography,
   Card,
   CardContent,
-  Input,
+  TextField,
   Button,
   Dialog,
   DialogTitle,
@@ -21,7 +21,7 @@ import SearchIcon from "@mui/icons-material/Search";
 import LocalPharmacyIcon from "@mui/icons-material/LocalPharmacy";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import PhoneIcon from "@mui/icons-material/Phone";
-import DeleteIcon from "@mui/icons-material/Delete";
+import DeleteIconfrom "@mui/icons-material/DeleteOutline";
 import { useEffect, useState } from "react";
 import api from "../../api/api";
 
@@ -234,12 +234,12 @@ export default function PharmaManagement() {
       </Box>
 
       {/* Search */}
-      <Input
+      <TextField
         fullWidth
         placeholder="Search by name or address..."
         onChange={(e) => setSearch(e.target.value)}
         sx={{ mb: 2.5 }}
-        slotProps={{
+        InputProps={{
           startAdornment: (
             <InputAdornment position="start">
               <SearchIcon sx={{ fontSize: 18, color: "text.secondary" }} />
@@ -401,7 +401,7 @@ export default function PharmaManagement() {
 
           <ModalSection>Owner account</ModalSection>
 
-          <Input
+          <TextField
             label="Owner full name"
             name="ownerName"
             value={form.ownerName}
@@ -410,7 +410,7 @@ export default function PharmaManagement() {
             helperText={formErrors.ownerName}
             fullWidth
           />
-          <Input
+          <TextField
             label="Owner email"
             name="email"
             type="email"
@@ -420,7 +420,7 @@ export default function PharmaManagement() {
             helperText={formErrors.email || "Used to log in as the pharmacy owner."}
             fullWidth
           />
-          <Input
+          <TextField
             label="Password"
             name="password"
             type="password"
@@ -435,7 +435,7 @@ export default function PharmaManagement() {
 
           <ModalSection>Pharmacy details</ModalSection>
 
-          <Input
+          <TextField
             label="Pharmacy name"
             name="pharmacyName"
             value={form.pharmacyName}
@@ -444,7 +444,7 @@ export default function PharmaManagement() {
             helperText={formErrors.pharmacyName}
             fullWidth
           />
-          <Input
+          <TextField
             label="Address"
             name="address"
             value={form.address}
@@ -453,7 +453,7 @@ export default function PharmaManagement() {
             helperText={formErrors.address}
             fullWidth
           />
-          <Input
+          <TextField
             label="Contact number"
             name="contactNumber"
             value={form.contactNumber}
@@ -463,7 +463,7 @@ export default function PharmaManagement() {
             fullWidth
           />
           <Box sx={{ display: "flex", gap: 2 }}>
-            <Input
+            <TextField
               label="Latitude"
               name="lat"
               value={form.lat}
@@ -472,7 +472,7 @@ export default function PharmaManagement() {
               helperText={formErrors.lat || "e.g. 14.3294"}
               fullWidth
             />
-            <Input
+            <TextField
               label="Longitude"
               name="lng"
               value={form.lng}
