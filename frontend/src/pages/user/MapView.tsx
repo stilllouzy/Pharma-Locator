@@ -76,7 +76,7 @@ export default function MapView({ onSelectPharmacy, focusPharmacyId, findNearest
   const navigate = useNavigate();
   const isMobile = useMediaQuery((theme: Theme) => theme.breakpoints.down("sm"));
   const popupMaxWidth = isMobile ? 220 : 260;
-  const popupMinWidth = isMobile ? 190 : 200;
+  const popupMinWidth = isMobile ? 150 : 160;
 
   // Keep the favorited set in sync with localStorage, including when a
   // favorite is toggled elsewhere (e.g. the Home page chip, the Favorites page).
@@ -202,7 +202,10 @@ export default function MapView({ onSelectPharmacy, focusPharmacyId, findNearest
               key={pharmacy._id}
               position={[pharmacy.location.lat, pharmacy.location.lng]}
               eventHandlers={{
-                click: () => {
+                click: (e) => {
+                  // Leaflet's marker <img> can retain focus after a tap, which
+                  // conflicts if any overlay later sets aria-hidden on #root.
+                  (e.originalEvent?.target as HTMLElement)?.blur?.();
                   setSelected(pharmacy);
                   onSelectPharmacy(pharmacy._id, pharmacy.name);
                 },
