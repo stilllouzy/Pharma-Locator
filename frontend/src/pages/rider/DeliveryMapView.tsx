@@ -253,19 +253,25 @@ export default function DeliveryMapView() {
             Live map
           </Typography>
           {selectedDelivery && (
-            <Button
-              variant="contained"
-              size="small"
-              startIcon={<NavigationOutlinedIcon sx={{ fontSize: 15 }} />}
-              href={`[google.com](https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent()
-                selectedDelivery.deliveryAddress
-              )}`}
-              target="_blank"
-              disableElevation
-              sx={{ borderRadius: "8px", textTransform: "none", fontSize: 12, py: 0.5, px: 1.5 }}
-            >
-              Get directions
-            </Button>
+          <Button
+  variant="contained"
+  size="small"
+  startIcon={<NavigationOutlinedIcon sx={{ fontSize: 15 }} />}
+  href={`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(
+    selectedDelivery.deliveryAddress
+  )}`}
+  target="_blank"
+  disableElevation
+  sx={{
+    borderRadius: "8px",
+    textTransform: "none",
+    fontSize: 12,
+    py: 0.5,
+    px: 1.5,
+  }}
+>
+  Get directions
+</Button>
           )}
         </Box>
 
@@ -278,7 +284,7 @@ export default function DeliveryMapView() {
               zoom={14}
               style={{ height: "60vh", width: "100%" }}
             >
-              <TileLayer url="[{s}.tile.openstreetmap.org](https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png)" />
+              <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
               {riderLocation && (
                 <Marker position={riderLocation}>
                   <Popup>You are here</Popup>
