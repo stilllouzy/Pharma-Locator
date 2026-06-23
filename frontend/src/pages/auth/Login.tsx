@@ -40,6 +40,7 @@ const regPasswordRef = useRef<HTMLInputElement>(null);
 
       localStorage.setItem("token", token);
       localStorage.setItem("role", user.role);
+      localStorage.setItem("userId", user.id);
 
       if (user.role === "user") {
         window.location.href = "/user";

@@ -146,7 +146,35 @@ export default function MapView({ onSelectPharmacy, focusPharmacyId, findNearest
   }, [findNearest, userLocation, pharmacies]);
 
   return (
-    <div style={{ height: "100%", width: "100%" }}>
+    <div style={{ height: "100%", width: "100%", position: "relative" }}>
+      {selected && (
+        <button
+          type="button"
+          onClick={() => handleToggleFavoritePharmacy(selected)}
+          aria-label="Toggle favorite pharmacy"
+          style={{
+            position: "absolute",
+            top: 12,
+            right: 12,
+            zIndex: 1000,
+            width: 36,
+            height: 36,
+            borderRadius: "50%",
+            border: "none",
+            backgroundColor: "#fff",
+            boxShadow: "0 2px 8px rgba(13,59,110,0.25)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            cursor: "pointer",
+            fontSize: "1.2rem",
+            color: "#E0457B",
+            padding: 0,
+          }}
+        >
+          {favoritedIds.has(selected._id) ? "♥" : "♡"}
+        </button>
+      )}
       <MapContainer
         center={userLocation || [14.3294, 120.9367]} // fallback: Dasmariñas
         zoom={13}
@@ -184,30 +212,10 @@ export default function MapView({ onSelectPharmacy, focusPharmacyId, findNearest
                 <Popup
                   maxWidth={popupMaxWidth}
                   minWidth={popupMinWidth}
-                  eventHandlers={{
-                    remove: () => setSelected(null),
-                    add: (e) => {
-                      // Leaflet renders popup content as raw DOM, not React —
-                      // React's onClick won't reliably survive Leaflet's own
-                      // open/close DOM management. Bind natively instead,
-                      // once the popup's DOM actually exists.
-                      const container = e.target.getElement?.();
-                      if (!container) return;
-                      const heartBtn = container.querySelector(".pl-popup__heart");
-                      if (heartBtn) {
-                        heartBtn.textContent = favoritedIds.has(pharmacy._id) ? "♥" : "♡";
-                        heartBtn.onclick = () => handleToggleFavoritePharmacy(pharmacy);
-                      }
-                    },
-                  }}
+                  eventHandlers={{ remove: () => setSelected(null) }}
                 >
                   <div className="pl-popup">
-                    <div className="pl-popup__header">
-                      <p className="pl-popup__name">{pharmacy.name}</p>
-                      <button type="button" className="pl-popup__heart" aria-label="Toggle favorite pharmacy">
-                        {favoritedIds.has(pharmacy._id) ? "♥" : "♡"}
-                      </button>
-                    </div>
+                    <p className="pl-popup__name">{pharmacy.name}</p>
                     <p className="pl-popup__address">{pharmacy.address}</p>
 
                     <div className="pl-popup__actions">
