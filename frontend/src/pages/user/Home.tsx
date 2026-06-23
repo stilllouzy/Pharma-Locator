@@ -573,17 +573,18 @@ export default function Home() {
       {/* STICKY CART BAR */}
       {cart.length > 0 && (
         <Box
-          sx={{
-            position: "fixed",
-            bottom: 0,
-            left: 0,
-            right: 0,
-            zIndex: 20,
-            backgroundColor: "#fff",
-            borderTop: "1px solid rgba(13,59,110,0.12)",
-            boxShadow: "0 -4px 20px rgba(13,59,110,0.10)",
-          }}
-        >
+  sx={{
+    position: "sticky",
+    bottom: 0,
+    left: 0,
+    right: 0,
+    zIndex: 20,
+    backgroundColor: "#fff",
+    borderTop: "1px solid rgba(13,59,110,0.12)",
+    boxShadow: "0 -4px 20px rgba(13,59,110,0.10)",
+    mx: -3, // cancel out the page's own horizontal padding so it spans full width
+  }}
+>
           <Collapse in={cartExpanded}>
             <Box sx={{ maxHeight: "40vh", overflowY: "auto", px: 2, pt: 1.5 }}>
               {cart.map((item) => (
