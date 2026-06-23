@@ -349,13 +349,37 @@ export default function MyDeliveries() {
     <Box>
       {/* ── Header ── */}
       <Box sx={{ mb: 2.5 }}>
-        <Typography sx={{ fontSize: 22, fontWeight: 700, color: "primary.main", lineHeight: 1.2 }}>
-          My Deliveries
-        </Typography>
-        <Typography variant="caption" color="text.disabled">
-          Active and ongoing deliveries
-        </Typography>
-      </Box>
+  <Box
+    sx={{
+      display: "flex",
+      alignItems: "center",
+      gap: 1,
+      mb: 0.5,
+    }}
+  >
+    <LocalShippingOutlinedIcon
+      sx={{
+        fontSize: 22,
+        color: "primary.main",
+      }}
+    />
+
+    <Typography
+      sx={{
+        fontSize: 22,
+        fontWeight: 700,
+        color: "primary.main",
+        lineHeight: 1.2,
+      }}
+    >
+      My Deliveries
+    </Typography>
+  </Box>
+
+  <Typography variant="caption" color="text.disabled">
+    Active and ongoing deliveries
+  </Typography>
+</Box>
 
       {/* ── Filter chips ── */}
       <Box
