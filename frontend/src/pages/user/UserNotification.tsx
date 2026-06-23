@@ -6,7 +6,7 @@ import {
   Button,
   Chip,
 } from "@mui/material";
-import NotificationsOutlinedIcon from "@mui/icons-material/NotificationsOutlined";
+import NotificationsNoneOutlinedIcon from "@mui/icons-material/NotificationsNoneOutlined";
 import { useEffect, useState } from "react";
 import api from "../../api/api";
 
@@ -89,7 +89,7 @@ export default function Notifications() {
         mb: 0.25,
       }}
     >
-      <NotificationsOutlinedIcon
+      <NotificationsNoneOutlinedIcon
         sx={{
           color: "primary.main",
           fontSize: 24,

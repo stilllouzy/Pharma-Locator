@@ -185,7 +185,7 @@ export default function Notifications() {
     mb: 0.25,
   }}
 >
-  <NotificationsOutlinedIcon
+  <NotificationsNoneIcon
     sx={{
       color: "primary.main",
       fontSize: 24,
