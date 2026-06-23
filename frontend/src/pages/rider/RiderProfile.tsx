@@ -140,13 +140,14 @@ export default function RiderProfile() {
 
   return (
     <Box>
-      <Box sx={{ mb: 3, justifyContent: "center" }}>
+      <Box sx={{ mb: 3, }}>
   <Box
     sx={{
       display: "flex",
       alignItems: "center",
       gap: 1,
       mb: 0.5,
+      justifyContent: "center",
     }}
   >
     <PersonOutlineIcon
