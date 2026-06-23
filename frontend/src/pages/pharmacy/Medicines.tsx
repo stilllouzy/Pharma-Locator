@@ -10,6 +10,7 @@ import {
 } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
 import type { GridColDef } from "@mui/x-data-grid";
+import MedicationOutlinedIcon from "@mui/icons-material/MedicationOutlined";
 
 export default function Medicines() {
   const [medicines, setMedicines] = useState([]);
@@ -96,10 +97,30 @@ const columns: GridColDef[] = [
     flex: 1,
     renderCell: (params) => (
       <>
-        <Button onClick={() => handleEdit(params.row)}>Edit</Button>
-        <Button color="error" onClick={() => handleDelete(params.row._id)}>
-          Delete
-        </Button>
+       <Button
+  size="small"
+  variant="outlined"
+  sx={{
+    borderRadius: "8px",
+    textTransform: "none",
+  }}
+  onClick={() => handleEdit(params.row)}
+>
+  Edit
+</Button>
+
+<Button
+  size="small"
+  color="error"
+  variant="outlined"
+  sx={{
+    borderRadius: "8px",
+    textTransform: "none",
+  }}
+  onClick={() => handleDelete(params.row._id)}
+>
+  Delete
+</Button>
       </>
     ),
   },
@@ -107,33 +128,102 @@ const columns: GridColDef[] = [
 
   return (
 <Box sx={{ p: 3 }}>
-      <Typography variant="h5" sx={{color : "primary.main"}}>Medicines</Typography>
+      <Box sx={{ mb: 3 }}>
+  <Box
+    sx={{
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      gap: 1,
+      mb: 0.5,
+    }}
+  >
+    <MedicationOutlinedIcon
+      sx={{
+        color: "primary.main",
+        fontSize: 22,
+      }}
+    />
 
-      <Button variant="contained" sx={{ my: 2 }} onClick={() => setOpen(true)}>
-        Add Medicine
-      </Button>
+    <Typography
+      sx={{
+        fontSize: 22,
+        fontWeight: 700,
+        color: "primary.main",
+      }}
+    >
+      Medicines
+    </Typography>
+  </Box>
 
-      <div style={{ height: 400 }}>
-        <DataGrid
-          rows={medicines}
-          columns={columns}
-          getRowId={(row) => row._id}
-        />
-      </div>
+  <Typography
+    variant="caption"
+    color="text.disabled"
+  >
+    Manage your pharmacy inventory
+  </Typography>
+</Box>
+
+      <Button
+  variant="contained"
+  onClick={() => setOpen(true)}
+  disableElevation
+  sx={{
+    mb: 2.5,
+    borderRadius: "10px",
+    textTransform: "none",
+    fontWeight: 600,
+  }}
+>
+  Add Medicine
+</Button>
+      <Card sx={{ borderRadius: 3 }}>
+  <Box sx={{ height: 500 }}>
+    <DataGrid
+  rows={medicines}
+  columns={columns}
+  getRowId={(row) => row._id}
+  sx={{
+    border: 0,
+
+    "& .MuiDataGrid-columnHeaders": {
+      backgroundColor: "#F8FAFC",
+      fontWeight: 700,
+    },
+
+    "& .MuiDataGrid-cell": {
+      borderBottom: "1px solid rgba(0,0,0,0.05)",
+    },
+
+    "& .MuiDataGrid-row:hover": {
+      backgroundColor: "#F9FBFD",
+    },
+  }}
+/>
+  </Box>
+</Card>
 
       {/* MODAL FORM */}
       <Modal open={open} onClose={() => setOpen(false)}>
         <Box
-          sx={{
-            width: 400,
-            bgcolor: "white",
-            p: 3,
-            mx: "auto",
-            mt: "10%",
-            borderRadius: 2,
-          }}
-        >
-          <Typography variant="h6">Add Medicine</Typography>
+  sx={{
+    width: 450,
+    bgcolor: "background.paper",
+    p: 4,
+    mx: "auto",
+    mt: "8%",
+    borderRadius: 3,
+    boxShadow: 24,
+  }}
+>
+          <Typography
+  sx={{
+    fontSize: 20,
+    fontWeight: 700,
+    color: "primary.main",
+    mb: 2,
+  }}
+>Add Medicine</Typography>
 
           <TextField
             fullWidth

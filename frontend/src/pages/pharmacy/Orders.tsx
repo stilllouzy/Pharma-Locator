@@ -39,57 +39,139 @@ export default function Orders() {
 
   return (
     <Box sx={{p:3}}>
-      <Typography variant="h5" sx={{color : "primary.main"}}>
-        Orders
-      </Typography>
+    <Box sx={{ mb: 3 }}>
+  <Typography
+    sx={{
+      fontSize: 22,
+      fontWeight: 700,
+      color: "primary.main",
+    }}
+  >
+    Orders
+  </Typography>
+
+  <Typography
+    variant="caption"
+    color="text.disabled"
+  >
+    Manage customer orders
+  </Typography>
+</Box>
 
       {orders.map((order) => (
-        <Card key={order._id} sx={{ mb: 2 }}>
-          <CardContent>
-            <Typography>
-              <strong>Customer:</strong> {order.user?.name}
-            </Typography>
+  <Card
+    key={order._id}
+    sx={{
+      mb: 2,
+      borderRadius: 3,
+      overflow: "hidden",
+    }}
+  >
+    <CardContent>
+      {/* Header */}
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          mb: 2,
+        }}
+      >
+        <Typography
+          sx={{
+            fontWeight: 700,
+            fontSize: 15,
+          }}
+        >
+          {order.user?.name}
+        </Typography>
 
-            <Typography>
-              <strong>Total:</strong> ₱{order.totalPrice}
-            </Typography>
+        <Typography
+          sx={{
+            fontSize: 12,
+            fontWeight: 700,
+            color: "primary.main",
+            textTransform: "capitalize",
+          }}
+        >
+          {order.status}
+        </Typography>
+      </Box>
 
-            <Typography>
-              <strong>Delivery:</strong> {order.deliveryMethod}
-            </Typography>
+      {/* Delivery info */}
+      <Typography variant="body2" color="text.secondary">
+        Delivery: {order.deliveryMethod}
+      </Typography>
 
-            {order.deliveryAddress && (
-              <Typography>
-                <strong>Address:</strong> {order.deliveryAddress}
-              </Typography>
-            )}
+      {order.deliveryAddress && (
+        <Typography
+          variant="body2"
+          color="text.secondary"
+          sx={{ mt: 0.5 }}
+        >
+          Address: {order.deliveryAddress}
+        </Typography>
+      )}
 
-            <Typography>
-              <strong>Medicines:</strong>
-            </Typography>
+      {/* Medicines */}
+      <Box
+        sx={{
+          mt: 2,
+          pt: 2,
+          borderTop: "1px solid rgba(0,0,0,0.08)",
+          display: "flex",
+          flexWrap: "wrap",
+          gap: 1,
+        }}
+      >
+        {order.items.map((item: any) => (
+          <Box
+            key={item._id}
+            sx={{
+              px: 1,
+              py: 0.5,
+              borderRadius: "8px",
+              backgroundColor: "#F4F7FB",
+              fontSize: 12,
+            }}
+          >
+            {item.medicine?.name} ×{item.quantity}
+          </Box>
+        ))}
+      </Box>
 
-            {order.items.map((item: any) => (
-              <Typography key={item._id}>
-                - {item.medicine?.name} (x{item.quantity})
-              </Typography>
-            ))}
+      {/* Total */}
+      <Typography
+        sx={{
+          mt: 2,
+          fontSize: 18,
+          fontWeight: 700,
+          color: "primary.main",
+        }}
+      >
+        ₱{order.totalPrice.toLocaleString()}
+      </Typography>
 
-            {/* STATUS UPDATE */}
-            <TextField
-              select
-              label="Status"
-              value={order.status}
-              sx={{ mt: 2 }}
-              onChange={(e) => updateStatus(order._id, e.target.value)}
-            >
-              <MenuItem value="pending">Pending</MenuItem>
-              <MenuItem value="paid">Paid</MenuItem>
-              <MenuItem value="delivered">Delivered</MenuItem>
-              <MenuItem value="cancelled">Cancelled</MenuItem>
-            </TextField>
-          </CardContent>
-        </Card>
-      ))}
+      {/* Status Update */}
+      <TextField
+        select
+        fullWidth
+        size="small"
+        label="Update Status"
+        value={order.status}
+        sx={{ mt: 2 }}
+        onChange={(e) =>
+          updateStatus(order._id, e.target.value)
+        }
+      >
+        <MenuItem value="pending">Pending</MenuItem>
+        <MenuItem value="paid">Paid</MenuItem>
+        <MenuItem value="delivered">Delivered</MenuItem>
+        <MenuItem value="cancelled">Cancelled</MenuItem>
+      </TextField>
+    </CardContent>
+  </Card>
+))}
     </Box>
   );
 }
