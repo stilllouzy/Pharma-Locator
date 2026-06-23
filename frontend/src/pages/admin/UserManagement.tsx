@@ -331,7 +331,7 @@ export default function UserManagement() {
         sx={{
           mb: 3,
           display: "flex",
-          justifyContent: "space-between",
+          justifyContent: "center",
           alignItems: "flex-start",
           flexWrap: "wrap",
           gap: 1,
@@ -345,7 +345,7 @@ export default function UserManagement() {
             {users.length} account{users.length !== 1 ? "s" : ""} registered in the system
           </Typography>
         </Box>
-        <Button variant="contained" startIcon={<AddIcon />} onClick={handleOpenModal}>
+        <Button variant="contained" startIcon={<AddIcon />} onClick={handleOpenModal} sx={{position: "absolute"}}>
           Add account
         </Button>
       </Box>

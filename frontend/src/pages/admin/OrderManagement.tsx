@@ -150,7 +150,7 @@ export default function OrderManagement() {
         sx={{
           mb: 3,
           display: "flex",
-          justifyContent: "space-between",
+          justifyContent: "center",
           alignItems: "flex-start",
           flexWrap: "wrap",
           gap: 1,
@@ -168,7 +168,7 @@ export default function OrderManagement() {
         {/* Live count badge */}
         {!loading && (
           <Chip
-            icon={<ShoppingCartIcon sx={{ fontSize: "14px !important" }} />}
+            icon={<ShoppingCartIcon sx={{ fontSize: "14px !important", position: "absolute" }} />}
             label={`${orders.length} order${orders.length !== 1 ? "s" : ""}`}
             size="small"
             sx={{ mt: 0.5, backgroundColor: "#EEF4FB", color: "#0D3B6E", fontWeight: 500 }}

@@ -169,7 +169,7 @@ export default function Notifications() {
         sx={{
           mb: 3,
           display: "flex",
-          justifyContent: "space-between",
+          justifyContent: "center",
           alignItems: "flex-start",
           flexWrap: "wrap",
           gap: 1,
@@ -205,7 +205,7 @@ export default function Notifications() {
             startIcon={<DoneAllIcon />}
             onClick={markAllRead}
             size="small"
-            sx={{ mt: 0.5 }}
+            sx={{ mt: 0.5, position: "absolute" }}
           >
             Mark all as read
           </Button>
