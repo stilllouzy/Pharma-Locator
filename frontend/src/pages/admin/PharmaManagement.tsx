@@ -209,7 +209,7 @@ export default function PharmaManagement() {
       <Box
         sx={{
           mb: 3,
-          position: "relative"
+          position: "relative",
           display: "flex",
           justifyContent: "center",
           alignItems: "flex-start",
