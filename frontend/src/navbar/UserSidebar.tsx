@@ -5,6 +5,7 @@ import MapOutlinedIcon from "@mui/icons-material/MapOutlined";
 import ReceiptLongOutlinedIcon from "@mui/icons-material/ReceiptLongOutlined";
 import DescriptionOutlinedIcon from "@mui/icons-material/DescriptionOutlined";
 import NotificationsNoneOutlinedIcon from "@mui/icons-material/NotificationsNoneOutlined";
+import FavoriteBorderOutlinedIcon from "@mui/icons-material/FavoriteBorderOutlined";
 import LogoutOutlinedIcon from "@mui/icons-material/LogoutOutlined";
 
 export const DRAWER_WIDTH = 248;
@@ -24,6 +25,7 @@ interface NavLinkItem {
 const links: NavLinkItem[] = [
   { label: "Home", path: "/user", icon: HomeOutlinedIcon, end: true },
   { label: "Map", path: "/user/map", icon: MapOutlinedIcon },
+  { label: "Favorites", path: "/user/favorites", icon: FavoriteBorderOutlinedIcon },
   { label: "Orders", path: "/user/orders", icon: ReceiptLongOutlinedIcon },
   { label: "Prescriptions", path: "/user/prescription", icon: DescriptionOutlinedIcon },
   { label: "Notifications", path: "/user/notifications", icon: NotificationsNoneOutlinedIcon },
@@ -221,7 +223,7 @@ export default function UserSidebar({ open, onClose }: SidebarProps) {
         variant="temporary"
         open={open}
         onClose={onClose}
-        ModalProps={{ keepMounted: true }}
+        ModalProps={{ keepMounted: true, disableRestoreFocus: true }}
         sx={{
           "& .MuiDrawer-paper": {
             width: MOBILE_DRAWER_WIDTH,

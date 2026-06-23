@@ -73,8 +73,8 @@ export default function MapView({ onSelectPharmacy, focusPharmacyId, findNearest
 
   const navigate = useNavigate();
   const isMobile = useMediaQuery((theme: Theme) => theme.breakpoints.down("sm"));
-  const popupMaxWidth = isMobile ? 200 : 260;
-  const popupMinWidth = isMobile ? 160 : 200;
+  const popupMaxWidth = isMobile ? 220 : 260;
+  const popupMinWidth = isMobile ? 190 : 200;
 
   const handleToggleFavoritePharmacy = (pharmacy: IPharmacy) => {
     toggleFavoritePharmacy({ _id: pharmacy._id, name: pharmacy.name, address: pharmacy.address });

@@ -7,6 +7,7 @@ import {
   payOrder,
   trackOrder,
   uploadProofOfDelivery,
+  cancelOrder,
 } from "../controllers/orderController";
 import { protect } from "../middleware/authMiddleware";
 import { authorize } from "../middleware/roleMiddleware";
@@ -23,6 +24,7 @@ router.get(
   authorize("user"),
   trackOrder
 );
+router.put("/:id/cancel", protect, authorize("user"), cancelOrder);
 
 // PHARMACY
 router.get("/pharmacy", protect, authorize("pharmacy"), getPharmacyOrders);

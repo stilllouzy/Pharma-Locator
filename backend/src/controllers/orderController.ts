@@ -264,3 +264,61 @@ if (admin) {
     res.status(500).json({ message: "Server error", error });
   }
 };
+// CANCEL ORDER (User)
+export const cancelOrder = async (req: AuthRequest, res: Response) => {
+  try {
+    const { id } = req.params;
+
+    const order = await Order.findById(id).populate("items.medicine");
+
+    if (!order)
+      return res.status(404).json({ message: "Order not found" });
+
+    // SECURITY CHECK — only the order's own user can cancel it
+    if (order.user.toString() !== req.user!.id)
+      return res.status(403).json({ message: "Unauthorized" });
+
+    // ONLY PENDING OR PREPARING ORDERS CAN BE CANCELLED
+    if (order.status !== "pending" && order.status !== "preparing")
+      return res.status(400).json({
+        message: `Order cannot be cancelled once it is ${order.status}.`,
+      });
+
+    // RESTORE STOCK if this order had already been paid (stock was deducted at payment time)
+    if (order.paymentStatus === "paid") {
+      for (const item of order.items as any[]) {
+        const medicine = await Medicine.findById(item.medicine._id);
+        if (!medicine) continue;
+
+        medicine.stock += item.quantity;
+        await medicine.save();
+      }
+
+      order.paymentStatus = "refunded";
+    }
+
+    order.status = "cancelled";
+    await order.save();
+
+    // 🔔 NOTIFY USER
+    await createNotification(
+      order.user.toString(),
+      "Order Cancelled",
+      "Your order has been cancelled.",
+      "order"
+    );
+
+    // 🔔 NOTIFY PHARMACY
+    await createNotification(
+      order.pharmacy.toString(),
+      "Order Cancelled",
+      "A customer has cancelled their order.",
+      "order"
+    );
+
+    res.json({ message: "Order cancelled", order });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Error cancelling order" });
+  }
+};

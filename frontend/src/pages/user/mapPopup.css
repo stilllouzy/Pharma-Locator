@@ -22,12 +22,30 @@
   font-family: inherit;
 }
 
+.pl-popup__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
 .pl-popup__name {
   font-size: 0.92rem;
   font-weight: 600;
   color: #0d3b6e;
   margin: 0 0 4px 0;
   line-height: 1.3;
+}
+
+.pl-popup__heart {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1.1rem;
+  line-height: 1;
+  color: #e0457b;
+  padding: 0;
+  flex-shrink: 0;
 }
 
 .pl-popup__address {

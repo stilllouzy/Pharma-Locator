@@ -5,6 +5,7 @@ import MenuOpenIcon from "@mui/icons-material/MenuOpen";
 import MenuIcon from "@mui/icons-material/Menu";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import Sidebar, { DRAWER_WIDTH, RAIL_WIDTH } from "../navbar/UserSidebar";
+import NotificationBell from "../pages/user/NotifBell";
 
 // USER PAGES
 import Home from "../pages/user/Home";
@@ -126,22 +127,25 @@ export default function UserLayout() {
           </Box>
 
           {/* Right cluster */}
-          <Box
-            sx={{
-              width: 34,
-              height: 34,
-              borderRadius: "50%",
-              backgroundColor: "#0D3B6E",
-              color: "#fff",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              fontSize: 12.5,
-              fontWeight: 600,
-              flexShrink: 0,
-            }}
-          >
-            US
+          <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
+            <NotificationBell />
+            <Box
+              sx={{
+                width: 34,
+                height: 34,
+                borderRadius: "50%",
+                backgroundColor: "#0D3B6E",
+                color: "#fff",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                fontSize: 12.5,
+                fontWeight: 600,
+                flexShrink: 0,
+              }}
+            >
+              US
+            </Box>
           </Box>
         </Toolbar>
       </AppBar>
@@ -166,11 +170,20 @@ export default function UserLayout() {
             <Route
               path="/map"
               element={
-                <MapView
-                  onSelectPharmacy={(id: string, name?: string) =>
-                    console.log("Selected pharmacy:", id, name)
-                  }
-                />
+                <Box
+                  sx={{
+                    height: "calc(100vh - 64px - 48px)",
+                    minHeight: 400,
+                    borderRadius: "12px",
+                    overflow: "hidden",
+                  }}
+                >
+                  <MapView
+                    onSelectPharmacy={(id: string, name?: string) =>
+                      console.log("Selected pharmacy:", id, name)
+                    }
+                  />
+                </Box>
               }
             />
             <Route path="/orders" element={<Orders />} />
