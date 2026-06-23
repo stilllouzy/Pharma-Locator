@@ -106,7 +106,7 @@ export default function Home() {
 
   const [cart, setCart] = useState<ICartItem[]>(() => loadCart());
   const [cartExpanded, setCartExpanded] = useState(false);
-  const [favoritesVersion, setFavoritesVersion] = useState(0);
+  const [, setFavoritesVersion] = useState(0);
 
   const [checkoutOpen, setCheckoutOpen] = useState(false);
   const [deliveryMethod, setDeliveryMethod] = useState("delivery");
