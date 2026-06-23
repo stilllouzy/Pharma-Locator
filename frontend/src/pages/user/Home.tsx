@@ -169,36 +169,48 @@ export default function Home() {
     setSelectedPharmacyName(null);
   };
 
-  // If we arrived from a search result with ?addMedicine=<id>, the medicine's
-  // full data was passed via navigation state (no GET /medicines/:id exists
-  // on the backend) — add it to cart, confirm via snackbar, then strip the
-  // param so refreshing the page doesn't re-add it.
+  // If we arrived from a search result with ?addMedicine=<id>, add it to
+  // cart. We try the navigation state first (instant, no network call) and
+  // fall back to fetching from the backend if that's unavailable — e.g. a
+  // direct link, refresh, or browser back/forward landed here instead.
   useEffect(() => {
     if (!addMedicineId) return;
 
-    const state = location.state as { medicineToAdd?: IMedicine } | null;
-    const medicine = state?.medicineToAdd;
+    const addFromResult = async () => {
+      const state = location.state as { medicineToAdd?: IMedicine } | null;
+      let medicine = state?.medicineToAdd && state.medicineToAdd._id === addMedicineId
+        ? state.medicineToAdd
+        : null;
 
-    if (medicine && medicine._id === addMedicineId) {
-      setCart((prev) => {
-        const existing = prev.find((item) => item._id === medicine._id);
-        if (existing) {
-          return prev.map((item) =>
-            item._id === medicine._id ? { ...item, quantity: item.quantity + 1 } : item
-          );
+      if (!medicine) {
+        try {
+          const res = await api.get(`/medicines/${addMedicineId}`);
+          medicine = res.data;
+        } catch (error) {
+          console.error(error);
+          setSnackbar({ open: true, message: "Couldn't find that medicine. Try again from the list." });
         }
-        return [...prev, { ...medicine, quantity: 1 }];
-      });
-      setSnackbar({ open: true, message: `${medicine.name} added to your cart.` });
-    } else {
-      // Arrived without the expected state (e.g. direct link, refresh, or
-      // browser back/forward) — nothing to add, let the user know gently.
-      setSnackbar({ open: true, message: "Open that medicine from the search results to add it." });
-    }
+      }
 
-    const next = new URLSearchParams(params);
-    next.delete("addMedicine");
-    navigate(`/user?${next.toString()}`, { replace: true, state: {} });
+      if (medicine) {
+        setCart((prev) => {
+          const existing = prev.find((item) => item._id === medicine!._id);
+          if (existing) {
+            return prev.map((item) =>
+              item._id === medicine!._id ? { ...item, quantity: item.quantity + 1 } : item
+            );
+          }
+          return [...prev, { ...medicine!, quantity: 1 }];
+        });
+        setSnackbar({ open: true, message: `${medicine.name} added to your cart.` });
+      }
+
+      const next = new URLSearchParams(params);
+      next.delete("addMedicine");
+      navigate(`/user?${next.toString()}`, { replace: true, state: {} });
+    };
+
+    addFromResult();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [addMedicineId]);
 

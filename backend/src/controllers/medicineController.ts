@@ -119,3 +119,20 @@ export const updateMedicine = async (req: AuthRequest, res: Response) => {
     res.status(500).json({ message: "Error updating medicine" });
   }
 };
+
+export const getMedicineById = async (req: AuthRequest, res: Response) => {
+  try {
+    const { id } = req.params;
+
+    const medicine = await Medicine.findById(id).populate("pharmacy", "name");
+
+    if (!medicine) {
+      return res.status(404).json({ message: "Medicine not found" });
+    }
+
+    res.json(medicine);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Error fetching medicine" });
+  }
+};
