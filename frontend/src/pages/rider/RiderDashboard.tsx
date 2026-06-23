@@ -7,7 +7,7 @@ import {
   Skeleton,
 } from "@mui/material";
 import DashboardOutlinedIcon from "@mui/icons-material/DashboardOutlined";
-import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
+import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutlined";
 import LocalShippingOutlinedIcon from "@mui/icons-material/LocalShippingOutlined";
 import CancelOutlinedIcon from "@mui/icons-material/CancelOutlined";
 import { useEffect, useState } from "react";
