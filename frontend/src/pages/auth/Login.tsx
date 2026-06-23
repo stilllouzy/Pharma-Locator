@@ -79,30 +79,56 @@ const regPasswordRef = useRef<HTMLInputElement>(null);
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
-        backgroundColor: "#f5f5f5",
+       background:
+  "linear-gradient(135deg, #F8FAFC 0%, #EEF4FF 100%)",
       }}
     >
-      <Paper
-        elevation={4}
-        sx={{
-          width: 400,
-          p: 4,
-          borderRadius: 3,
-        }}
-      >
-        <Typography variant="h5" sx={{ textAlign: "center", mb: 2 , fontWeight : 700, color: "primary.main"}}>
-          Pharma Locator System
-        </Typography>
+    <Paper
+  elevation={0}
+  sx={{
+    width: 420,
+    p: 4,
+    borderRadius: 4,
+    border: "1px solid rgba(0,0,0,0.08)",
+    boxShadow: "0 8px 30px rgba(0,0,0,0.06)",
+  }}
+>
+     <Box sx={{ textAlign: "center", mb: 3 }}>
+  <Typography
+    sx={{
+      fontSize: 28,
+      fontWeight: 700,
+      color: "primary.main",
+    }}
+  >
+    Pharma Locator
+  </Typography>
+
+  <Typography
+    variant="body2"
+    color="text.secondary"
+  >
+    Find medicines from nearby pharmacies
+  </Typography>
+</Box>
 
         {/* TABS */}
-        <Tabs
-          value={tab}
-          onChange={(_, newValue) => setTab(newValue)}
-          centered
-        >
-          <Tab label="Login" />
-          <Tab label="Register" />
-        </Tabs>
+       <Tabs
+  value={tab}
+  onChange={(_, value) => setTab(value)}
+  centered
+  sx={{
+    mb: 2,
+
+    "& .MuiTabs-indicator": {
+      height: 3,
+      borderRadius: 10,
+    },
+  }}
+>
+  <Tab label="Login" />
+  <Tab label="Register" />
+</Tabs>
 
         {/* LOGIN FORM */}
         {tab === 0 && (
@@ -111,6 +137,11 @@ const regPasswordRef = useRef<HTMLInputElement>(null);
   fullWidth
   label="Email"
   margin="normal"
+  sx={{
+  "& .MuiOutlinedInput-root": {
+    borderRadius: 2,
+  },
+}}
   onChange={(e) => setEmail(e.target.value)}
   onKeyDown={(e) => e.key === "Enter" && passwordRef.current?.focus()} // ✅
 />
@@ -120,19 +151,31 @@ const regPasswordRef = useRef<HTMLInputElement>(null);
   label="Password"
   type="password"
   margin="normal"
+  sx={{
+  "& .MuiOutlinedInput-root": {
+    borderRadius: 2,
+  },
+}}
   inputRef={passwordRef} // ✅
   onChange={(e) => setPassword(e.target.value)}
   onKeyDown={(e) => e.key === "Enter" && handleLogin()}
 />
 
             <Button
-              fullWidth
-              variant="contained"
-              sx={{ mt: 2 }}
-              onClick={handleLogin}
-            >
-              Login
-            </Button>
+  fullWidth
+  variant="contained"
+  disableElevation
+  sx={{
+    mt: 2,
+    py: 1.2,
+    borderRadius: 2,
+    textTransform: "none",
+    fontWeight: 600,
+  }}
+  onClick={handleLogin}
+>
+  Login
+</Button>
           </>
         )}
 
@@ -151,6 +194,11 @@ const regPasswordRef = useRef<HTMLInputElement>(null);
   fullWidth
   label="Email"
   margin="normal"
+  sx={{
+  "& .MuiOutlinedInput-root": {
+    borderRadius: 2,
+  },
+}}
   inputRef={regEmailRef} // ✅
   onChange={(e) => setRegEmail(e.target.value)}
   onKeyDown={(e) => e.key === "Enter" && regPasswordRef.current?.focus()} // ✅
@@ -161,19 +209,31 @@ const regPasswordRef = useRef<HTMLInputElement>(null);
   label="Password"
   type="password"
   margin="normal"
+  sx={{
+  "& .MuiOutlinedInput-root": {
+    borderRadius: 2,
+  },
+}}
   inputRef={regPasswordRef} // ✅
   onChange={(e) => setRegPassword(e.target.value)}
   onKeyDown={(e) => e.key === "Enter" && handleRegister()}
 />
 
             <Button
-              fullWidth
-              variant="contained"
-              sx={{ mt: 2 }}
-              onClick={handleRegister}
-            >
-              Register
-            </Button>
+  fullWidth
+  variant="contained"
+  disableElevation
+  sx={{
+    mt: 2,
+    py: 1.2,
+    borderRadius: 2,
+    textTransform: "none",
+    fontWeight: 600,
+  }}
+  onClick={handleRegister}
+>
+  Create Account
+</Button>
           </>
         )}
       </Paper>
