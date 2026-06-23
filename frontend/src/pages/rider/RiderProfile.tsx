@@ -140,7 +140,7 @@ export default function RiderProfile() {
 
   return (
     <Box>
-      <Box sx={{ mb: 3 }}>
+      <Box sx={{ mb: 3, justifyContent: "center" }}>
   <Box
     sx={{
       display: "flex",
@@ -161,6 +161,7 @@ export default function RiderProfile() {
         fontSize: 22,
         fontWeight: 700,
         color: "primary.main",
+        alignText: "center"
       }}
     >
       Rider Profile

@@ -146,10 +146,10 @@ export default function DeliveryMapView() {
   return (
     <Box>
       {/* ── Page header ── */}
-      <Box sx={{ mb: 3 }}>
+      <Box sx={{ mb: 3, justifyContent: "center" }}>
         <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 0.5 }}>
           <MapOutlinedIcon sx={{ fontSize: 20, color: "primary.main" }} />
-          <Typography sx={{ fontSize: 22, fontWeight: 700, color: "primary.main" }}>
+          <Typography sx={{ fontSize: 22, fontWeight: 700, color: "primary.main", alignText: "center" }}>
             Delivery Map
           </Typography>
         </Box>

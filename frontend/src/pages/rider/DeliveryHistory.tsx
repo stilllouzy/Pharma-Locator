@@ -332,10 +332,10 @@ export default function DeliveryHistory() {
   return (
     <Box>
       {/* ── Header ── */}
-      <Box sx={{ mb: 2.5 }}>
+      <Box sx={{ mb: 2.5, justifyContent: "center" }}>
         <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 0.5 }}>
           <HistoryOutlinedIcon sx={{ fontSize: 20, color: "primary.main" }} />
-          <Typography sx={{ fontSize: 22, fontWeight: 700, color: "primary.main", lineHeight: 1.2 }}>
+          <Typography sx={{ fontSize: 22, fontWeight: 700, color: "primary.main", lineHeight: 1.2, alignText: "center",}}>
             Delivery History
           </Typography>
         </Box>
