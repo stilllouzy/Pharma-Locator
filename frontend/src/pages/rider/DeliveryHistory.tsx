@@ -392,12 +392,14 @@ export default function DeliveryHistory() {
         value={search}
         onChange={(e) => setSearch(e.target.value)}
         sx={{ mb: 2.5, backgroundColor: "#fff" }}
-        InputProps={{
+       slotProps={{
+        input: {
           startAdornment: (
             <InputAdornment position="start">
               <SearchOutlinedIcon sx={{ fontSize: 19, color: "text.disabled" }} />
             </InputAdornment>
           ),
+         },
         }}
       />
 
