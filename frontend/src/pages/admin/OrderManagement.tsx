@@ -11,6 +11,7 @@ import {
   Skeleton,
   InputAdornment,
 } from "@mui/material";
+import LocalShippingOutlinedIcon from "@mui/icons-material/LocalShippingOutlined";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import PersonIcon from "@mui/icons-material/Person";
 import LocalPharmacyIcon from "@mui/icons-material/LocalPharmacy";
@@ -146,38 +147,75 @@ export default function OrderManagement() {
     <Box sx={{ p: 3, minHeight: "100vh" }}>
 
       {/* Header */}
-      <Box
+ <Box
+  sx={{
+    mb: 3,
+    display: "flex",
+    alignItems: "flex-start",
+    justifyContent: "center",
+    textAlign: "center",
+    position: "relative",
+  }}
+>
+  <Box>
+    <Box
+      sx={{
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        gap: 1,
+        mb: 0.25,
+      }}
+    >
+      <LocalShippingOutlinedIcon
         sx={{
-          mb: 3,
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "flex-start",
-          flexWrap: "wrap",
-          gap: 1,
+          color: "primary.main",
+          fontSize: 24,
+        }}
+      />
+
+      <Typography
+        variant="h2"
+        sx={{
+          fontSize: "1.4rem",
+          fontWeight: 700,
+          color: "primary.main",
         }}
       >
-        <Box>
-          <Typography variant="h2" sx={{ fontSize: "1.4rem", mb: 0.25 }}>
-            Order & Reservation Management
-          </Typography>
-          <Typography variant="subtitle1" sx={{ fontSize: "0.83rem" }}>
-            Track and manage all system orders
-          </Typography>
-        </Box>
+        Order & Reservation Management
+      </Typography>
+    </Box>
 
-        {/* Live count badge */}
-        {!loading && (
-          <Chip
-            icon={<ShoppingCartIcon sx={{ fontSize: "14px !important" }} />}
-            label={`${orders.length} order${orders.length !== 1 ? "s" : ""}`}
-            size="small"
-            sx={{   position: "absolute",
-      right: 0,
-      top: "50%",
-      transform: "translateY(-50%)",mt: 0.5, backgroundColor: "#EEF4FB", color: "#0D3B6E", fontWeight: 500 }}
-          />
-        )}
-      </Box>
+    <Typography
+      variant="subtitle1"
+      color="text.secondary"
+      sx={{ fontSize: "0.83rem" }}
+    >
+      Track and manage all system orders
+    </Typography>
+  </Box>
+
+  {!loading && (
+    <Chip
+      icon={
+        <ShoppingCartIcon
+          sx={{ fontSize: "14px !important" }}
+        />
+      }
+      label={`${orders.length} order${orders.length !== 1 ? "s" : ""}`}
+      size="small"
+      sx={{
+        position: "absolute",
+        right: 0,
+        top: "50%",
+        transform: "translateY(-50%)",
+        backgroundColor: "#EEF4FB",
+        color: "#0D3B6E",
+        fontWeight: 600,
+      }}
+    />
+  )}
+</Box>
 
       {/* Filter */}
       <Box sx={{ mb: 2.5, display: "flex", alignItems: "center", gap: 1 }}>

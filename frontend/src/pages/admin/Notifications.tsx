@@ -170,31 +170,53 @@ export default function Notifications() {
           mb: 3,
           position: "relative",
           display: "flex",
-          justifyContent: "center",
           alignItems: "flex-start",
           flexWrap: "wrap",
           gap: 1,
         }}
       >
         <Box>
-          <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 0.25 }}>
-            <Typography variant="h2" sx={{ fontSize: "1.4rem" }}>
-              Notifications
-            </Typography>
-            {unreadCount > 0 && (
-              <Chip
-                label={`${unreadCount} unread`}
-                size="small"
-                sx={{
-                  backgroundColor: "#0D3B6E",
-                  color: "#fff",
-                  fontWeight: 600,
-                  fontSize: "0.68rem",
-                  height: 20,
-                }}
-              />
-            )}
-          </Box>
+          <Box
+  sx={{
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 1,
+    mb: 0.25,
+  }}
+>
+  <NotificationsOutlinedIcon
+    sx={{
+      color: "primary.main",
+      fontSize: 24,
+    }}
+  />
+
+  <Typography
+    variant="h2"
+    sx={{
+      fontSize: "1.4rem",
+      fontWeight: 700,
+      color: "primary.main",
+    }}
+  >
+    Notifications
+  </Typography>
+
+  {unreadCount > 0 && (
+    <Chip
+      label={`${unreadCount} unread`}
+      size="small"
+      sx={{
+        backgroundColor: "#0D3B6E",
+        color: "#fff",
+        fontWeight: 600,
+        fontSize: "0.68rem",
+        height: 20,
+      }}
+    />
+  )}
+</Box>
           <Typography variant="subtitle1" sx={{ fontSize: "0.83rem" }}>
             System alerts and updates
           </Typography>

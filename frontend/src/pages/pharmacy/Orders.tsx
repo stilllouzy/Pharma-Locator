@@ -8,6 +8,7 @@ import {
   CardContent,
 } from "@mui/material";
 import api from "../../api/api";
+import Inventory2OutlinedIcon from "@mui/icons-material/Inventory2Outlined";
 
 export default function Orders() {
   const [orders, setOrders] = useState<any[]>([]);
@@ -39,16 +40,33 @@ export default function Orders() {
 
   return (
     <Box sx={{p:3}}>
-    <Box sx={{ mb: 3 }}>
-  <Typography
+  <Box sx={{ mb: 3 }}>
+  <Box
     sx={{
-      fontSize: 22,
-      fontWeight: 700,
-      color: "primary.main",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      gap: 1,
+      mb: 0.5,
     }}
   >
-    Orders
-  </Typography>
+    <Inventory2OutlinedIcon
+      sx={{
+        color: "primary.main",
+        fontSize: 22,
+      }}
+    />
+
+    <Typography
+      sx={{
+        fontSize: 22,
+        fontWeight: 700,
+        color: "primary.main",
+      }}
+    >
+      Orders
+    </Typography>
+  </Box>
 
   <Typography
     variant="caption"
@@ -57,7 +75,6 @@ export default function Orders() {
     Manage customer orders
   </Typography>
 </Box>
-
       {orders.map((order) => (
   <Card
     key={order._id}

@@ -10,6 +10,7 @@ import {
   Alert,
   Collapse,
 } from "@mui/material";
+import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
 import PersonIcon from "@mui/icons-material/Person";
 import SecurityIcon from "@mui/icons-material/Security";
 import BuildIcon from "@mui/icons-material/Build";
@@ -167,14 +168,43 @@ export default function SettingsModule() {
     <Box sx={{ p: 3, minHeight: "100vh" }}>
 
       {/* Header */}
-      <Box sx={{ mb: 3 }}>
-        <Typography variant="h2" sx={{ fontSize: "1.4rem", mb: 0.25 }}>
-          System Settings
-        </Typography>
-        <Typography variant="subtitle1" sx={{ fontSize: "0.83rem" }}>
-          Manage system configuration and preferences
-        </Typography>
-      </Box>
+<Box sx={{ mb: 3 }}>
+  <Box
+    sx={{
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      gap: 1,
+      mb: 0.25,
+    }}
+  >
+    <SettingsOutlinedIcon
+      sx={{
+        color: "primary.main",
+        fontSize: 24,
+      }}
+    />
+
+    <Typography
+      variant="h2"
+      sx={{
+        fontSize: "1.4rem",
+      }}
+    >
+      System Settings
+    </Typography>
+  </Box>
+
+  <Typography
+    variant="subtitle1"
+    sx={{
+      fontSize: "0.83rem",
+      textAlign: "center",
+    }}
+  >
+    Manage system configuration and preferences
+  </Typography>
+</Box>
 
       <Box
         sx={{

@@ -15,6 +15,7 @@ import {
   InputAdornment,
   Skeleton,
 } from "@mui/material";
+import StorefrontOutlinedIcon from "@mui/icons-material/StorefrontOutlined";
 import CloseIcon from "@mui/icons-material/Close";
 import AddIcon from "@mui/icons-material/Add";
 import SearchIcon from "@mui/icons-material/Search";
@@ -218,13 +219,41 @@ export default function PharmaManagement() {
         }}
       >
         <Box>
-          <Typography variant="h2" sx={{ fontSize: "1.4rem", mb: 0.25 }}>
-            Pharmacy Management
-          </Typography>
-          <Typography variant="subtitle1" sx={{ fontSize: "0.83rem" }}>
-            {pharmacies.length} registered · {activeCount} active
-          </Typography>
-        </Box>
+  <Box
+    sx={{
+      display: "flex",
+      alignItems: "center",
+      gap: 1,
+      mb: 0.25,
+    }}
+  >
+    <StorefrontOutlinedIcon
+      sx={{
+        color: "primary.main",
+        fontSize: 24,
+      }}
+    />
+
+    <Typography
+      variant="h2"
+      sx={{
+        fontSize: "1.4rem",
+        fontWeight: 700,
+        color: "primary.main",
+      }}
+    >
+      Pharmacy Management
+    </Typography>
+  </Box>
+
+  <Typography
+    variant="subtitle1"
+    color="text.secondary"
+    sx={{ fontSize: "0.83rem" }}
+  >
+    {pharmacies.length} registered · {activeCount} active
+  </Typography>
+</Box>
         <Button
           variant="contained"
           startIcon={<AddIcon />}

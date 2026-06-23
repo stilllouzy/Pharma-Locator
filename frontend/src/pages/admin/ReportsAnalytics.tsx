@@ -7,6 +7,7 @@ import {
   Chip,
   LinearProgress,
 } from "@mui/material";
+import BarChartOutlinedIcon from "@mui/icons-material/BarChartOutlined";
 import PeopleAltIcon from "@mui/icons-material/PeopleAlt";
 import LocalPharmacyIcon from "@mui/icons-material/LocalPharmacy";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
@@ -217,13 +218,42 @@ export default function ReportsAnalytics() {
 
       {/* Header */}
       <Box sx={{ mb: 3 }}>
-        <Typography variant="h2" sx={{ fontSize: "1.4rem", mb: 0.25 }}>
-          Reports & Analytics
-        </Typography>
-        <Typography variant="subtitle1" sx={{ fontSize: "0.83rem" }}>
-          System insights and performance overview
-        </Typography>
-      </Box>
+  <Box
+    sx={{
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      gap: 1,
+      mb: 0.25,
+    }}
+  >
+    <BarChartOutlinedIcon
+      sx={{
+        color: "primary.main",
+        fontSize: 24,
+      }}
+    />
+
+    <Typography
+      variant="h2"
+      sx={{
+        fontSize: "1.4rem",
+        fontWeight: 700,
+        color: "primary.main",
+      }}
+    >
+      Reports & Analytics
+    </Typography>
+  </Box>
+
+  <Typography
+    variant="subtitle1"
+    color="text.secondary"
+    sx={{ fontSize: "0.83rem" }}
+  >
+    System insights and performance overview
+  </Typography>
+</Box>
 
       {/* Overview cards */}
       <Box

@@ -20,6 +20,7 @@ import {
   Snackbar,
   Alert,
 } from "@mui/material";
+import LocationOnOutlinedIcon from "@mui/icons-material/LocationOnOutlined";
 import SearchIcon from "@mui/icons-material/Search";
 import CloseIcon from "@mui/icons-material/Close";
 import AddIcon from "@mui/icons-material/Add";
@@ -300,55 +301,89 @@ export default function Home() {
   return (
     <Box sx={{ pb: cart.length > 0 ? "88px" : 0 }}>
       {/* SEARCH */}
-      <Box sx={{ mb: 2.5 }}>
-        <Typography sx={{ fontWeight: 600, fontSize: "1.1rem", color: "text.primary", mb: 0.25 }}>
-          Find medicine near you
-        </Typography>
-        <Typography variant="body2" color="text.secondary" sx={{ mb: 1.5 }}>
-          Search a medicine or pharmacy, or try "pharmacy near me".
-        </Typography>
+      <Box sx={{ mb: 3 }}>
+  <Box
+    sx={{
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      gap: 1,
+      mb: 0.25,
+    }}
+  >
+    <LocationOnOutlinedIcon
+      sx={{
+        color: "primary.main",
+        fontSize: 24,
+      }}
+    />
 
-        <TextField
-          fullWidth
-          placeholder="Search medicine, pharmacy, or 'near me'"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          onKeyDown={(e) => {
-            if (e.key === "Enter") handleSearchSubmit();
-          }}
-          sx={{
-            backgroundColor: "#fff",
-            borderRadius: "10px",
-            "& .MuiOutlinedInput-root": { borderRadius: "10px" },
-          }}
-          slotProps={{
-            input: {
-              startAdornment: (
-                <InputAdornment position="start">
-                  <SearchIcon sx={{ fontSize: 18, color: "text.secondary" }} />
-                </InputAdornment>
-              ),
-              endAdornment: search.trim() && (
-                <InputAdornment position="end">
-                  <IconButton
-                    size="small"
-                    onClick={handleSearchSubmit}
-                    sx={{
-                      backgroundColor: "#0D3B6E",
-                      color: "#fff",
-                      width: 30,
-                      height: 30,
-                      "&:hover": { backgroundColor: "#0A2E55" },
-                    }}
-                  >
-                    <SearchIcon sx={{ fontSize: 16 }} />
-                  </IconButton>
-                </InputAdornment>
-              ),
-            },
-          }}
-        />
-      </Box>
+    <Typography
+      variant="h2"
+      sx={{
+        fontSize: "1.4rem",
+      }}
+    >
+      Medicine Search
+    </Typography>
+  </Box>
+
+  <Typography
+    variant="subtitle1"
+    sx={{
+      fontSize: "0.83rem",
+      textAlign: "center",
+      mb: 2,
+    }}
+  >
+    Find medicines and nearby pharmacies
+  </Typography>
+
+  <TextField
+    fullWidth
+    placeholder="Search medicine, pharmacy, or 'near me'"
+    value={search}
+    onChange={(e) => setSearch(e.target.value)}
+    onKeyDown={(e) => {
+      if (e.key === "Enter") handleSearchSubmit();
+    }}
+    sx={{
+      backgroundColor: "#fff",
+      borderRadius: "10px",
+      "& .MuiOutlinedInput-root": {
+        borderRadius: "10px",
+      },
+    }}
+    slotProps={{
+      input: {
+        startAdornment: (
+          <InputAdornment position="start">
+            <SearchIcon sx={{ fontSize: 18, color: "text.secondary" }} />
+          </InputAdornment>
+        ),
+        endAdornment: search.trim() && (
+          <InputAdornment position="end">
+            <IconButton
+              size="small"
+              onClick={handleSearchSubmit}
+              sx={{
+                backgroundColor: "#0D3B6E",
+                color: "#fff",
+                width: 30,
+                height: 30,
+                "&:hover": {
+                  backgroundColor: "#0A2E55",
+                },
+              }}
+            >
+              <SearchIcon sx={{ fontSize: 16 }} />
+            </IconButton>
+          </InputAdornment>
+        ),
+      },
+    }}
+  />
+</Box>
 
       {/* MAP */}
       <Card sx={{ borderRadius: "12px", mb: 2.5, overflow: "hidden" }}>

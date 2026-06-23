@@ -9,6 +9,7 @@ import {
 } from "@mui/icons-material";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import DashboardOutlinedIcon from "@mui/icons-material/DashboardOutlined";
 import api from "../../api/api";
 
 interface DashboardData {
@@ -184,9 +185,42 @@ export default function Dashboard() {
       {/* Header */}
       <Box sx={{ mb: 3.5, display: "flex", alignItems: "flex-start", justifyContent: "center", textAlign: "center", position: "relative" }}>
         <Box>
-          <Typography variant="h2" sx={{ fontSize: "1.4rem", mb: 0.25 }}>Admin Dashboard</Typography>
-          <Typography variant="subtitle1" sx={{ fontSize: "0.82rem" }}>System overview and monitoring</Typography>
-        </Box>
+  <Box
+    sx={{
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      gap: 1,
+      mb: 0.25,
+    }}
+  >
+    <DashboardOutlinedIcon
+      sx={{
+        color: "primary.main",
+        fontSize: 24,
+      }}
+    />
+
+    <Typography
+      variant="h2"
+      sx={{
+        fontSize: "1.4rem",
+        fontWeight: 700,
+        color: "primary.main",
+      }}
+    >
+      Admin Dashboard
+    </Typography>
+  </Box>
+
+  <Typography
+    variant="subtitle1"
+    color="text.secondary"
+    sx={{ fontSize: "0.82rem" }}
+  >
+    System overview and monitoring
+  </Typography>
+</Box>
         <Chip icon={<FiberManualRecord sx={{ fontSize: "10px !important" }} />} label="System active" color="success" size="small"  sx={{
       position: "absolute",
       right: 0,

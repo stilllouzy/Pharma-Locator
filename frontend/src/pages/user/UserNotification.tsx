@@ -6,6 +6,7 @@ import {
   Button,
   Chip,
 } from "@mui/material";
+import NotificationsOutlinedIcon from "@mui/icons-material/NotificationsOutlined";
 import { useEffect, useState } from "react";
 import api from "../../api/api";
 
@@ -69,24 +70,67 @@ export default function Notifications() {
     <Box sx={{ p: 3 }}>
 
       {/* HEADER */}
-      <Box sx={{ mb: 2, position: "relative", display: "flex", justifyContent: "center", alignItems: "center" }}>
-        <Box>
-          <Typography sx={{ fontSize: "1.1rem", fontWeight: "bold",  color : "primary.main" }}>
-            Notifications
-          </Typography>
-          <Typography variant="caption" color="gray">
-            Your order and delivery updates
-          </Typography>
-        </Box>
-        {notifications.length > 0 && (
-          <Button variant="outlined" onClick={markAllRead} sx={{
+    <Box
+  sx={{
+    mb: 2,
+    position: "relative",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+  }}
+>
+  <Box>
+    <Box
+      sx={{
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        gap: 1,
+        mb: 0.25,
+      }}
+    >
+      <NotificationsOutlinedIcon
+        sx={{
+          color: "primary.main",
+          fontSize: 24,
+        }}
+      />
+
+      <Typography
+        sx={{
+          fontSize: "1.4rem",
+          fontWeight: 700,
+          color: "primary.main",
+        }}
+      >
+        Notifications
+      </Typography>
+    </Box>
+
+    <Typography
+      variant="subtitle1"
+      sx={{
+        fontSize: "0.83rem",
+        textAlign: "center",
+      }}
+    >
+      Your order and delivery updates
+    </Typography>
+  </Box>
+
+  {notifications.length > 0 && (
+    <Button
+      variant="outlined"
+      onClick={markAllRead}
+      sx={{
         position: "absolute",
         right: 0,
-      }}>
-            Mark All as Read
-          </Button>
-        )}
-      </Box>
+      }}
+    >
+      Mark All as Read
+    </Button>
+  )}
+</Box>
 
       {loading && <Typography color="gray">Loading...</Typography>}
 

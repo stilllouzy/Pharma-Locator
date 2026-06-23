@@ -24,6 +24,7 @@ import {
   InputLabel,
   FormHelperText,
 } from "@mui/material";
+import PeopleOutlinedIcon from "@mui/icons-material/PeopleOutlined";
 import SearchIcon from "@mui/icons-material/Search";
 import PeopleAltIcon from "@mui/icons-material/PeopleAlt";
 import PersonIcon from "@mui/icons-material/Person";
@@ -327,34 +328,69 @@ export default function UserManagement() {
     <Box sx={{ p: 3, minHeight: "100vh" }}>
 
       {/* Header */}
-      <Box
+     <Box
+  sx={{
+    mb: 3,
+    position: "relative",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "flex-start",
+    flexWrap: "wrap",
+    gap: 1,
+  }}
+>
+  <Box>
+    <Box
+      sx={{
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        gap: 1,
+        mb: 0.25,
+      }}
+    >
+      <PeopleOutlinedIcon
         sx={{
-          mb: 3,
-          position: "relative",
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "flex-start",
-          flexWrap: "wrap",
-          gap: 1,
+          color: "primary.main",
+          fontSize: 24,
+        }}
+      />
+
+      <Typography
+        variant="h2"
+        sx={{
+          fontSize: "1.4rem",
         }}
       >
-        <Box>
-          <Typography variant="h2" sx={{ fontSize: "1.4rem", mb: 0.25 }}>
-            User Management
-          </Typography>
-          <Typography variant="subtitle1" sx={{ fontSize: "0.83rem" }}>
-            {users.length} account{users.length !== 1 ? "s" : ""} registered in the system
-          </Typography>
-        </Box>
-        <Button variant="contained" startIcon={<AddIcon />} onClick={handleOpenModal} sx={{
+        User Management
+      </Typography>
+    </Box>
+
+    <Typography
+      variant="subtitle1"
+      sx={{
+        fontSize: "0.83rem",
+        textAlign: "center",
+      }}
+    >
+      {users.length} account{users.length !== 1 ? "s" : ""} registered in the system
+    </Typography>
+  </Box>
+
+  <Button
+    variant="contained"
+    startIcon={<AddIcon />}
+    onClick={handleOpenModal}
+    sx={{
       position: "absolute",
       right: 0,
       top: "50%",
       transform: "translateY(-50%)",
-    }}>
-          Add account
-        </Button>
-      </Box>
+    }}
+  >
+    Add account
+  </Button>
+</Box>
 
       {/* Search */}
       <TextField

@@ -96,14 +96,43 @@ export default function Orders() {
 
   return (
     <Box>
-      <Box sx={{ mb: 2.5 }}>
-        <Typography sx={{ fontWeight: 600, fontSize: "1.1rem", color: "text.primary", mb: 0.25 }}>
-          My Orders
-        </Typography>
-        <Typography variant="body2" color="text.secondary">
-          Track your orders and cancel anytime before they're delivered.
-        </Typography>
-      </Box>
+   <Box sx={{ mb: 2.5 }}>
+  <Box
+    sx={{
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      gap: 1,
+      mb: 0.25,
+    }}
+  >
+    <ReceiptLongOutlinedIcon
+      sx={{
+        color: "primary.main",
+        fontSize: 24,
+      }}
+    />
+
+    <Typography
+      variant="h2"
+      sx={{
+        fontSize: "1.4rem",
+      }}
+    >
+      My Orders
+    </Typography>
+  </Box>
+
+  <Typography
+    variant="subtitle1"
+    sx={{
+      fontSize: "0.83rem",
+      textAlign: "center",
+    }}
+  >
+    Track your orders and cancel anytime before they're delivered.
+  </Typography>
+</Box>
 
       {loading && (
         <Box sx={{ display: "flex", flexDirection: "column", gap: 1.5 }}>

@@ -9,6 +9,7 @@ import {
   FormControl,
   InputLabel,
 } from "@mui/material";
+import DescriptionOutlinedIcon from "@mui/icons-material/DescriptionOutlined";
 import { useEffect, useState } from "react";
 import api from "../../api/api";
 
@@ -113,13 +114,43 @@ export default function Prescription() {
 
       {/* HEADER */}
       <Box sx={{ mb: 3 }}>
-        <Typography sx={{ fontSize: "1.1rem", fontWeight: "bold", color : "primary.main"  }}>
-          My Prescriptions
-        </Typography>
-        <Typography variant="caption" color="gray">
-          Upload and track your prescription status
-        </Typography>
-      </Box>
+  <Box
+    sx={{
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      gap: 1,
+      mb: 0.25,
+    }}
+  >
+    <DescriptionOutlinedIcon
+      sx={{
+        color: "primary.main",
+        fontSize: 24,
+      }}
+    />
+
+    <Typography
+      sx={{
+        fontSize: "1.4rem",
+        fontWeight: 700,
+        color: "primary.main",
+      }}
+    >
+      My Prescriptions
+    </Typography>
+  </Box>
+
+  <Typography
+    variant="subtitle1"
+    sx={{
+      fontSize: "0.83rem",
+      textAlign: "center",
+    }}
+  >
+    Upload and track your prescription status
+  </Typography>
+</Box>
 
       {/* UPLOAD FORM */}
       <Card sx={{ mb: 3, borderRadius: 3 }}>

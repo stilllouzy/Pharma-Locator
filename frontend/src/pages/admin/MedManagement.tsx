@@ -10,6 +10,7 @@ import {
   Skeleton,
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
+import MedicationOutlinedIcon from "@mui/icons-material/MedicationOutlined";
 import MedicalServicesIcon from "@mui/icons-material/MedicalServices";
 import LocalPharmacyIcon from "@mui/icons-material/LocalPharmacy";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -76,15 +77,43 @@ export default function MedManagement() {
     <Box sx={{ p: 3, minHeight: "100vh" }}>
 
       {/* Header */}
-      <Box sx={{ mb: 3 }}>
-        <Typography variant="h2" sx={{ fontSize: "1.4rem", mb: 0.25 }}>
-          Medicine Management
-        </Typography>
-        <Typography variant="subtitle1" sx={{ fontSize: "0.83rem" }}>
-          Monitor all medicines across all pharmacies
-        </Typography>
-      </Box>
+    <Box sx={{ mb: 3 }}>
+  <Box
+    sx={{
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      gap: 1,
+      mb: 0.25,
+    }}
+  >
+    <MedicationOutlinedIcon
+      sx={{
+        color: "primary.main",
+        fontSize: 24,
+      }}
+    />
 
+    <Typography
+      variant="h2"
+      sx={{
+        fontSize: "1.4rem",
+        fontWeight: 700,
+        color: "primary.main",
+      }}
+    >
+      Medicine Management
+    </Typography>
+  </Box>
+
+  <Typography
+    variant="subtitle1"
+    color="text.secondary"
+    sx={{ fontSize: "0.83rem" }}
+  >
+    Monitor all medicines across all pharmacies
+  </Typography>
+</Box>
       {/* Search */}
       <TextField
         fullWidth

@@ -1,5 +1,6 @@
 import { Box, Typography, Card, CardContent, IconButton, Tabs, Tab } from "@mui/material";
 import FavoriteIcon from "@mui/icons-material/Favorite";
+import FavoriteBorderOutlinedIcon from "@mui/icons-material/FavoriteBorderOutlined";
 import MedicalServicesOutlinedIcon from "@mui/icons-material/MedicalServicesOutlined";
 import LocalPharmacyOutlinedIcon from "@mui/icons-material/LocalPharmacyOutlined";
 import { useEffect, useState } from "react";
@@ -46,14 +47,43 @@ export default function Favorites() {
 
   return (
     <Box>
-      <Box sx={{ mb: 2 }}>
-        <Typography sx={{ fontWeight: 600, fontSize: "1.1rem", color: "text.primary", mb: 0.25 }}>
-          Favorites
-        </Typography>
-        <Typography variant="body2" color="text.secondary">
-          Medicines you take often and pharmacies you trust.
-        </Typography>
-      </Box>
+    <Box sx={{ mb: 2 }}>
+  <Box
+    sx={{
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      gap: 1,
+      mb: 0.25,
+    }}
+  >
+    <FavoriteBorderOutlinedIcon
+      sx={{
+        color: "primary.main",
+        fontSize: 24,
+      }}
+    />
+
+    <Typography
+      variant="h2"
+      sx={{
+        fontSize: "1.4rem",
+      }}
+    >
+      Favorites
+    </Typography>
+  </Box>
+
+  <Typography
+    variant="subtitle1"
+    sx={{
+      fontSize: "0.83rem",
+      textAlign: "center",
+    }}
+  >
+    Medicines you take often and pharmacies you trust.
+  </Typography>
+</Box>
 
       <Tabs
         value={tab}
