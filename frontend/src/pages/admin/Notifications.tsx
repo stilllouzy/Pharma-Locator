@@ -164,81 +164,85 @@ export default function Notifications() {
   return (
     <Box sx={{ p: 3, minHeight: "100vh" }}>
 
-      {/* Header */}
       <Box
-        sx={{
-          mb: 3,
-          position: "relative",
-          display: "flex",
-          alignItems: "flex-start",
-          flexWrap: "wrap",
-          gap: 1,
-        }}
-      >
-        <Box>
-          <Box
   sx={{
+    mb: 3,
+    position: "relative",
     display: "flex",
-    alignItems: "center",
     justifyContent: "center",
-    gap: 1,
-    mb: 0.25,
+    alignItems: "center",
   }}
 >
-  <NotificationsNoneIcon
-    sx={{
-      color: "primary.main",
-      fontSize: 24,
-    }}
-  />
+  <Box sx={{ textAlign: "center" }}>
+    <Box
+      sx={{
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        gap: 1,
+        mb: 0.25,
+      }}
+    >
+      <NotificationsNoneIcon
+        sx={{
+          color: "primary.main",
+          fontSize: 24,
+        }}
+      />
 
-  <Typography
-    variant="h2"
-    sx={{
-      fontSize: "1.4rem",
-      fontWeight: 700,
-      color: "primary.main",
-    }}
-  >
-    Notifications
-  </Typography>
+      <Typography
+        variant="h2"
+        sx={{
+          fontSize: "1.4rem",
+          fontWeight: 700,
+          color: "primary.main",
+        }}
+      >
+        Notifications
+      </Typography>
 
-  {unreadCount > 0 && (
-    <Chip
-      label={`${unreadCount} unread`}
+      {unreadCount > 0 && (
+        <Chip
+          label={`${unreadCount} unread`}
+          size="small"
+          sx={{
+            backgroundColor: "#0D3B6E",
+            color: "#fff",
+            fontWeight: 600,
+            fontSize: "0.68rem",
+            height: 20,
+          }}
+        />
+      )}
+    </Box>
+
+    <Typography
+      variant="subtitle1"
+      sx={{
+        fontSize: "0.83rem",
+      }}
+    >
+      System alerts and updates
+    </Typography>
+  </Box>
+
+  {notifications.length > 0 && (
+    <Button
+      variant="outlined"
+      startIcon={<DoneAllIcon />}
+      onClick={markAllRead}
       size="small"
       sx={{
-        backgroundColor: "#0D3B6E",
-        color: "#fff",
-        fontWeight: 600,
-        fontSize: "0.68rem",
-        height: 20,
+        position: "absolute",
+        right: 0,
+        top: "50%",
+        transform: "translateY(-50%)",
       }}
-    />
+    >
+      Mark all as read
+    </Button>
   )}
 </Box>
-          <Typography variant="subtitle1" sx={{ fontSize: "0.83rem" }}>
-            System alerts and updates
-          </Typography>
-        </Box>
-
-        {notifications.length > 0 && (
-          <Button
-            variant="outlined"
-            startIcon={<DoneAllIcon />}
-            onClick={markAllRead}
-            size="small"
-              sx={{
-      position: "absolute",
-      right: 0,
-      top: "50%",
-      transform: "translateY(-50%)",
-    }}
-          >
-            Mark all as read
-          </Button>
-        )}
-      </Box>
 
       {/* Loading skeletons */}
       {loading && (
