@@ -80,7 +80,7 @@ export default function Orders() {
         <Typography
           sx={{
             fontWeight: 700,
-            fontSize: 15,
+            fontSize: 19,
           }}
         >
           {order.user?.name}
