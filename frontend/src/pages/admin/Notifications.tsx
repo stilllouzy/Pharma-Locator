@@ -205,7 +205,7 @@ export default function Notifications() {
             startIcon={<DoneAllIcon />}
             onClick={markAllRead}
             size="small"
-            sx={{ mt: 0.5, position: "absolute" }}
+            sx={{ mt: 0.5 }}
           >
             Mark all as read
           </Button>

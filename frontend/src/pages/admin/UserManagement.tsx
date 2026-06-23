@@ -345,7 +345,7 @@ export default function UserManagement() {
             {users.length} account{users.length !== 1 ? "s" : ""} registered in the system
           </Typography>
         </Box>
-        <Button variant="contained" startIcon={<AddIcon />} onClick={handleOpenModal} sx={{position: "absolute"}}>
+        <Button variant="contained" startIcon={<AddIcon />} onClick={handleOpenModal}>
           Add account
         </Button>
       </Box>
