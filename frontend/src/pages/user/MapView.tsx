@@ -5,7 +5,7 @@ import L from "leaflet";
 import { useNavigate } from "react-router-dom";
 import { useMediaQuery, type Theme } from "@mui/material";
 import "./mapPopup.css";
-import { isPharmacyFavorited, toggleFavoritePharmacy, notifyFavoritesChanged } from "../../utils/favorites";
+import { toggleFavoritePharmacy, notifyFavoritesChanged, loadFavorites, FAVORITES_CHANGED_EVENT } from "../../utils/favorites";
 
 // Fix Leaflet's default marker icon paths, which break under bundlers like Vite.
 import markerIcon2x from "leaflet/dist/images/marker-icon-2x.png";
@@ -69,17 +69,27 @@ export default function MapView({ onSelectPharmacy, focusPharmacyId, findNearest
   const [userLocation, setUserLocation] = useState<[number, number] | null>(null);
   const [selected, setSelected] = useState<IPharmacy | null>(null);
   const [recenterTo, setRecenterTo] = useState<[number, number] | null>(null);
-  const [, setFavoritesVersion] = useState(0);
+  const [favoritedIds, setFavoritedIds] = useState<Set<string>>(
+    () => new Set(loadFavorites().pharmacies.map((p) => p._id))
+  );
 
   const navigate = useNavigate();
   const isMobile = useMediaQuery((theme: Theme) => theme.breakpoints.down("sm"));
   const popupMaxWidth = isMobile ? 220 : 260;
   const popupMinWidth = isMobile ? 190 : 200;
 
+  // Keep the favorited set in sync with localStorage, including when a
+  // favorite is toggled elsewhere (e.g. the Home page chip, the Favorites page).
+  useEffect(() => {
+    const sync = () => setFavoritedIds(new Set(loadFavorites().pharmacies.map((p) => p._id)));
+    window.addEventListener(FAVORITES_CHANGED_EVENT, sync);
+    return () => window.removeEventListener(FAVORITES_CHANGED_EVENT, sync);
+  }, []);
+
   const handleToggleFavoritePharmacy = (pharmacy: IPharmacy) => {
     toggleFavoritePharmacy({ _id: pharmacy._id, name: pharmacy.name, address: pharmacy.address });
     notifyFavoritesChanged();
-    setFavoritesVersion((v) => v + 1);
+    setFavoritedIds(new Set(loadFavorites().pharmacies.map((p) => p._id)));
   };
 
   // Get the user's current location, falling back silently if denied.
@@ -157,62 +167,64 @@ export default function MapView({ onSelectPharmacy, focusPharmacyId, findNearest
           </Marker>
         )}
 
-        {pharmacies.map((pharmacy) => (
-          <Marker
-            key={pharmacy._id}
-            position={[pharmacy.location.lat, pharmacy.location.lng]}
-            eventHandlers={{
-              click: () => {
-                setSelected(pharmacy);
-                onSelectPharmacy(pharmacy._id, pharmacy.name);
-              },
-            }}
-          />
-        ))}
-
-        {selected && (
-          <Popup
-            position={[selected.location.lat, selected.location.lng]}
-            maxWidth={popupMaxWidth}
-            minWidth={popupMinWidth}
-            eventHandlers={{ remove: () => setSelected(null) }}
-          >
-            <div className="pl-popup">
-              <div className="pl-popup__header">
-                <p className="pl-popup__name">{selected.name}</p>
-                <button
-                  className="pl-popup__heart"
-                  onClick={() => handleToggleFavoritePharmacy(selected)}
-                  aria-label="Toggle favorite pharmacy"
+        {pharmacies.map((pharmacy) => {
+          const isSelected = selected?._id === pharmacy._id;
+          return (
+            <Marker
+              key={pharmacy._id}
+              position={[pharmacy.location.lat, pharmacy.location.lng]}
+              eventHandlers={{
+                click: () => {
+                  setSelected(pharmacy);
+                  onSelectPharmacy(pharmacy._id, pharmacy.name);
+                },
+              }}
+            >
+              {isSelected && (
+                <Popup
+                  maxWidth={popupMaxWidth}
+                  minWidth={popupMinWidth}
+                  eventHandlers={{ remove: () => setSelected(null) }}
                 >
-                  {isPharmacyFavorited(selected._id) ? "♥" : "♡"}
-                </button>
-              </div>
-              <p className="pl-popup__address">{selected.address}</p>
+                  <div className="pl-popup">
+                    <div className="pl-popup__header">
+                      <p className="pl-popup__name">{pharmacy.name}</p>
+                      <button
+                        className="pl-popup__heart"
+                        onClick={() => handleToggleFavoritePharmacy(pharmacy)}
+                        aria-label="Toggle favorite pharmacy"
+                      >
+                        {favoritedIds.has(pharmacy._id) ? "♥" : "♡"}
+                      </button>
+                    </div>
+                    <p className="pl-popup__address">{pharmacy.address}</p>
 
-              <div className="pl-popup__actions">
-                <button
-                  className="pl-popup__button"
-                  onClick={() => {
-                    onSelectPharmacy(selected._id, selected.name);
-                    navigate(`/user?pharmacy=${selected._id}`);
-                  }}
-                >
-                  View medicines
-                </button>
+                    <div className="pl-popup__actions">
+                      <button
+                        className="pl-popup__button"
+                        onClick={() => {
+                          onSelectPharmacy(pharmacy._id, pharmacy.name);
+                          navigate(`/user?pharmacy=${pharmacy._id}`);
+                        }}
+                      >
+                        View medicines
+                      </button>
 
-                <a
-                  className="pl-popup__link"
-                  href={`https://www.google.com/maps/dir/?api=1&destination=${selected.location.lat},${selected.location.lng}`}
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  Get directions
-                </a>
-              </div>
-            </div>
-          </Popup>
-        )}
+                      <a
+                        className="pl-popup__link"
+                        href={`https://www.google.com/maps/dir/?api=1&destination=${pharmacy.location.lat},${pharmacy.location.lng}`}
+                        target="_blank"
+                        rel="noreferrer"
+                      >
+                        Get directions
+                      </a>
+                    </div>
+                  </div>
+                </Popup>
+              )}
+            </Marker>
+          );
+        })}
       </MapContainer>
     </div>
   );
