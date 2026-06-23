@@ -182,12 +182,12 @@ export default function Dashboard() {
   return (
     <Box sx={{ p: 3, minHeight: "100vh" }}>
       {/* Header */}
-      <Box sx={{ mb: 3.5, display: "flex", alignItems: "flex-start", justifyContent: "center" }}>
+      <Box sx={{ mb: 3.5, display: "flex", alignItems: "flex-start", justifyContent: "center", textAlign: "center", position: "relative" }}>
         <Box>
           <Typography variant="h2" sx={{ fontSize: "1.4rem", mb: 0.25 }}>Admin Dashboard</Typography>
           <Typography variant="subtitle1" sx={{ fontSize: "0.82rem" }}>System overview and monitoring</Typography>
         </Box>
-        <Chip icon={<FiberManualRecord sx={{ fontSize: "10px !important" }} />} label="System active" color="success" size="small" sx={{ mt: 0.5 }} />
+        <Chip icon={<FiberManualRecord sx={{ fontSize: "10px !important" }} />} label="System active" color="success" size="small" sx={{ mt: 0.5 , position: "absolute"}} />
       </Box>
 
       {/* KPI cards */}
