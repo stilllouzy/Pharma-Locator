@@ -33,7 +33,7 @@ import LocalPharmacyOutlinedIcon from "@mui/icons-material/LocalPharmacyOutlined
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import { useEffect, useMemo, useState } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams, useLocation } from "react-router-dom";
 import api from "../../api/api";
 import MapView from "../user/MapView";
 import {
@@ -90,6 +90,7 @@ function saveCart(cart: ICartItem[]) {
 
 export default function Home() {
   const navigate = useNavigate();
+  const location = useLocation();
   const [params] = useSearchParams();
   const pharmacyIdFromMap = params.get("pharmacy");
   const addMedicineId = params.get("addMedicine");
@@ -157,42 +158,47 @@ export default function Home() {
     setSelectedPharmacyName(name ?? null);
   };
 
+  const handleSearchSubmit = () => {
+    const trimmed = search.trim();
+    if (!trimmed) return;
+    navigate(`/user/results?q=${encodeURIComponent(trimmed)}`);
+  };
+
   const clearPharmacyFilter = () => {
     setSelectedPharmacy(null);
     setSelectedPharmacyName(null);
   };
 
-  // If we arrived from a search result with ?addMedicine=<id>, fetch that
-  // medicine, add it to cart, confirm via snackbar, then strip the param so
-  // refreshing the page doesn't re-add it.
+  // If we arrived from a search result with ?addMedicine=<id>, the medicine's
+  // full data was passed via navigation state (no GET /medicines/:id exists
+  // on the backend) — add it to cart, confirm via snackbar, then strip the
+  // param so refreshing the page doesn't re-add it.
   useEffect(() => {
     if (!addMedicineId) return;
 
-    const addFromResult = async () => {
-      try {
-        const res = await api.get(`/medicines/${addMedicineId}`);
-        const medicine: IMedicine = res.data;
-        setCart((prev) => {
-          const existing = prev.find((item) => item._id === medicine._id);
-          if (existing) {
-            return prev.map((item) =>
-              item._id === medicine._id ? { ...item, quantity: item.quantity + 1 } : item
-            );
-          }
-          return [...prev, { ...medicine, quantity: 1 }];
-        });
-        setSnackbar({ open: true, message: `${medicine.name} added to your cart.` });
-      } catch (error) {
-        console.error(error);
-        setSnackbar({ open: true, message: "Couldn't add that medicine. Try again from the list." });
-      } finally {
-        const next = new URLSearchParams(params);
-        next.delete("addMedicine");
-        navigate(`/user?${next.toString()}`, { replace: true });
-      }
-    };
+    const state = location.state as { medicineToAdd?: IMedicine } | null;
+    const medicine = state?.medicineToAdd;
 
-    addFromResult();
+    if (medicine && medicine._id === addMedicineId) {
+      setCart((prev) => {
+        const existing = prev.find((item) => item._id === medicine._id);
+        if (existing) {
+          return prev.map((item) =>
+            item._id === medicine._id ? { ...item, quantity: item.quantity + 1 } : item
+          );
+        }
+        return [...prev, { ...medicine, quantity: 1 }];
+      });
+      setSnackbar({ open: true, message: `${medicine.name} added to your cart.` });
+    } else {
+      // Arrived without the expected state (e.g. direct link, refresh, or
+      // browser back/forward) — nothing to add, let the user know gently.
+      setSnackbar({ open: true, message: "Open that medicine from the search results to add it." });
+    }
+
+    const next = new URLSearchParams(params);
+    next.delete("addMedicine");
+    navigate(`/user?${next.toString()}`, { replace: true, state: {} });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [addMedicineId]);
 
@@ -296,9 +302,7 @@ export default function Home() {
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           onKeyDown={(e) => {
-            if (e.key === "Enter" && search.trim()) {
-              navigate(`/user/results?q=${encodeURIComponent(search.trim())}`);
-            }
+            if (e.key === "Enter") handleSearchSubmit();
           }}
           sx={{
             backgroundColor: "#fff",
@@ -310,6 +314,23 @@ export default function Home() {
               startAdornment: (
                 <InputAdornment position="start">
                   <SearchIcon sx={{ fontSize: 18, color: "text.secondary" }} />
+                </InputAdornment>
+              ),
+              endAdornment: search.trim() && (
+                <InputAdornment position="end">
+                  <IconButton
+                    size="small"
+                    onClick={handleSearchSubmit}
+                    sx={{
+                      backgroundColor: "#0D3B6E",
+                      color: "#fff",
+                      width: 30,
+                      height: 30,
+                      "&:hover": { backgroundColor: "#0A2E55" },
+                    }}
+                  >
+                    <SearchIcon sx={{ fontSize: 16 }} />
+                  </IconButton>
                 </InputAdornment>
               ),
             },

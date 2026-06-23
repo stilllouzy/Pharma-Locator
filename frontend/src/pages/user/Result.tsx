@@ -13,7 +13,7 @@ import NearMeOutlinedIcon from "@mui/icons-material/NearMeOutlined";
 import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import api from "../../api/api";
-import { isNearestQuery } from "../../utils/searchintent";
+import { isNearestQuery } from "../../utils/searchIntent";
 
 interface IMedicineResult {
   _id: string;
@@ -82,7 +82,9 @@ export default function Results() {
   const handleSelectMedicine = (med: IMedicineResult) => {
     const pharmacyId = med.pharmacy?._id ?? med.pharmacyId?._id;
     if (!pharmacyId) return;
-    navigate(`/user?pharmacy=${pharmacyId}&addMedicine=${med._id}`);
+    navigate(`/user?pharmacy=${pharmacyId}&addMedicine=${med._id}`, {
+      state: { medicineToAdd: med },
+    });
   };
 
   const handleSelectPharmacy = (pharmacy: IPharmacyResult) => {
