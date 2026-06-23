@@ -168,6 +168,7 @@ export default function Notifications() {
       <Box
         sx={{
           mb: 3,
+          position: "relative",
           display: "flex",
           justifyContent: "center",
           alignItems: "flex-start",
@@ -205,7 +206,12 @@ export default function Notifications() {
             startIcon={<DoneAllIcon />}
             onClick={markAllRead}
             size="small"
-            sx={{ mt: 0.5 }}
+              sx={{
+      position: "absolute",
+      right: 0,
+      top: "50%",
+      transform: "translateY(-50%)",
+    }}
           >
             Mark all as read
           </Button>

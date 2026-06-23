@@ -171,7 +171,10 @@ export default function OrderManagement() {
             icon={<ShoppingCartIcon sx={{ fontSize: "14px !important" }} />}
             label={`${orders.length} order${orders.length !== 1 ? "s" : ""}`}
             size="small"
-            sx={{ mt: 0.5, backgroundColor: "#EEF4FB", color: "#0D3B6E", fontWeight: 500 }}
+            sx={{   position: "absolute",
+      right: 0,
+      top: "50%",
+      transform: "translateY(-50%)",mt: 0.5, backgroundColor: "#EEF4FB", color: "#0D3B6E", fontWeight: 500 }}
           />
         )}
       </Box>

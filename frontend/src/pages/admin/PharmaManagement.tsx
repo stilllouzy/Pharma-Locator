@@ -209,6 +209,7 @@ export default function PharmaManagement() {
       <Box
         sx={{
           mb: 3,
+          position: "relative"
           display: "flex",
           justifyContent: "center",
           alignItems: "flex-start",
@@ -228,6 +229,10 @@ export default function PharmaManagement() {
           variant="contained"
           startIcon={<AddIcon />}
           onClick={handleOpenModal}
+          sx={{  position: "absolute",
+      right: 0,
+      top: "50%",
+      transform: "translateY(-50%)",}}
         >
           Add pharmacy
         </Button>
