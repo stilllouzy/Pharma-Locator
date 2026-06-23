@@ -353,6 +353,7 @@ export default function MyDeliveries() {
     sx={{
       display: "flex",
       alignItems: "center",
+      justifyContent: "center",
       gap: 1,
       mb: 0.5,
     }}
