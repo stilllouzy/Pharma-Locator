@@ -36,7 +36,7 @@ const theme = createTheme({
 
   typography: {
     // Plus Jakarta Sans — modern, slightly geometric, still professional
-    fontFamily: '"DM Sans", "Inter", "Roboto", sans-serif',
+    fontFamily: '"Plus Jakarta Sans", "Inter", "Roboto", sans-serif',
     fontWeightLight:   300,
     fontWeightRegular: 400,
     fontWeightMedium:  500,
