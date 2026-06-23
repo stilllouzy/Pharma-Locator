@@ -2,16 +2,19 @@
    Leaflet renders popups as raw HTML outside React's styling system,
    so these need to be plain CSS rather than MUI sx props. */
 
+.leaflet-popup {
+  margin-left: 0 !important;
+}
+
 .leaflet-popup-content-wrapper {
   border-radius: 12px;
   box-shadow: 0 8px 24px rgba(13, 59, 110, 0.18);
-  padding: 0;
+  padding: 0 !important;
 }
 
 .leaflet-popup-content {
-  margin: 0;
-  padding: 0;
-  width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
 }
 
 .leaflet-popup-content p {
