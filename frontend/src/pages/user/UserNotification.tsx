@@ -69,7 +69,7 @@ export default function Notifications() {
     <Box sx={{ p: 3 }}>
 
       {/* HEADER */}
-      <Box sx={{ mb: 2, position: "relative", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+      <Box sx={{ mb: 2, position: "relative", display: "flex", justifyContent: "center", alignItems: "center" }}>
         <Box>
           <Typography sx={{ fontSize: 24, fontWeight: "bold",  color : "primary.main" }}>
             Notifications
