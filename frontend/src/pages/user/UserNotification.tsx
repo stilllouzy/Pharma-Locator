@@ -71,7 +71,7 @@ export default function Notifications() {
       {/* HEADER */}
       <Box sx={{ mb: 2, position: "relative", display: "flex", justifyContent: "center", alignItems: "center" }}>
         <Box>
-          <Typography sx={{ fontSize: 24, fontWeight: "bold",  color : "primary.main" }}>
+          <Typography sx={{ fontSize: "1.1rem", fontWeight: "bold",  color : "primary.main" }}>
             Notifications
           </Typography>
           <Typography variant="caption" color="gray">
