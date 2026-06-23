@@ -184,16 +184,27 @@ export default function MapView({ onSelectPharmacy, focusPharmacyId, findNearest
                 <Popup
                   maxWidth={popupMaxWidth}
                   minWidth={popupMinWidth}
-                  eventHandlers={{ remove: () => setSelected(null) }}
+                  eventHandlers={{
+                    remove: () => setSelected(null),
+                    add: (e) => {
+                      // Leaflet renders popup content as raw DOM, not React —
+                      // React's onClick won't reliably survive Leaflet's own
+                      // open/close DOM management. Bind natively instead,
+                      // once the popup's DOM actually exists.
+                      const container = e.target.getElement?.();
+                      if (!container) return;
+                      const heartBtn = container.querySelector(".pl-popup__heart");
+                      if (heartBtn) {
+                        heartBtn.textContent = favoritedIds.has(pharmacy._id) ? "♥" : "♡";
+                        heartBtn.onclick = () => handleToggleFavoritePharmacy(pharmacy);
+                      }
+                    },
+                  }}
                 >
                   <div className="pl-popup">
                     <div className="pl-popup__header">
                       <p className="pl-popup__name">{pharmacy.name}</p>
-                      <button
-                        className="pl-popup__heart"
-                        onClick={() => handleToggleFavoritePharmacy(pharmacy)}
-                        aria-label="Toggle favorite pharmacy"
-                      >
+                      <button type="button" className="pl-popup__heart" aria-label="Toggle favorite pharmacy">
                         {favoritedIds.has(pharmacy._id) ? "♥" : "♡"}
                       </button>
                     </div>
@@ -201,6 +212,7 @@ export default function MapView({ onSelectPharmacy, focusPharmacyId, findNearest
 
                     <div className="pl-popup__actions">
                       <button
+                        type="button"
                         className="pl-popup__button"
                         onClick={() => {
                           onSelectPharmacy(pharmacy._id, pharmacy.name);
