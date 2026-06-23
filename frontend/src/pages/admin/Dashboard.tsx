@@ -187,7 +187,12 @@ export default function Dashboard() {
           <Typography variant="h2" sx={{ fontSize: "1.4rem", mb: 0.25 }}>Admin Dashboard</Typography>
           <Typography variant="subtitle1" sx={{ fontSize: "0.82rem" }}>System overview and monitoring</Typography>
         </Box>
-        <Chip icon={<FiberManualRecord sx={{ fontSize: "10px !important" }} />} label="System active" color="success" size="small" sx={{ mt: 0.5 , position: "absolute"}} />
+        <Chip icon={<FiberManualRecord sx={{ fontSize: "10px !important" }} />} label="System active" color="success" size="small"  sx={{
+      position: "absolute",
+      right: 0,
+      top: "50%",
+      transform: "translateY(-50%)",
+    }} />
       </Box>
 
       {/* KPI cards */}
