@@ -5,10 +5,17 @@ import {
   CardContent,
   TextField,
   Button,
-  Divider,
+  Skeleton,
 } from "@mui/material";
 import { useEffect, useState } from "react";
 import api from "../../api/api";
+import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
+import PhoneOutlinedIcon from "@mui/icons-material/PhoneOutlined";
+import LocationOnOutlinedIcon from "@mui/icons-material/LocationOnOutlined";
+import EmailOutlinedIcon from "@mui/icons-material/EmailOutlined";
+import BadgeOutlinedIcon from "@mui/icons-material/BadgeOutlined";
+import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
+
 
 interface IProfile {
   name: string;
@@ -16,6 +23,60 @@ interface IProfile {
   contactNumber?: string;
   address?: string;
   role: string;
+}
+
+function InfoRow({
+  icon,
+  label,
+  value,
+}: {
+  icon: React.ReactNode;
+  label: string;
+  value: React.ReactNode;
+}) {
+  return (
+    <Box sx={{ display: "flex", alignItems: "flex-start", gap: 1.25 }}>
+      <Box
+        sx={{
+          width: 36,
+          height: 36,
+          borderRadius: "10px",
+          backgroundColor: "#F4F7FB",
+          color: "text.secondary",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          flexShrink: 0,
+        }}
+      >
+        {icon}
+      </Box>
+
+      <Box>
+        <Typography
+          variant="caption"
+          sx={{
+            color: "text.disabled",
+            display: "block",
+            lineHeight: 1.2,
+          }}
+        >
+          {label}
+        </Typography>
+
+        <Typography
+          sx={{
+            fontSize: 14,
+            fontWeight: 500,
+            color: "text.primary",
+            mt: 0.25,
+          }}
+        >
+          {value}
+        </Typography>
+      </Box>
+    </Box>
+  );
 }
 
 export default function RiderProfile() {
@@ -65,98 +126,255 @@ export default function RiderProfile() {
     }
   };
 
-  if (loading) return <Typography sx={{ p: 3 }}>Loading...</Typography>;
+  if (loading) {
+  return (
+    <Box>
+      <Skeleton variant="text" width={180} height={40} />
+      <Skeleton variant="rounded" height={120} sx={{ mb: 2 }} />
+      <Skeleton variant="rounded" height={180} sx={{ mb: 2 }} />
+      <Skeleton variant="rounded" height={180} />
+    </Box>
+  );
+}
   if (!profile) return <Typography sx={{ p: 3 }}>Profile not found.</Typography>;
 
   return (
     <Box>
       <Box sx={{ mb: 3 }}>
-        <Typography sx={{ fontSize: 24, fontWeight: "bold", color : "primary.main"  }}>
-          Profile
-        </Typography>
-        <Typography variant="caption" color="gray">
-          Your personal information
-        </Typography>
+  <Box
+    sx={{
+      display: "flex",
+      alignItems: "center",
+      gap: 1,
+      mb: 0.5,
+    }}
+  >
+    <PersonOutlineIcon
+      sx={{
+        fontSize: 20,
+        color: "primary.main",
+      }}
+    />
+
+    <Typography
+      sx={{
+        fontSize: 22,
+        fontWeight: 700,
+        color: "primary.main",
+      }}
+    >
+      Rider Profile
+    </Typography>
+  </Box>
+
+  <Typography variant="caption" color="text.disabled">
+    Manage your personal information
+  </Typography>
+</Box>
+<Card sx={{ mb: 3 }}>
+  <CardContent>
+    <Box
+      sx={{
+        display: "flex",
+        alignItems: "center",
+        gap: 2,
+      }}
+    >
+      <Box
+        sx={{
+          width: 64,
+          height: 64,
+          borderRadius: "50%",
+          backgroundColor: "rgba(13,59,110,0.08)",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        <PersonOutlineIcon
+          sx={{
+            fontSize: 30,
+            color: "primary.main",
+          }}
+        />
       </Box>
 
-      <Card sx={{ borderRadius: 3 }}>
-        <CardContent>
+      <Box>
+        <Typography
+          sx={{
+            fontSize: 18,
+            fontWeight: 700,
+          }}
+        >
+          {profile.name}
+        </Typography>
 
-          {/* BASIC INFO */}
-          <Typography sx={{ fontWeight: "bold", mb: 1 }}>
-            Basic Information
-          </Typography>
+        <Typography
+          variant="body2"
+          color="text.secondary"
+        >
+          {profile.email}
+        </Typography>
+      </Box>
+    </Box>
+  </CardContent>
+</Card>
+<Typography
+  variant="overline"
+  sx={{
+    color: "text.disabled",
+    mb: 1.25,
+    display: "block",
+  }}
+>
+  Account Information
+</Typography>
 
-          <Typography variant="body2" color="gray">Name</Typography>
-          <Typography sx={{ mb: 1 }}>{profile.name}</Typography>
+<Card sx={{ mb: 3 }}>
+  <CardContent>
+    <Box
+      sx={{
+        display: "flex",
+        flexDirection: "column",
+        gap: 2,
+      }}
+    >
+      <InfoRow
+        icon={<PersonOutlineIcon sx={{ fontSize: 18 }} />}
+        label="Full Name"
+        value={profile.name}
+      />
 
-          <Typography variant="body2" color="gray">Email</Typography>
-          <Typography sx={{ mb: 1 }}>{profile.email}</Typography>
+      <InfoRow
+        icon={<EmailOutlinedIcon sx={{ fontSize: 18 }} />}
+        label="Email"
+        value={profile.email}
+      />
 
-          <Typography variant="body2" color="gray">Role</Typography>
-          <Typography sx={{ mb: 1, textTransform: "capitalize" }}>
-            {profile.role}
-          </Typography>
+      <InfoRow
+  icon={<BadgeOutlinedIcon sx={{ fontSize: 18 }} />}
+  label="Role"
+  value={
+    profile.role.charAt(0).toUpperCase() +
+    profile.role.slice(1)
+  }
+/>
+    </Box>
+  </CardContent>
+</Card>
+<Typography
+  variant="overline"
+  sx={{
+    color: "text.disabled",
+    mb: 1.25,
+    display: "block",
+  }}
+>
+  Contact Information
+</Typography>
 
-          <Divider sx={{ my: 2 }} />
+<Card sx={{ mb: 3 }}>
+  <CardContent>
+    {editing ? (
+      // EDIT FORM
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          gap: 2,
+        }}
+      >
+        <TextField
+          size="small"
+          label="Contact Number"
+          value={form.contactNumber}
+          onChange={(e) =>
+            setForm({
+              ...form,
+              contactNumber: e.target.value,
+            })
+          }
+          fullWidth
+        />
 
-          {/* EDITABLE INFO */}
-          <Typography sx={{ fontWeight: "bold", mb: 1 }}>
-            Contact Information
-          </Typography>
+        <TextField
+          size="small"
+          label="Address"
+          value={form.address}
+          onChange={(e) =>
+            setForm({
+              ...form,
+              address: e.target.value,
+            })
+          }
+          fullWidth
+        />
 
-          {editing ? (
-            <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
-              <TextField
-                label="Contact Number"
-                value={form.contactNumber}
-                onChange={(e) =>
-                  setForm({ ...form, contactNumber: e.target.value })
-                }
-                fullWidth
-              />
-              <TextField
-                label="Address"
-                value={form.address}
-                onChange={(e) =>
-                  setForm({ ...form, address: e.target.value })
-                }
-                fullWidth
-              />
-              <Box sx={{ display: "flex", gap: 1 }}>
-                <Button variant="contained" onClick={handleUpdate}>
-                  Save
-                </Button>
-                <Button
-                  variant="outlined"
-                  onClick={() => setEditing(false)}
-                >
-                  Cancel
-                </Button>
-              </Box>
-            </Box>
-          ) : (
-            <Box>
-              <Typography variant="body2" color="gray">
-                Contact Number
-              </Typography>
-              <Typography sx={{ mb: 1 }}>
-                {profile.contactNumber || "Not set"}
-              </Typography>
+        <Box sx={{ display: "flex", gap: 1 }}>
+          <Button
+            variant="contained"
+            onClick={handleUpdate}
+            disableElevation
+            sx={{
+              borderRadius: "8px",
+              textTransform: "none",
+            }}
+          >
+            Save Changes
+          </Button>
 
-              <Typography variant="body2" color="gray">Address</Typography>
-              <Typography sx={{ mb: 2 }}>
-                {profile.address || "Not set"}
-              </Typography>
+          <Button
+            variant="outlined"
+            onClick={() => setEditing(false)}
+            sx={{
+              borderRadius: "8px",
+              textTransform: "none",
+            }}
+          >
+            Cancel
+          </Button>
+        </Box>
+      </Box>
+    ) : (
+      // DISPLAY MODE
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          gap: 2,
+        }}
+      >
+        <InfoRow
+          icon={<PhoneOutlinedIcon sx={{ fontSize: 18 }} />}
+          label="Contact Number"
+          value={profile.contactNumber || "Not set"}
+        />
 
-              <Button variant="outlined" onClick={() => setEditing(true)}>
-                Edit Profile
-              </Button>
-            </Box>
-          )}
+        <InfoRow
+          icon={<LocationOnOutlinedIcon sx={{ fontSize: 18 }} />}
+          label="Address"
+          value={profile.address || "Not set"}
+        />
 
-        </CardContent>
-      </Card>
+        <Button
+          variant="contained"
+          startIcon={<EditOutlinedIcon />}
+          onClick={() => setEditing(true)}
+          disableElevation
+          sx={{
+            mt: 1,
+            alignSelf: "flex-start",
+            borderRadius: "8px",
+            textTransform: "none",
+          }}
+        >
+          Edit Profile
+        </Button>
+      </Box>
+    )}
+  </CardContent>
+</Card>
+ 
     </Box>
   );
 }
