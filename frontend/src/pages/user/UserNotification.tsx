@@ -79,7 +79,10 @@ export default function Notifications() {
           </Typography>
         </Box>
         {notifications.length > 0 && (
-          <Button variant="outlined" onClick={markAllRead}>
+          <Button variant="outlined" onClick={markAllRead} sx={{
+        position: "absolute",
+        right: 0,
+      }}>
             Mark All as Read
           </Button>
         )}
