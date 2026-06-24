@@ -22,16 +22,19 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
 const [showRegPassword, setShowRegPassword] = useState(false);
+const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   // REGISTER STATE
   const [name, setName] = useState("");
   const [regEmail, setRegEmail] = useState("");
   const [regPassword, setRegPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
 
   //EnterKey Nav
   const passwordRef = useRef<HTMLInputElement>(null);
 const regEmailRef = useRef<HTMLInputElement>(null);
 const regPasswordRef = useRef<HTMLInputElement>(null);
+const confirmPasswordRef = useRef<HTMLInputElement>(null);
   // LOGIN FUNCTION
   const handleLogin = async () => {
     try {
@@ -230,6 +233,27 @@ const regPasswordRef = useRef<HTMLInputElement>(null);
         <InputAdornment position="end">
           <IconButton onClick={() => setShowRegPassword((prev) => !prev)} edge="end">
             {showRegPassword ? <VisibilityOff /> : <Visibility />}
+          </IconButton>
+        </InputAdornment>
+      ),
+    },
+  }}
+/>
+<TextField
+  fullWidth
+  label="Confirm Password"
+  type={showConfirmPassword ? "text" : "password"}
+  margin="normal"
+  sx={{ "& .MuiOutlinedInput-root": { borderRadius: 2 } }}
+  inputRef={confirmPasswordRef}
+  onChange={(e) => setConfirmPassword(e.target.value)}
+  onKeyDown={(e) => e.key === "Enter" && handleRegister()}
+  slotProps={{
+    input: {
+      endAdornment: (
+        <InputAdornment position="end">
+          <IconButton onClick={() => setShowConfirmPassword((prev) => !prev)} edge="end">
+            {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
           </IconButton>
         </InputAdornment>
       ),
