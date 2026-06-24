@@ -64,20 +64,23 @@ const confirmPasswordRef = useRef<HTMLInputElement>(null);
   };
 
   // REGISTER FUNCTION (USER ONLY)
-  const handleRegister = async () => {
-    try {
-      await api.post("/auth/register", {
-        name,
-        email: regEmail,
-        password: regPassword,
-      });
-
-      alert("Registration successful! Please login.");
-      setTab(0); // switch back to login
-    } catch (err) {
-      alert("Registration failed");
-    }
-  };
+ const handleRegister = async () => {
+  if (regPassword !== confirmPassword) {
+    alert("Passwords do not match!");
+    return;
+  }
+  try {
+    await api.post("/auth/register", {
+      name,
+      email: regEmail,
+      password: regPassword,
+    });
+    alert("Registration successful! Please login.");
+    setTab(0);
+  } catch (err) {
+    alert("Registration failed");
+  }
+};
 
   return (
     <Box
@@ -226,7 +229,7 @@ const confirmPasswordRef = useRef<HTMLInputElement>(null);
   sx={{ "& .MuiOutlinedInput-root": { borderRadius: 2 } }}
   inputRef={regPasswordRef}
   onChange={(e) => setRegPassword(e.target.value)}
-  onKeyDown={(e) => e.key === "Enter" && handleRegister()}
+ onKeyDown={(e) => e.key === "Enter" && confirmPasswordRef.current?.focus()}
   slotProps={{
     input: {
       endAdornment: (
