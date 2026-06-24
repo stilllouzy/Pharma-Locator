@@ -1,5 +1,6 @@
 import { useState,useRef } from "react";
-
+import { useState, useRef } from "react";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
 import api from "../../api/api";
 import {
   Box,
@@ -9,6 +10,8 @@ import {
   Paper,
   Tabs,
   Tab,
+  IconButton,
+  InputAdornment,
 } from "@mui/material";
 
 
@@ -18,6 +21,8 @@ export default function Login() {
   // LOGIN STATE
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+const [showRegPassword, setShowRegPassword] = useState(false);
 
   // REGISTER STATE
   const [name, setName] = useState("");
@@ -149,16 +154,23 @@ const regPasswordRef = useRef<HTMLInputElement>(null);
 <TextField
   fullWidth
   label="Password"
-  type="password"
+  type={showPassword ? "text" : "password"}
   margin="normal"
-  sx={{
-  "& .MuiOutlinedInput-root": {
-    borderRadius: 2,
-  },
-}}
-  inputRef={passwordRef} // ✅
+  sx={{ "& .MuiOutlinedInput-root": { borderRadius: 2 } }}
+  inputRef={passwordRef}
   onChange={(e) => setPassword(e.target.value)}
   onKeyDown={(e) => e.key === "Enter" && handleLogin()}
+  slotProps={{
+    input: {
+      endAdornment: (
+        <InputAdornment position="end">
+          <IconButton onClick={() => setShowPassword((prev) => !prev)} edge="end">
+            {showPassword ? <VisibilityOff /> : <Visibility />}
+          </IconButton>
+        </InputAdornment>
+      ),
+    },
+  }}
 />
 
             <Button
@@ -207,18 +219,24 @@ const regPasswordRef = useRef<HTMLInputElement>(null);
 <TextField
   fullWidth
   label="Password"
-  type="password"
+  type={showRegPassword ? "text" : "password"}
   margin="normal"
-  sx={{
-  "& .MuiOutlinedInput-root": {
-    borderRadius: 2,
-  },
-}}
-  inputRef={regPasswordRef} // ✅
+  sx={{ "& .MuiOutlinedInput-root": { borderRadius: 2 } }}
+  inputRef={regPasswordRef}
   onChange={(e) => setRegPassword(e.target.value)}
   onKeyDown={(e) => e.key === "Enter" && handleRegister()}
+  slotProps={{
+    input: {
+      endAdornment: (
+        <InputAdornment position="end">
+          <IconButton onClick={() => setShowRegPassword((prev) => !prev)} edge="end">
+            {showRegPassword ? <VisibilityOff /> : <Visibility />}
+          </IconButton>
+        </InputAdornment>
+      ),
+    },
+  }}
 />
-
             <Button
   fullWidth
   variant="contained"
