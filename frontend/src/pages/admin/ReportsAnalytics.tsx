@@ -81,16 +81,18 @@ function StatCard({
           {icon}
         </Box>
         <Box>
-          <Typography sx={{
-            display: "block",
-            fontSize: "0.65rem",
-            fontWeight: 700,
-            letterSpacing: "0.08em",
-            textTransform: "uppercase",
-            color: "text.secondary",
-            whiteSpace: "nowrap",
-            lineHeight: 1.4,
-          }}>
+          <Typography
+            sx={{
+              display: "block",
+              fontSize: "0.65rem",
+              fontWeight: 700,
+              letterSpacing: "0.08em",
+              textTransform: "uppercase",
+              color: "text.secondary",
+              whiteSpace: "nowrap",
+              lineHeight: 1.4,
+            }}
+          >
             {label}
           </Typography>
           <Typography sx={{ fontSize: "1.5rem", fontWeight: 700, color: "text.primary", lineHeight: 1.2 }}>
@@ -163,14 +165,7 @@ function MetricRow({
   chip?: { label: string; color: "success" | "warning" | "error" | "info" };
 }) {
   return (
-    <Box
-      sx={{
-        display: "flex",
-        justifyContent: "space-between",
-        alignItems: "center",
-        py: 1.25,
-      }}
-    >
+    <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", py: 1.25 }}>
       <Typography variant="body2" color="text.secondary">
         {label}
       </Typography>
@@ -186,7 +181,6 @@ function MetricRow({
 
 // ─── PDF Generator ────────────────────────────────────────────────────────────
 async function generatePDF(data: Analytics) {
-  // Dynamically import jsPDF and autoTable to keep initial bundle lean
   const { default: jsPDF } = await import("jspdf");
   const { default: autoTable } = await import("jspdf-autotable");
 
@@ -211,14 +205,12 @@ async function generatePDF(data: Analytics) {
     data.medicines > 0 ? Math.round((data.lowStock / data.medicines) * 100) : 0;
 
   // ── Header banner ──
-  doc.setFillColor(13, 59, 110); // #0D3B6E
+  doc.setFillColor(13, 59, 110);
   doc.rect(0, 0, pageW, 32, "F");
-
   doc.setTextColor(255, 255, 255);
   doc.setFont("helvetica", "bold");
   doc.setFontSize(18);
   doc.text("Reports & Analytics", 14, 13);
-
   doc.setFont("helvetica", "normal");
   doc.setFontSize(9);
   doc.setTextColor(180, 210, 255);
@@ -227,7 +219,6 @@ async function generatePDF(data: Analytics) {
 
   let y = 42;
 
-  // ── Section helper ──
   const sectionTitle = (title: string) => {
     doc.setFont("helvetica", "bold");
     doc.setFontSize(11);
@@ -241,40 +232,32 @@ async function generatePDF(data: Analytics) {
 
   // ── Overview ──
   sectionTitle("Overview");
-
   autoTable(doc, {
     startY: y,
     head: [["Metric", "Value"]],
     body: [
-      ["Total Users", data.users.toString()],
-      ["Pharmacies", data.pharmacies.toString()],
-      ["Total Orders", data.orders.toString()],
-      ["Medicines", data.medicines.toString()],
+      ["Total Users", String(data.users)],
+      ["Pharmacies", String(data.pharmacies)],
+      ["Total Orders", String(data.orders)],
+      ["Medicines", String(data.medicines)],
     ],
-    headStyles: {
-      fillColor: [13, 59, 110],
-      textColor: 255,
-      fontStyle: "bold",
-      fontSize: 9,
-    },
+    headStyles: { fillColor: [13, 59, 110], textColor: 255, fontStyle: "bold", fontSize: 9 },
     bodyStyles: { fontSize: 9, textColor: [30, 30, 30] },
     alternateRowStyles: { fillColor: [238, 244, 251] },
     columnStyles: { 1: { fontStyle: "bold" } },
     margin: { left: 14, right: 14 },
     theme: "grid",
   });
-
-  y = (doc as any).lastAutoTable.finalY + 10;
+  y = (doc as unknown as { lastAutoTable: { finalY: number } }).lastAutoTable.finalY + 10;
 
   // ── Revenue ──
   sectionTitle("Revenue");
-
   doc.setFillColor(238, 244, 251);
   doc.roundedRect(14, y, pageW - 28, 18, 3, 3, "F");
   doc.setFont("helvetica", "bold");
   doc.setFontSize(13);
   doc.setTextColor(13, 59, 110);
-  doc.text(`₱${data.totalRevenue.toLocaleString()}`, 20, y + 10);
+  doc.text(`PHP ${data.totalRevenue.toLocaleString()}`, 20, y + 10);
   doc.setFont("helvetica", "normal");
   doc.setFontSize(8);
   doc.setTextColor(100, 100, 100);
@@ -287,7 +270,6 @@ async function generatePDF(data: Analytics) {
 
   // ── Order Breakdown ──
   sectionTitle("Order Breakdown");
-
   const orderPct = (n: number) =>
     data.orders > 0 ? `${Math.round((n / data.orders) * 100)}%` : "0%";
 
@@ -295,24 +277,16 @@ async function generatePDF(data: Analytics) {
     startY: y,
     head: [["Status", "Count", "Percentage"]],
     body: [
-      ["Completed", data.completedOrders.toString(), orderPct(data.completedOrders)],
-      ["Pending", data.pendingOrders.toString(), orderPct(data.pendingOrders)],
-      ["Cancelled", data.cancelledOrders.toString(), orderPct(data.cancelledOrders)],
-      ["Total", data.orders.toString(), "100%"],
+      ["Completed", String(data.completedOrders), orderPct(data.completedOrders)],
+      ["Pending", String(data.pendingOrders), orderPct(data.pendingOrders)],
+      ["Cancelled", String(data.cancelledOrders), orderPct(data.cancelledOrders)],
+      ["Total", String(data.orders), "100%"],
     ],
-    headStyles: {
-      fillColor: [21, 101, 192],
-      textColor: 255,
-      fontStyle: "bold",
-      fontSize: 9,
-    },
+    headStyles: { fillColor: [21, 101, 192], textColor: 255, fontStyle: "bold", fontSize: 9 },
     bodyStyles: { fontSize: 9, textColor: [30, 30, 30] },
     alternateRowStyles: { fillColor: [227, 242, 253] },
-    columnStyles: {
-      1: { fontStyle: "bold", halign: "center" },
-      2: { halign: "center" },
-    },
-    didParseCell: (hookData) => {
+    columnStyles: { 1: { fontStyle: "bold", halign: "center" }, 2: { halign: "center" } },
+    didParseCell: (hookData: Parameters<NonNullable<Parameters<typeof autoTable>[1]["didParseCell"]>>[0]) => {
       if (hookData.section === "body") {
         const status = hookData.row.cells[0]?.raw as string;
         if (status === "Completed") hookData.cell.styles.textColor = [46, 125, 50];
@@ -324,87 +298,48 @@ async function generatePDF(data: Analytics) {
     margin: { left: 14, right: 14 },
     theme: "grid",
   });
-
-  y = (doc as any).lastAutoTable.finalY + 10;
+  y = (doc as unknown as { lastAutoTable: { finalY: number } }).lastAutoTable.finalY + 10;
 
   // ── Performance Metrics ──
   sectionTitle("Performance Metrics");
-
-  const ratingColor = (
-    value: number,
-    good: number,
-    bad: number,
-    lowerIsBetter = false
-  ): [number, number, number] => {
-    if (!lowerIsBetter) {
-      if (value >= good) return [46, 125, 50];
-      if (value >= bad) return [245, 127, 23];
-      return [198, 40, 40];
-    } else {
-      if (value <= good) return [46, 125, 50];
-      if (value <= bad) return [245, 127, 23];
-      return [198, 40, 40];
-    }
-  };
-
   autoTable(doc, {
     startY: y,
     head: [["Metric", "Value", "Status"]],
     body: [
-      [
-        "Order Completion Rate",
-        `${completionRate}%`,
-        completionRate >= 70 ? "Healthy" : "Needs Attention",
-      ],
-      [
-        "Cancellation Rate",
-        `${cancellationRate}%`,
-        cancellationRate <= 10 ? "Normal" : "High",
-      ],
-      [
-        "Low Stock Ratio",
-        `${lowStockRate}% of medicines`,
-        lowStockRate === 0 ? "All Stocked" : lowStockRate <= 20 ? "Moderate" : "Critical",
-      ],
+      ["Order Completion Rate", `${completionRate}%`, completionRate >= 70 ? "Healthy" : "Needs Attention"],
+      ["Cancellation Rate", `${cancellationRate}%`, cancellationRate <= 10 ? "Normal" : "High"],
+      ["Low Stock Ratio", `${lowStockRate}% of medicines`, lowStockRate === 0 ? "All Stocked" : lowStockRate <= 20 ? "Moderate" : "Critical"],
     ],
-    headStyles: {
-      fillColor: [13, 59, 110],
-      textColor: 255,
-      fontStyle: "bold",
-      fontSize: 9,
-    },
+    headStyles: { fillColor: [13, 59, 110], textColor: 255, fontStyle: "bold", fontSize: 9 },
     bodyStyles: { fontSize: 9, textColor: [30, 30, 30] },
     alternateRowStyles: { fillColor: [238, 244, 251] },
     columnStyles: { 1: { fontStyle: "bold" }, 2: { halign: "center" } },
-    didParseCell: (hookData) => {
+    didParseCell: (hookData: Parameters<NonNullable<Parameters<typeof autoTable>[1]["didParseCell"]>>[0]) => {
       if (hookData.section === "body" && hookData.column.index === 2) {
         const status = hookData.cell.raw as string;
         if (["Healthy", "Normal", "All Stocked"].includes(status))
           hookData.cell.styles.textColor = [46, 125, 50];
         else if (["Needs Attention", "Moderate"].includes(status))
           hookData.cell.styles.textColor = [245, 127, 23];
-        else hookData.cell.styles.textColor = [198, 40, 40];
+        else
+          hookData.cell.styles.textColor = [198, 40, 40];
         hookData.cell.styles.fontStyle = "bold";
       }
     },
     margin: { left: 14, right: 14 },
     theme: "grid",
   });
-
-  y = (doc as any).lastAutoTable.finalY + 10;
+  y = (doc as unknown as { lastAutoTable: { finalY: number } }).lastAutoTable.finalY + 10;
 
   // ── Inventory Insights ──
   sectionTitle("Inventory Insights");
-
-  const invColor = data.lowStock > 0 ? [255, 248, 225] : [232, 245, 233];
-  const invTextColor: [number, number, number] =
-    data.lowStock > 0 ? [245, 127, 23] : [46, 125, 50];
-
-  doc.setFillColor(...(invColor as [number, number, number]));
+  const invFill: [number, number, number] = data.lowStock > 0 ? [255, 248, 225] : [232, 245, 233];
+  const invText: [number, number, number] = data.lowStock > 0 ? [245, 127, 23] : [46, 125, 50];
+  doc.setFillColor(...invFill);
   doc.roundedRect(14, y, pageW - 28, 20, 3, 3, "F");
   doc.setFont("helvetica", "bold");
   doc.setFontSize(9);
-  doc.setTextColor(...invTextColor);
+  doc.setTextColor(...invText);
   const invMsg =
     data.lowStock > 0
       ? `${data.lowStock} medicine${data.lowStock !== 1 ? "s" : ""} running low (${lowStockRate}% of total)`
@@ -418,7 +353,6 @@ async function generatePDF(data: Analytics) {
       ? "Notify pharmacy staff to restock flagged medicines to avoid disruptions."
       : "No low stock items detected. Inventory is healthy across all registered pharmacies.";
   doc.text(invNote, 20, y + 14.5);
-  y += 28;
 
   // ── Footer ──
   const pageCount = doc.getNumberOfPages();
@@ -471,7 +405,6 @@ export default function ReportsAnalytics() {
     }
   };
 
-  // Derived metrics
   const completionRate =
     data.orders > 0 ? Math.round((data.completedOrders / data.orders) * 100) : 0;
   const cancellationRate =
@@ -484,29 +417,13 @@ export default function ReportsAnalytics() {
 
       {/* Header */}
       <Box sx={{ mb: 3 }}>
-        <Box
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            gap: 1,
-            mb: 0.25,
-          }}
-        >
+        <Box sx={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 1, mb: 0.25 }}>
           <BarChartOutlinedIcon sx={{ color: "primary.main", fontSize: 24 }} />
-          <Typography
-            variant="h2"
-            sx={{ fontSize: "1.4rem", fontWeight: 700, color: "primary.main" }}
-          >
+          <Typography variant="h2" sx={{ fontSize: "1.4rem", fontWeight: 700, color: "primary.main" }}>
             Reports & Analytics
           </Typography>
         </Box>
-
-        <Typography
-          variant="subtitle1"
-          color="text.secondary"
-          sx={{ fontSize: "0.83rem", textAlign: "center" }}
-        >
+        <Typography variant="subtitle1" color="text.secondary" sx={{ fontSize: "0.83rem", textAlign: "center" }}>
           System insights and performance overview
         </Typography>
 
@@ -559,14 +476,7 @@ export default function ReportsAnalytics() {
         <StatCard label="Medicines" value={data.medicines} icon={<MedicalServicesIcon fontSize="small" />} iconBg="#F3E5F5" iconColor="#6A1B9A" />
       </Box>
 
-      <Box
-        sx={{
-          display: "grid",
-          gridTemplateColumns: { xs: "1fr", md: "1fr 1fr" },
-          gap: 2,
-          mb: 2,
-        }}
-      >
+      <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", md: "1fr 1fr" }, gap: 2, mb: 2 }}>
         {/* Revenue highlight */}
         <Card sx={{ background: "linear-gradient(135deg, #0D3B6E 0%, #1565C0 100%)", color: "#fff" }}>
           <CardContent>

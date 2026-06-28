@@ -22,7 +22,6 @@ import SearchIcon from "@mui/icons-material/Search";
 import LocalPharmacyIcon from "@mui/icons-material/LocalPharmacy";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import PhoneIcon from "@mui/icons-material/Phone";
-import DeleteIcon from "@mui/icons-material/Delete";
 import { useEffect, useState } from "react";
 import api from "../../api/api";
 
@@ -31,6 +30,10 @@ interface IPharmacy {
   name: string;
   address: string;
   contactNumber: string;
+  location?: {
+    lat: number;
+    lng: number;
+  };
   isActive: boolean;
   ownerId?: string;
 }
@@ -108,17 +111,6 @@ export default function PharmaManagement() {
         {},
         { headers: { Authorization: `Bearer ${token}` } }
       );
-      fetchPharmacies();
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const deletePharmacy = async (id: string) => {
-    try {
-      await api.delete(`/admin/pharmacies/${id}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
       fetchPharmacies();
     } catch (error) {
       console.log(error);
@@ -206,7 +198,7 @@ export default function PharmaManagement() {
   return (
     <Box sx={{ p: 3, minHeight: "100vh" }}>
 
-      {/* Header */}
+      {/* ── Header ── */}
       <Box
         sx={{
           mb: 3,
@@ -219,97 +211,55 @@ export default function PharmaManagement() {
         }}
       >
         <Box>
-  <Box
-    sx={{
-      display: "flex",
-      alignItems: "center",
-      gap: 1,
-      mb: 0.25,
-    }}
-  >
-    <StorefrontOutlinedIcon
-      sx={{
-        color: "primary.main",
-        fontSize: 24,
-      }}
-    />
-
-    <Typography
-      variant="h2"
-      sx={{
-        fontSize: "1.4rem",
-        fontWeight: 700,
-        color: "primary.main",
-      }}
-    >
-      Pharmacy Management
-    </Typography>
-  </Box>
-
-  <Typography
-    variant="subtitle1"
-    color="text.secondary"
-    sx={{ fontSize: "0.83rem" }}
-  >
-    {pharmacies.length} registered · {activeCount} active
-  </Typography>
-</Box>
+          <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 0.25 }}>
+            <StorefrontOutlinedIcon sx={{ color: "primary.main", fontSize: 24 }} />
+            <Typography variant="h2" sx={{ fontSize: "1.4rem", fontWeight: 700, color: "primary.main" }}>
+              Pharmacy Management
+            </Typography>
+          </Box>
+          <Typography variant="subtitle1" color="text.secondary" sx={{ fontSize: "0.83rem" }}>
+            Brgy. Emmanuel Bergado 1 · {pharmacies.length} registered · {activeCount} active
+          </Typography>
+        </Box>
         <Button
           variant="contained"
           startIcon={<AddIcon />}
           onClick={handleOpenModal}
-          sx={{  position: "absolute",
-      right: 0,
-      top: "50%",
-      transform: "translateY(-50%)",}}
+          sx={{ position: "absolute", right: 0, top: "50%", transform: "translateY(-50%)" }}
         >
           Add pharmacy
         </Button>
       </Box>
 
-      {/* Search */}
+      {/* ── Search ── */}
       <TextField
         fullWidth
         placeholder="Search by name or address..."
         onChange={(e) => setSearch(e.target.value)}
         sx={{ mb: 2.5 }}
-    slotProps={{
-  input: {
-    startAdornment: (
-      <InputAdornment position="start">
-        <SearchIcon sx={{ fontSize: 18, color: "text.secondary" }} />
-      </InputAdornment>
-    ),
-  },
-}}
+        slotProps={{
+          input: {
+            startAdornment: (
+              <InputAdornment position="start">
+                <SearchIcon sx={{ fontSize: 18, color: "text.secondary" }} />
+              </InputAdornment>
+            ),
+          },
+        }}
       />
 
-      {/* Loading */}
+      {/* ── Loading skeletons ── */}
       {loading && (
-        <Box
-          sx={{
-            display: "grid",
-            gridTemplateColumns: { xs: "1fr", md: "1fr 1fr" },
-            gap: 2,
-          }}
-        >
+        <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", md: "1fr 1fr" }, gap: 2 }}>
           {Array.from({ length: 4 }).map((_, i) => (
             <Skeleton key={i} variant="rounded" height={130} />
           ))}
         </Box>
       )}
 
-      {/* Empty state */}
+      {/* ── Empty state ── */}
       {!loading && pharmacies.length === 0 && (
-        <Box
-          sx={{
-            py: 8,
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            gap: 1,
-          }}
-        >
+        <Box sx={{ py: 8, display: "flex", flexDirection: "column", alignItems: "center", gap: 1 }}>
           <LocalPharmacyIcon sx={{ fontSize: 40, color: "text.disabled" }} />
           <Typography variant="body2" color="text.secondary">
             No pharmacies found.
@@ -322,28 +272,15 @@ export default function PharmaManagement() {
         </Box>
       )}
 
-      {/* Pharmacy grid */}
-      {!loading && (
-        <Box
-          sx={{
-            display: "grid",
-            gridTemplateColumns: { xs: "1fr", md: "1fr 1fr" },
-            gap: 2,
-          }}
-        >
+      {/* ── Pharmacy grid ── */}
+      {!loading && pharmacies.length > 0 && (
+        <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", md: "1fr 1fr" }, gap: 2 }}>
           {pharmacies.map((pharmacy) => (
             <Card key={pharmacy._id}>
               <CardContent sx={{ px: "20px !important", py: "16px !important" }}>
 
-                {/* Top row: name + status */}
-                <Box
-                  sx={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "flex-start",
-                    mb: 1,
-                  }}
-                >
+                {/* Top row: name + status chip */}
+                <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", mb: 1 }}>
                   <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
                     <Box
                       sx={{
@@ -360,9 +297,7 @@ export default function PharmaManagement() {
                     >
                       <LocalPharmacyIcon sx={{ fontSize: 18 }} />
                     </Box>
-                    <Typography
-                      sx={{ fontWeight: 600, fontSize: "0.9rem", color: "text.primary" }}
-                    >
+                    <Typography sx={{ fontWeight: 600, fontSize: "0.9rem", color: "text.primary" }}>
                       {pharmacy.name}
                     </Typography>
                   </Box>
@@ -373,7 +308,7 @@ export default function PharmaManagement() {
                   />
                 </Box>
 
-                {/* Details */}
+                {/* Address + phone */}
                 <Box sx={{ display: "flex", flexDirection: "column", gap: 0.5, mb: 1.5, pl: "50px" }}>
                   <Box sx={{ display: "flex", alignItems: "center", gap: 0.75 }}>
                     <LocationOnIcon sx={{ fontSize: 13, color: "text.disabled" }} />
@@ -392,41 +327,49 @@ export default function PharmaManagement() {
                 <Divider sx={{ mb: 1.5 }} />
 
                 {/* Actions */}
-                <Box sx={{ display: "flex", gap: 1 }}>
-                 <Button
-    size="small"
-    variant="outlined"
-    color="primary"
-    startIcon={<LocationOnIcon sx={{ fontSize: "15px !important" }} />}
-    onClick={() => {
-      const destination = pharmacy.lat && pharmacy.lng
-        ? `${pharmacy.lat},${pharmacy.lng}`
-        : encodeURIComponent(pharmacy.address);
-      window.open(
-        `https://www.google.com/maps/dir/?api=1&destination=${destination}`,
-        "_blank"
-      );
-    }}
-    sx={{ borderRadius: "8px", fontSize: "0.75rem", borderWidth: "0.5px", px: 1.5 }}
-  >
-    Directions
-  </Button>
+                <Box sx={{ display: "flex", gap: 1, flexWrap: "wrap" }}>
+                  <Button
+                    size="small"
+                    variant="outlined"
+                    color={pharmacy.isActive ? "warning" : "success"}
+                    onClick={() => toggleStatus(pharmacy._id)}
+                    sx={{ borderRadius: "8px", fontSize: "0.75rem", borderWidth: "0.5px", px: 1.5 }}
+                  >
+                    {pharmacy.isActive ? "Deactivate" : "Activate"}
+                  </Button>
 
+                  <Button
+                    size="small"
+                    variant="outlined"
+                    color="primary"
+                    startIcon={<LocationOnIcon sx={{ fontSize: "15px !important" }} />}
+                    onClick={() => {
+                      const destination =
+                        pharmacy.location?.lat && pharmacy.location?.lng
+                          ? `${pharmacy.location.lat},${pharmacy.location.lng}`
+                          : encodeURIComponent(pharmacy.address);
+                      window.open(
+                        `https://www.google.com/maps/dir/?api=1&destination=${destination}`,
+                        "_blank"
+                      );
+                    }}
+                    sx={{ borderRadius: "8px", fontSize: "0.75rem", borderWidth: "0.5px", px: 1.5 }}
+                  >
+                    Directions
+                  </Button>
                 </Box>
+
               </CardContent>
             </Card>
           ))}
         </Box>
       )}
 
-      {/* Add Pharmacy Modal */}
+      {/* ── Add Pharmacy Modal ── */}
       <Dialog open={openModal} onClose={handleCloseModal} fullWidth maxWidth="sm">
         <DialogTitle sx={{ pr: 6 }}>
           Add new pharmacy
-          <IconButton
-            onClick={handleCloseModal}
-            sx={{ position: "absolute", right: 12, top: 12 }}
-          >
+          <IconButton onClick={handleCloseModal} sx={{ position: "absolute", right: 12, top: 12 }}>
             <CloseIcon fontSize="small" />
           </IconButton>
         </DialogTitle>
@@ -527,15 +470,12 @@ export default function PharmaManagement() {
           <Button onClick={handleCloseModal} variant="outlined" disabled={submitting}>
             Cancel
           </Button>
-          <Button
-            onClick={handleAddPharmacy}
-            variant="contained"
-            disabled={submitting}
-          >
+          <Button onClick={handleAddPharmacy} variant="contained" disabled={submitting}>
             {submitting ? "Adding..." : "Add pharmacy"}
           </Button>
         </DialogActions>
       </Dialog>
+
     </Box>
   );
 }
