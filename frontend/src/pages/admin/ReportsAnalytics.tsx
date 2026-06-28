@@ -48,7 +48,6 @@ const EMPTY: Analytics = {
   totalRevenue: 0,
 };
 
-// ─── Overview stat card ───────────────────────────────────────────────────────
 function StatCard({
   label,
   value,
@@ -65,34 +64,11 @@ function StatCard({
   return (
     <Card>
       <CardContent sx={{ display: "flex", alignItems: "center", gap: 1.5, minHeight: 88 }}>
-        <Box
-          sx={{
-            width: 40,
-            height: 40,
-            borderRadius: "10px",
-            backgroundColor: iconBg,
-            color: iconColor,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            flexShrink: 0,
-          }}
-        >
+        <Box sx={{ width: 40, height: 40, borderRadius: "10px", backgroundColor: iconBg, color: iconColor, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
           {icon}
         </Box>
         <Box>
-          <Typography
-            sx={{
-              display: "block",
-              fontSize: "0.65rem",
-              fontWeight: 700,
-              letterSpacing: "0.08em",
-              textTransform: "uppercase",
-              color: "text.secondary",
-              whiteSpace: "nowrap",
-              lineHeight: 1.4,
-            }}
-          >
+          <Typography sx={{ display: "block", fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase", color: "text.secondary", whiteSpace: "nowrap", lineHeight: 1.4 }}>
             {label}
           </Typography>
           <Typography sx={{ fontSize: "1.5rem", fontWeight: 700, color: "text.primary", lineHeight: 1.2 }}>
@@ -104,107 +80,61 @@ function StatCard({
   );
 }
 
-// ─── Order breakdown bar ──────────────────────────────────────────────────────
-function OrderBar({
-  label,
-  value,
-  total,
-  color,
-  icon,
-}: {
-  label: string;
-  value: number;
-  total: number;
-  color: string;
-  icon: React.ReactNode;
-}) {
+function OrderBar({ label, value, total, color, icon }: { label: string; value: number; total: number; color: string; icon: React.ReactNode }) {
   const pct = total > 0 ? Math.round((value / total) * 100) : 0;
   return (
     <Box sx={{ mb: 2 }}>
       <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 0.75 }}>
         <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
           <Box sx={{ color, display: "flex" }}>{icon}</Box>
-          <Typography variant="body2" sx={{ fontWeight: 500, color: "text.primary" }}>
-            {label}
-          </Typography>
+          <Typography variant="body2" sx={{ fontWeight: 500, color: "text.primary" }}>{label}</Typography>
         </Box>
         <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-          <Typography sx={{ fontWeight: 600, fontSize: "0.88rem", color: "text.primary" }}>
-            {value}
-          </Typography>
-          <Typography variant="caption" color="text.disabled">
-            ({pct}%)
-          </Typography>
+          <Typography sx={{ fontWeight: 600, fontSize: "0.88rem", color: "text.primary" }}>{value}</Typography>
+          <Typography variant="caption" color="text.disabled">({pct}%)</Typography>
         </Box>
       </Box>
-      <LinearProgress
-        variant="determinate"
-        value={pct}
-        sx={{
-          height: 6,
-          borderRadius: 3,
-          backgroundColor: "rgba(0,0,0,0.06)",
-          "& .MuiLinearProgress-bar": {
-            backgroundColor: color,
-            borderRadius: 3,
-          },
-        }}
-      />
+      <LinearProgress variant="determinate" value={pct} sx={{ height: 6, borderRadius: 3, backgroundColor: "rgba(0,0,0,0.06)", "& .MuiLinearProgress-bar": { backgroundColor: color, borderRadius: 3 } }} />
     </Box>
   );
 }
 
-// ─── Metric row (derived stats) ───────────────────────────────────────────────
-function MetricRow({
-  label,
-  value,
-  chip,
-}: {
-  label: string;
-  value: string;
-  chip?: { label: string; color: "success" | "warning" | "error" | "info" };
-}) {
+function MetricRow({ label, value, chip }: { label: string; value: string; chip?: { label: string; color: "success" | "warning" | "error" | "info" } }) {
   return (
     <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", py: 1.25 }}>
-      <Typography variant="body2" color="text.secondary">
-        {label}
-      </Typography>
+      <Typography variant="body2" color="text.secondary">{label}</Typography>
       <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-        <Typography sx={{ fontWeight: 600, fontSize: "0.88rem", color: "text.primary" }}>
-          {value}
-        </Typography>
+        <Typography sx={{ fontWeight: 600, fontSize: "0.88rem", color: "text.primary" }}>{value}</Typography>
         {chip && <Chip label={chip.label} color={chip.color} size="small" />}
       </Box>
     </Box>
   );
 }
 
-// ─── PDF Generator ────────────────────────────────────────────────────────────
-async function generatePDF(data: Analytics) {
-  const { default: jsPDF } = await import("jspdf");
-  const { default: autoTable } = await import("jspdf-autotable");
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+async function generatePDF(data: Analytics): Promise<void> {
+  // Use require-style dynamic import to bypass TS module resolution
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const jsPDFModule = await import("jspdf" as any);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const autoTableModule = await import("jspdf-autotable" as any);
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const jsPDF = (jsPDFModule.default || jsPDFModule) as any;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const autoTable = (autoTableModule.default || autoTableModule) as any;
 
   const doc = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
   const pageW = doc.internal.pageSize.getWidth();
   const now = new Date();
-  const dateStr = now.toLocaleDateString("en-PH", {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  });
-  const timeStr = now.toLocaleTimeString("en-PH", {
-    hour: "2-digit",
-    minute: "2-digit",
-  });
+  const dateStr = now.toLocaleDateString("en-PH", { year: "numeric", month: "long", day: "numeric" });
+  const timeStr = now.toLocaleTimeString("en-PH", { hour: "2-digit", minute: "2-digit" });
 
-  const completionRate =
-    data.orders > 0 ? Math.round((data.completedOrders / data.orders) * 100) : 0;
-  const cancellationRate =
-    data.orders > 0 ? Math.round((data.cancelledOrders / data.orders) * 100) : 0;
-  const lowStockRate =
-    data.medicines > 0 ? Math.round((data.lowStock / data.medicines) * 100) : 0;
+  const completionRate = data.orders > 0 ? Math.round((data.completedOrders / data.orders) * 100) : 0;
+  const cancellationRate = data.orders > 0 ? Math.round((data.cancelledOrders / data.orders) * 100) : 0;
+  const lowStockRate = data.medicines > 0 ? Math.round((data.lowStock / data.medicines) * 100) : 0;
 
-  // ── Header banner ──
+  // Header
   doc.setFillColor(13, 59, 110);
   doc.rect(0, 0, pageW, 32, "F");
   doc.setTextColor(255, 255, 255);
@@ -230,7 +160,7 @@ async function generatePDF(data: Analytics) {
     y += 8;
   };
 
-  // ── Overview ──
+  // Overview
   sectionTitle("Overview");
   autoTable(doc, {
     startY: y,
@@ -248,9 +178,9 @@ async function generatePDF(data: Analytics) {
     margin: { left: 14, right: 14 },
     theme: "grid",
   });
-  y = (doc as unknown as { lastAutoTable: { finalY: number } }).lastAutoTable.finalY + 10;
+  y = doc.lastAutoTable.finalY + 10;
 
-  // ── Revenue ──
+  // Revenue
   sectionTitle("Revenue");
   doc.setFillColor(238, 244, 251);
   doc.roundedRect(14, y, pageW - 28, 18, 3, 3, "F");
@@ -261,18 +191,12 @@ async function generatePDF(data: Analytics) {
   doc.setFont("helvetica", "normal");
   doc.setFontSize(8);
   doc.setTextColor(100, 100, 100);
-  doc.text(
-    `From ${data.completedOrders} completed order${data.completedOrders !== 1 ? "s" : ""}`,
-    20,
-    y + 15.5
-  );
+  doc.text(`From ${data.completedOrders} completed order${data.completedOrders !== 1 ? "s" : ""}`, 20, y + 15.5);
   y += 26;
 
-  // ── Order Breakdown ──
+  // Order Breakdown
   sectionTitle("Order Breakdown");
-  const orderPct = (n: number) =>
-    data.orders > 0 ? `${Math.round((n / data.orders) * 100)}%` : "0%";
-
+  const orderPct = (n: number) => data.orders > 0 ? `${Math.round((n / data.orders) * 100)}%` : "0%";
   autoTable(doc, {
     startY: y,
     head: [["Status", "Count", "Percentage"]],
@@ -286,7 +210,7 @@ async function generatePDF(data: Analytics) {
     bodyStyles: { fontSize: 9, textColor: [30, 30, 30] },
     alternateRowStyles: { fillColor: [227, 242, 253] },
     columnStyles: { 1: { fontStyle: "bold", halign: "center" }, 2: { halign: "center" } },
-    didParseCell: (hookData: Parameters<NonNullable<Parameters<typeof autoTable>[1]["didParseCell"]>>[0]) => {
+    didParseCell: (hookData: any) => {
       if (hookData.section === "body") {
         const status = hookData.row.cells[0]?.raw as string;
         if (status === "Completed") hookData.cell.styles.textColor = [46, 125, 50];
@@ -298,9 +222,9 @@ async function generatePDF(data: Analytics) {
     margin: { left: 14, right: 14 },
     theme: "grid",
   });
-  y = (doc as unknown as { lastAutoTable: { finalY: number } }).lastAutoTable.finalY + 10;
+  y = doc.lastAutoTable.finalY + 10;
 
-  // ── Performance Metrics ──
+  // Performance Metrics
   sectionTitle("Performance Metrics");
   autoTable(doc, {
     startY: y,
@@ -314,24 +238,21 @@ async function generatePDF(data: Analytics) {
     bodyStyles: { fontSize: 9, textColor: [30, 30, 30] },
     alternateRowStyles: { fillColor: [238, 244, 251] },
     columnStyles: { 1: { fontStyle: "bold" }, 2: { halign: "center" } },
-    didParseCell: (hookData: Parameters<NonNullable<Parameters<typeof autoTable>[1]["didParseCell"]>>[0]) => {
+    didParseCell: (hookData: any) => {
       if (hookData.section === "body" && hookData.column.index === 2) {
         const status = hookData.cell.raw as string;
-        if (["Healthy", "Normal", "All Stocked"].includes(status))
-          hookData.cell.styles.textColor = [46, 125, 50];
-        else if (["Needs Attention", "Moderate"].includes(status))
-          hookData.cell.styles.textColor = [245, 127, 23];
-        else
-          hookData.cell.styles.textColor = [198, 40, 40];
+        if (["Healthy", "Normal", "All Stocked"].includes(status)) hookData.cell.styles.textColor = [46, 125, 50];
+        else if (["Needs Attention", "Moderate"].includes(status)) hookData.cell.styles.textColor = [245, 127, 23];
+        else hookData.cell.styles.textColor = [198, 40, 40];
         hookData.cell.styles.fontStyle = "bold";
       }
     },
     margin: { left: 14, right: 14 },
     theme: "grid",
   });
-  y = (doc as unknown as { lastAutoTable: { finalY: number } }).lastAutoTable.finalY + 10;
+  y = doc.lastAutoTable.finalY + 10;
 
-  // ── Inventory Insights ──
+  // Inventory Insights
   sectionTitle("Inventory Insights");
   const invFill: [number, number, number] = data.lowStock > 0 ? [255, 248, 225] : [232, 245, 233];
   const invText: [number, number, number] = data.lowStock > 0 ? [245, 127, 23] : [46, 125, 50];
@@ -340,40 +261,31 @@ async function generatePDF(data: Analytics) {
   doc.setFont("helvetica", "bold");
   doc.setFontSize(9);
   doc.setTextColor(...invText);
-  const invMsg =
-    data.lowStock > 0
-      ? `${data.lowStock} medicine${data.lowStock !== 1 ? "s" : ""} running low (${lowStockRate}% of total)`
-      : "All medicines are adequately stocked";
+  const invMsg = data.lowStock > 0
+    ? `${data.lowStock} medicine${data.lowStock !== 1 ? "s" : ""} running low (${lowStockRate}% of total)`
+    : "All medicines are adequately stocked";
   doc.text(invMsg, 20, y + 8);
   doc.setFont("helvetica", "normal");
   doc.setFontSize(8);
   doc.setTextColor(100, 100, 100);
-  const invNote =
-    data.lowStock > 0
-      ? "Notify pharmacy staff to restock flagged medicines to avoid disruptions."
-      : "No low stock items detected. Inventory is healthy across all registered pharmacies.";
+  const invNote = data.lowStock > 0
+    ? "Notify pharmacy staff to restock flagged medicines to avoid disruptions."
+    : "No low stock items detected. Inventory is healthy across all registered pharmacies.";
   doc.text(invNote, 20, y + 14.5);
 
-  // ── Footer ──
+  // Footer
   const pageCount = doc.getNumberOfPages();
   for (let i = 1; i <= pageCount; i++) {
     doc.setPage(i);
     doc.setFont("helvetica", "normal");
     doc.setFontSize(7);
     doc.setTextColor(160, 160, 160);
-    doc.text(
-      `Page ${i} of ${pageCount}  •  MediFind Admin — Confidential`,
-      pageW / 2,
-      doc.internal.pageSize.getHeight() - 8,
-      { align: "center" }
-    );
+    doc.text(`Page ${i} of ${pageCount}  •  MediFind Admin — Confidential`, pageW / 2, doc.internal.pageSize.getHeight() - 8, { align: "center" });
   }
 
-  const fileName = `analytics-report-${now.toISOString().slice(0, 10)}.pdf`;
-  doc.save(fileName);
+  doc.save(`analytics-report-${now.toISOString().slice(0, 10)}.pdf`);
 }
 
-// ─── Main Component ───────────────────────────────────────────────────────────
 export default function ReportsAnalytics() {
   const [data, setData] = useState<Analytics>(EMPTY);
   const [generating, setGenerating] = useState(false);
@@ -405,12 +317,9 @@ export default function ReportsAnalytics() {
     }
   };
 
-  const completionRate =
-    data.orders > 0 ? Math.round((data.completedOrders / data.orders) * 100) : 0;
-  const cancellationRate =
-    data.orders > 0 ? Math.round((data.cancelledOrders / data.orders) * 100) : 0;
-  const lowStockRate =
-    data.medicines > 0 ? Math.round((data.lowStock / data.medicines) * 100) : 0;
+  const completionRate = data.orders > 0 ? Math.round((data.completedOrders / data.orders) * 100) : 0;
+  const cancellationRate = data.orders > 0 ? Math.round((data.cancelledOrders / data.orders) * 100) : 0;
+  const lowStockRate = data.medicines > 0 ? Math.round((data.lowStock / data.medicines) * 100) : 0;
 
   return (
     <Box sx={{ p: 3, minHeight: "100vh" }}>
@@ -426,18 +335,10 @@ export default function ReportsAnalytics() {
         <Typography variant="subtitle1" color="text.secondary" sx={{ fontSize: "0.83rem", textAlign: "center" }}>
           System insights and performance overview
         </Typography>
-
-        {/* Generate File Button */}
         <Box sx={{ display: "flex", justifyContent: "center", mt: 1.5 }}>
           <Button
             variant="contained"
-            startIcon={
-              generating ? (
-                <CircularProgress size={16} sx={{ color: "inherit" }} />
-              ) : (
-                <DownloadIcon fontSize="small" />
-              )
-            }
+            startIcon={generating ? <CircularProgress size={16} sx={{ color: "inherit" }} /> : <DownloadIcon fontSize="small" />}
             disabled={generating}
             onClick={handleGenerateFile}
             sx={{
@@ -449,10 +350,7 @@ export default function ReportsAnalytics() {
               px: 2.5,
               py: 0.9,
               boxShadow: "0 2px 8px rgba(13,59,110,0.25)",
-              "&:hover": {
-                background: "linear-gradient(135deg, #0a2d56 0%, #0d4fa3 100%)",
-                boxShadow: "0 4px 12px rgba(13,59,110,0.35)",
-              },
+              "&:hover": { background: "linear-gradient(135deg, #0a2d56 0%, #0d4fa3 100%)", boxShadow: "0 4px 12px rgba(13,59,110,0.35)" },
               "&:disabled": { opacity: 0.65 },
             }}
           >
@@ -462,14 +360,7 @@ export default function ReportsAnalytics() {
       </Box>
 
       {/* Overview cards */}
-      <Box
-        sx={{
-          display: "grid",
-          gridTemplateColumns: { xs: "1fr 1fr", md: "repeat(4, 1fr)" },
-          gap: 2,
-          mb: 2,
-        }}
-      >
+      <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr 1fr", md: "repeat(4, 1fr)" }, gap: 2, mb: 2 }}>
         <StatCard label="Total users" value={data.users} icon={<PeopleAltIcon fontSize="small" />} iconBg="#EEF4FB" iconColor="#0D3B6E" />
         <StatCard label="Pharmacies" value={data.pharmacies} icon={<LocalPharmacyIcon fontSize="small" />} iconBg="#E8F5E9" iconColor="#2E7D32" />
         <StatCard label="Total orders" value={data.orders} icon={<ShoppingCartIcon fontSize="small" />} iconBg="#E3F2FD" iconColor="#1565C0" />
@@ -477,14 +368,11 @@ export default function ReportsAnalytics() {
       </Box>
 
       <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", md: "1fr 1fr" }, gap: 2, mb: 2 }}>
-        {/* Revenue highlight */}
         <Card sx={{ background: "linear-gradient(135deg, #0D3B6E 0%, #1565C0 100%)", color: "#fff" }}>
           <CardContent>
             <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 1 }}>
               <AttachMoneyIcon sx={{ fontSize: 18, color: "rgba(255,255,255,0.7)" }} />
-              <Typography variant="overline" sx={{ color: "rgba(255,255,255,0.7)", lineHeight: 1 }}>
-                Total revenue
-              </Typography>
+              <Typography variant="overline" sx={{ color: "rgba(255,255,255,0.7)", lineHeight: 1 }}>Total revenue</Typography>
             </Box>
             <Typography sx={{ fontSize: "2rem", fontWeight: 700, color: "#fff", lineHeight: 1.2 }}>
               ₱{data.totalRevenue.toLocaleString()}
@@ -495,7 +383,6 @@ export default function ReportsAnalytics() {
           </CardContent>
         </Card>
 
-        {/* Derived metrics */}
         <Card>
           <CardContent>
             <Box sx={{ display: "flex", alignItems: "center", gap: 1.5, mb: 1.5 }}>
@@ -503,12 +390,8 @@ export default function ReportsAnalytics() {
                 <InsightsIcon sx={{ fontSize: 18 }} />
               </Box>
               <Box>
-                <Typography sx={{ fontWeight: 600, fontSize: "0.9rem", color: "text.primary" }}>
-                  Performance metrics
-                </Typography>
-                <Typography variant="caption" color="text.secondary">
-                  Derived from current data
-                </Typography>
+                <Typography sx={{ fontWeight: 600, fontSize: "0.9rem", color: "text.primary" }}>Performance metrics</Typography>
+                <Typography variant="caption" color="text.secondary">Derived from current data</Typography>
               </Box>
             </Box>
             <MetricRow label="Order completion rate" value={`${completionRate}%`} chip={completionRate >= 70 ? { label: "Healthy", color: "success" } : { label: "Needs attention", color: "warning" }} />
@@ -528,12 +411,8 @@ export default function ReportsAnalytics() {
               <ShoppingCartIcon sx={{ fontSize: 18 }} />
             </Box>
             <Box>
-              <Typography sx={{ fontWeight: 600, fontSize: "0.9rem", color: "text.primary" }}>
-                Order breakdown
-              </Typography>
-              <Typography variant="caption" color="text.secondary">
-                Distribution of {data.orders} total order{data.orders !== 1 ? "s" : ""}
-              </Typography>
+              <Typography sx={{ fontWeight: 600, fontSize: "0.9rem", color: "text.primary" }}>Order breakdown</Typography>
+              <Typography variant="caption" color="text.secondary">Distribution of {data.orders} total order{data.orders !== 1 ? "s" : ""}</Typography>
             </Box>
           </Box>
           <OrderBar label="Completed" value={data.completedOrders} total={data.orders} color="#2E7D32" icon={<CheckCircleIcon sx={{ fontSize: 16 }} />} />
@@ -550,25 +429,11 @@ export default function ReportsAnalytics() {
               <WarningAmberIcon sx={{ fontSize: 18 }} />
             </Box>
             <Box>
-              <Typography sx={{ fontWeight: 600, fontSize: "0.9rem", color: "text.primary" }}>
-                Inventory insights
-              </Typography>
-              <Typography variant="caption" color="text.secondary">
-                Medicine stock health across all pharmacies
-              </Typography>
+              <Typography sx={{ fontWeight: 600, fontSize: "0.9rem", color: "text.primary" }}>Inventory insights</Typography>
+              <Typography variant="caption" color="text.secondary">Medicine stock health across all pharmacies</Typography>
             </Box>
           </Box>
-          <Box
-            sx={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-              p: 1.5,
-              borderRadius: "8px",
-              backgroundColor: data.lowStock > 0 ? "#FFF8E1" : "#E8F5E9",
-              mb: 1,
-            }}
-          >
+          <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", p: 1.5, borderRadius: "8px", backgroundColor: data.lowStock > 0 ? "#FFF8E1" : "#E8F5E9", mb: 1 }}>
             <Typography variant="body2" sx={{ fontWeight: 500, color: data.lowStock > 0 ? "#F57F17" : "#2E7D32" }}>
               {data.lowStock > 0
                 ? `${data.lowStock} medicine${data.lowStock !== 1 ? "s" : ""} running low (${lowStockRate}% of total)`
