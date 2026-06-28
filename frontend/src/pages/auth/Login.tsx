@@ -1,7 +1,7 @@
 import { useState,useRef } from "react";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import api from "../../api/api";
-import logo from "../assets/Seal.png";
+import logo from "frontend/src/assets/Seal.png"
 import {
   Box,
   TextField,
