@@ -30,7 +30,7 @@ interface IPharmacy {
   _id: string;
   name: string;
   address: string;
-  phone: string;
+  contactNumber: string;
   isActive: boolean;
   ownerId?: string;
 }
@@ -384,7 +384,7 @@ export default function PharmaManagement() {
                   <Box sx={{ display: "flex", alignItems: "center", gap: 0.75 }}>
                     <PhoneIcon sx={{ fontSize: 13, color: "text.disabled" }} />
                     <Typography variant="caption" color="text.secondary">
-                      {pharmacy.phone || "—"}
+                      {pharmacy.contactNumber || "—"}
                     </Typography>
                   </Box>
                 </Box>
@@ -393,25 +393,25 @@ export default function PharmaManagement() {
 
                 {/* Actions */}
                 <Box sx={{ display: "flex", gap: 1 }}>
-                  <Button
-                    size="small"
-                    variant="outlined"
-                    color={pharmacy.isActive ? "warning" : "success"}
-                    onClick={() => toggleStatus(pharmacy._id)}
-                    sx={{ borderRadius: "8px", fontSize: "0.75rem", borderWidth: "0.5px", px: 1.5 }}
-                  >
-                    {pharmacy.isActive ? "Deactivate" : "Activate"}
-                  </Button>
-                  <Button
-                    size="small"
-                    variant="outlined"
-                    color="error"
-                    startIcon={<DeleteIcon sx={{ fontSize: "15px !important" }} />}
-                    onClick={() => deletePharmacy(pharmacy._id)}
-                    sx={{ borderRadius: "8px", fontSize: "0.75rem", borderWidth: "0.5px", px: 1.5 }}
-                  >
-                    Delete
-                  </Button>
+                 <Button
+    size="small"
+    variant="outlined"
+    color="primary"
+    startIcon={<LocationOnIcon sx={{ fontSize: "15px !important" }} />}
+    onClick={() => {
+      const destination = pharmacy.lat && pharmacy.lng
+        ? `${pharmacy.lat},${pharmacy.lng}`
+        : encodeURIComponent(pharmacy.address);
+      window.open(
+        `https://www.google.com/maps/dir/?api=1&destination=${destination}`,
+        "_blank"
+      );
+    }}
+    sx={{ borderRadius: "8px", fontSize: "0.75rem", borderWidth: "0.5px", px: 1.5 }}
+  >
+    Directions
+  </Button>
+
                 </Box>
               </CardContent>
             </Card>

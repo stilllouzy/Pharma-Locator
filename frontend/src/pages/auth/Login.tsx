@@ -1,6 +1,7 @@
 import { useState,useRef } from "react";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import api from "../../api/api";
+import logo from "../assets/Seal.png";
 import {
   Box,
   TextField,
@@ -103,25 +104,16 @@ const confirmPasswordRef = useRef<HTMLInputElement>(null);
     boxShadow: "0 8px 30px rgba(0,0,0,0.06)",
   }}
 >
-     <Box sx={{ textAlign: "center", mb: 3 }}>
-  <Typography
-    sx={{
-      fontSize: 28,
-      fontWeight: 700,
-      color: "primary.main",
-    }}
-  >
-    Pharma Locator
-  </Typography>
-
-  <Typography
-    variant="body2"
-    color="text.secondary"
-  >
-    Find medicines from nearby pharmacies
+    <Box sx={{ textAlign: "center", mb: 3 }}>
+  <img
+    src={logo}
+    alt="Brgy. Pharma Locator"
+    style={{ height: 72, objectFit: "contain", marginBottom: 8 }}
+  />
+  <Typography variant="body2" color="text.secondary">
+    Emmanuel Bergado 1, Pharmacy Locator
   </Typography>
 </Box>
-
         {/* TABS */}
        <Tabs
   value={tab}

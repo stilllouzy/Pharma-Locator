@@ -218,8 +218,9 @@ export default function Dashboard() {
     color="text.secondary"
     sx={{ fontSize: "0.82rem" }}
   >
-    System overview and monitoring
+     Brgy. Emmanuel Bergado 1 — System overview
   </Typography>
+  
 </Box>
         <Chip icon={<FiberManualRecord sx={{ fontSize: "10px !important" }} />} label="System active" color="success" size="small"  sx={{
       position: "absolute",

@@ -268,7 +268,6 @@ export default function MedManagement() {
                       py: 0.5,
                     }}
                   >
-                    Delete
                   </Button>
                 </Box>
               </CardContent>

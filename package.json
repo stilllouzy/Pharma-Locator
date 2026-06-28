@@ -3,5 +3,9 @@
     "dev": "concurrently \"npm run server\" \"npm run client\"",
     "server": "npm --prefix backend run dev",
     "client": "npm --prefix frontend run dev"
+  },
+  "dependencies": {
+    "jspdf": "^4.2.1",
+    "jspdf-autotable": "^5.0.8"
   }
 }

@@ -1,5 +1,6 @@
 import { Box, Typography, IconButton, Tooltip, Drawer, useMediaQuery, type Theme } from "@mui/material";
 import { NavLink, useNavigate, useLocation } from "react-router-dom";
+import logo from "../assets/Seal.png";
 import DashboardOutlinedIcon from "@mui/icons-material/DashboardOutlined";
 import LocalShippingOutlinedIcon from "@mui/icons-material/LocalShippingOutlined";
 import HistoryOutlinedIcon from "@mui/icons-material/HistoryOutlined";
@@ -60,26 +61,40 @@ export default function RiderSidebar({ open, onClose }: SidebarProps) {
         overflow: "hidden",
       }}
     >
-      {/* BRAND */}
-      <Box
-        sx={{
-          display: "flex",
-          alignItems: "center",
-          gap: 1.25,
-          height: 64,
-          px: showLabels ? 2.5 : 0,
-          justifyContent: showLabels ? "flex-start" : "center",
-          flexShrink: 0,
-        }}
-      >
-        <Box sx={{ width: 8, height: 8, borderRadius: "50%", backgroundColor: ACCENT, flexShrink: 0 }} />
-        {showLabels && (
-          <Typography sx={{ fontSize: 14, fontWeight: 500, color: "#fff", whiteSpace: "nowrap" }}>
-            Pharma Locator
-          </Typography>
-        )}
-      </Box>
-
+   {/* BRAND */}
+<Box
+  sx={{
+    display: "flex",
+    alignItems: "center",
+    gap: 1.25,
+    height: 64,
+    px: showLabels ? 2.5 : 0,
+    justifyContent: showLabels ? "flex-start" : "center",
+    flexShrink: 0,
+  }}
+>
+  <img
+    src={logo}
+    alt="Pharma Locator"
+    style={{
+      height: showLabels ? 36 : 32,
+      width: showLabels ? "auto" : 32,
+      objectFit: "contain",
+      flexShrink: 0,
+      transition: "height 0.25s ease, width 0.25s ease",
+    }}
+  />
+  {showLabels && (
+    <Box>
+      <Typography sx={{ fontSize: 11, color: "rgba(255,255,255,0.45)", whiteSpace: "nowrap", lineHeight: 1.2 }}>
+        Brgy. Emmanuel Bergado 1
+      </Typography>
+      <Typography sx={{ fontSize: 14, fontWeight: 500, color: "#fff", whiteSpace: "nowrap" }}>
+        Pharma Locator
+      </Typography>
+    </Box>
+  )}
+</Box>
       <Box sx={{ borderTop: "0.5px solid rgba(255,255,255,0.12)" }} />
 
       {/* NAV LINKS */}

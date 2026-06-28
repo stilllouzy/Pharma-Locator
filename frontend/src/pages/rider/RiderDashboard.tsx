@@ -227,8 +227,9 @@ export default function RiderDashboard() {
           </Typography>
         </Box>
         <Typography variant="caption" color="text.disabled">
-          Here's your delivery overview for today
+          Brgy. Emmanuel Bergado 1 · Delivery overview for today
         </Typography>
+        
       </Box>
 
       {/* ── Stat cards ── */}

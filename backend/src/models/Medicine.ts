@@ -12,6 +12,7 @@ export interface IMedicine extends Document {
 const MedicineSchema: Schema = new Schema(
   {
     name: { type: String, required: true },
+    genericName: { type: String, default: "" },
     description: String,
     price: { type: Number, required: true },
     stock: { type: Number, required: true },

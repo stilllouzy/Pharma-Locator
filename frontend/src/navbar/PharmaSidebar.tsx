@@ -1,5 +1,6 @@
 import { Box, Typography, IconButton, Tooltip } from "@mui/material";
 import { NavLink, useNavigate, useLocation } from "react-router-dom";
+import logo from "../assets/Seal.png";
 import MedicationOutlinedIcon from "@mui/icons-material/MedicationOutlined";
 import ReceiptLongOutlinedIcon from "@mui/icons-material/ReceiptLongOutlined";
 import DescriptionOutlinedIcon from "@mui/icons-material/DescriptionOutlined";
@@ -61,33 +62,40 @@ export default function PharmaSidebar({ open }: SidebarProps) {
         overflow: "hidden",
       }}
     >
-      {/* BRAND */}
-      <Box
-        sx={{
-          display: "flex",
-          alignItems: "center",
-          gap: 1.25,
-          height: 64,
-          px: open ? 2.5 : 0,
-          justifyContent: open ? "flex-start" : "center",
-          flexShrink: 0,
-        }}
-      >
-        <Box
-          sx={{
-            width: 8,
-            height: 8,
-            borderRadius: "50%",
-            backgroundColor: ACCENT,
-            flexShrink: 0,
-          }}
-        />
-        {open && (
-          <Typography sx={{ fontSize: 14, fontWeight: 500, color: "#fff", whiteSpace: "nowrap" }}>
-            Pharma Locator
-          </Typography>
-        )}
-      </Box>
+     {/* BRAND */}
+<Box
+  sx={{
+    display: "flex",
+    alignItems: "center",
+    gap: 1.25,
+    height: 64,
+    px: open ? 2.5 : 0,
+    justifyContent: open ? "flex-start" : "center",
+    flexShrink: 0,
+  }}
+>
+  <img
+    src={logo}
+    alt="Pharma Locator"
+    style={{
+      height: open ? 36 : 32,
+      width: open ? "auto" : 32,
+      objectFit: "contain",
+      flexShrink: 0,
+      transition: "height 0.25s ease, width 0.25s ease",
+    }}
+  />
+  {open && (
+    <Box>
+      <Typography sx={{ fontSize: 11, color: "rgba(255,255,255,0.45)", whiteSpace: "nowrap", lineHeight: 1.2 }}>
+        Brgy. Emmanuel Bergado 1
+      </Typography>
+      <Typography sx={{ fontSize: 14, fontWeight: 500, color: "#fff", whiteSpace: "nowrap" }}>
+        Pharma Locator
+      </Typography>
+    </Box>
+  )}
+</Box>
 
       <Box sx={{ borderTop: "0.5px solid rgba(255,255,255,0.12)" }} />
 

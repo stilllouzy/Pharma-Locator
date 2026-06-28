@@ -52,6 +52,8 @@ interface IMedicine {
   price: number;
   stock: number;
   category: string;
+  description?: string;
+  genericName?: string;
   pharmacyId?: { _id?: string; name: string };
   pharmacy?: { _id?: string; name: string };
 }
@@ -88,6 +90,19 @@ function saveCart(cart: ICartItem[]) {
     // Storage full or unavailable — cart still works in-memory for this session.
   }
 }
+
+// ─── Shared th style ──────────────────────────────────────────────────────────
+const thStyle: React.CSSProperties = {
+  textAlign: "left",
+  padding: "10px 16px",
+  fontWeight: 600,
+  color: "#6B7280",
+  fontSize: "0.72rem",
+  letterSpacing: "0.05em",
+  textTransform: "uppercase",
+  borderBottom: "1px solid rgba(0,0,0,0.06)",
+  whiteSpace: "nowrap",
+};
 
 export default function Home() {
   const navigate = useNavigate();
@@ -129,7 +144,6 @@ export default function Home() {
   }, [cart]);
 
   // Fetch medicines whenever the selected pharmacy filter changes.
-  // Free-text search no longer filters here — it navigates to /user/results instead.
   useEffect(() => {
     const fetchMedicines = async () => {
       if (!activePharmacyId) {
@@ -170,10 +184,6 @@ export default function Home() {
     setSelectedPharmacyName(null);
   };
 
-  // If we arrived from a search result with ?addMedicine=<id>, add it to
-  // cart. We try the navigation state first (instant, no network call) and
-  // fall back to fetching from the backend if that's unavailable — e.g. a
-  // direct link, refresh, or browser back/forward landed here instead.
   useEffect(() => {
     if (!addMedicineId) return;
 
@@ -300,92 +310,60 @@ export default function Home() {
 
   return (
     <Box sx={{ pb: cart.length > 0 ? "88px" : 0 }}>
-      {/* SEARCH */}
+
+      {/* ── SEARCH HEADER ── */}
       <Box sx={{ mb: 3 }}>
-  <Box
-    sx={{
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "center",
-      gap: 1,
-      mb: 0.25,
-    }}
-  >
-    <LocationOnOutlinedIcon
-      sx={{
-        color: "primary.main",
-        fontSize: 24,
-      }}
-    />
+        <Box sx={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 1, mb: 0.25 }}>
+          <LocationOnOutlinedIcon sx={{ color: "primary.main", fontSize: 24 }} />
+          <Typography variant="h2" sx={{ fontSize: "1.4rem" }}>
+            Medicine Search
+          </Typography>
+        </Box>
+        <Typography variant="subtitle1" sx={{ fontSize: "0.83rem", textAlign: "center", mb: 2 }}>
+          Brgy. Emmanuel Bergado 1 · Find medicines and nearby pharmacies
+        </Typography>
 
-    <Typography
-      variant="h2"
-      sx={{
-        fontSize: "1.4rem",
-      }}
-    >
-      Medicine Search
-    </Typography>
-  </Box>
+        <TextField
+          fullWidth
+          placeholder="Search medicine, pharmacy, or 'near me'"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          onKeyDown={(e) => { if (e.key === "Enter") handleSearchSubmit(); }}
+          sx={{
+            backgroundColor: "#fff",
+            borderRadius: "10px",
+            "& .MuiOutlinedInput-root": { borderRadius: "10px" },
+          }}
+          slotProps={{
+            input: {
+              startAdornment: (
+                <InputAdornment position="start">
+                  <SearchIcon sx={{ fontSize: 18, color: "text.secondary" }} />
+                </InputAdornment>
+              ),
+              endAdornment: search.trim() && (
+                <InputAdornment position="end">
+                  <IconButton
+                    size="small"
+                    onClick={handleSearchSubmit}
+                    sx={{
+                      backgroundColor: "#0D3B6E",
+                      color: "#fff",
+                      width: 30,
+                      height: 30,
+                      "&:hover": { backgroundColor: "#0A2E55" },
+                    }}
+                  >
+                    <SearchIcon sx={{ fontSize: 16 }} />
+                  </IconButton>
+                </InputAdornment>
+              ),
+            },
+          }}
+        />
+      </Box>
 
-  <Typography
-    variant="subtitle1"
-    sx={{
-      fontSize: "0.83rem",
-      textAlign: "center",
-      mb: 2,
-    }}
-  >
-    Find medicines and nearby pharmacies
-  </Typography>
-
-  <TextField
-    fullWidth
-    placeholder="Search medicine, pharmacy, or 'near me'"
-    value={search}
-    onChange={(e) => setSearch(e.target.value)}
-    onKeyDown={(e) => {
-      if (e.key === "Enter") handleSearchSubmit();
-    }}
-    sx={{
-      backgroundColor: "#fff",
-      borderRadius: "10px",
-      "& .MuiOutlinedInput-root": {
-        borderRadius: "10px",
-      },
-    }}
-    slotProps={{
-      input: {
-        startAdornment: (
-          <InputAdornment position="start">
-            <SearchIcon sx={{ fontSize: 18, color: "text.secondary" }} />
-          </InputAdornment>
-        ),
-        endAdornment: search.trim() && (
-          <InputAdornment position="end">
-            <IconButton
-              size="small"
-              onClick={handleSearchSubmit}
-              sx={{
-                backgroundColor: "#0D3B6E",
-                color: "#fff",
-                width: 30,
-                height: 30,
-                "&:hover": {
-                  backgroundColor: "#0A2E55",
-                },
-              }}
-            >
-              <SearchIcon sx={{ fontSize: 16 }} />
-            </IconButton>
-          </InputAdornment>
-        ),
-      },
-    }}
-  />
-</Box>
-
-      {/* MAP */}
+      {/* ── MAP ── */}
       <Card sx={{ borderRadius: "12px", mb: 2.5, overflow: "hidden" }}>
         <Box sx={{ height: { xs: "32vh", sm: "38vh", md: "46vh" } }}>
           <MapView
@@ -409,47 +387,31 @@ export default function Home() {
         </CardContent>
       </Card>
 
-      {/* CONTEXT CHIP — shown once a pharmacy filter is active */}
+      {/* ── PHARMACY FILTER CHIP ── */}
       {selectedPharmacy && (
         <Box sx={{ mb: 2, display: "flex", alignItems: "center", gap: 1 }}>
           <Chip
             label={`Browsing: ${selectedPharmacyName ?? "Selected pharmacy"}`}
             onDelete={clearPharmacyFilter}
-            sx={{
-              backgroundColor: "#EEF4FB",
-              color: "#0D3B6E",
-              fontWeight: 600,
-              fontSize: "0.78rem",
-            }}
+            sx={{ backgroundColor: "#EEF4FB", color: "#0D3B6E", fontWeight: 600, fontSize: "0.78rem" }}
           />
           <IconButton size="small" onClick={handleToggleFavoritePharmacy}>
-            {isPharmacyFavorited(selectedPharmacy) ? (
-              <FavoriteIcon sx={{ fontSize: 18, color: "#E0457B" }} />
-            ) : (
-              <FavoriteBorderIcon sx={{ fontSize: 18, color: "text.disabled" }} />
-            )}
+            {isPharmacyFavorited(selectedPharmacy)
+              ? <FavoriteIcon sx={{ fontSize: 18, color: "#E0457B" }} />
+              : <FavoriteBorderIcon sx={{ fontSize: 18, color: "text.disabled" }} />}
           </IconButton>
         </Box>
       )}
 
-      {/* MEDICINE RESULTS */}
+      {/* ── MEDICINE RESULTS ── */}
       <Box sx={{ mb: 2 }}>
         <Typography sx={{ fontWeight: 600, fontSize: "0.95rem", color: "text.primary", mb: 1.5 }}>
           Medicines
         </Typography>
 
+        {/* Empty prompt */}
         {!hasSearchedOrFiltered && (
-          <Box
-            sx={{
-              py: 5,
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              gap: 1,
-              backgroundColor: "#fff",
-              borderRadius: "12px",
-            }}
-          >
+          <Box sx={{ py: 5, display: "flex", flexDirection: "column", alignItems: "center", gap: 1, backgroundColor: "#fff", borderRadius: "12px" }}>
             <MedicalServicesOutlinedIcon sx={{ fontSize: 32, color: "text.disabled" }} />
             <Typography variant="body2" color="text.secondary" sx={{ textAlign: "center", px: 3 }}>
               Search for a medicine or select a pharmacy on the map to see what's in stock.
@@ -457,155 +419,159 @@ export default function Home() {
           </Box>
         )}
 
+        {/* Skeleton */}
         {hasSearchedOrFiltered && loadingMedicines && (
-          <Box
-            sx={{
-              display: "grid",
-              gridTemplateColumns: { xs: "repeat(2, 1fr)", sm: "repeat(3, 1fr)", md: "repeat(4, 1fr)" },
-              gap: 1.5,
-            }}
-          >
+          <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
             {Array.from({ length: 4 }).map((_, i) => (
-              <Skeleton key={i} variant="rounded" height={150} />
+              <Skeleton key={i} variant="rounded" height={44} />
             ))}
           </Box>
         )}
 
+        {/* No results */}
         {hasSearchedOrFiltered && !loadingMedicines && medicines.length === 0 && (
-          <Box
-            sx={{
-              py: 5,
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              gap: 1,
-              backgroundColor: "#fff",
-              borderRadius: "12px",
-            }}
-          >
+          <Box sx={{ py: 5, display: "flex", flexDirection: "column", alignItems: "center", gap: 1, backgroundColor: "#fff", borderRadius: "12px" }}>
             <MedicalServicesOutlinedIcon sx={{ fontSize: 32, color: "text.disabled" }} />
-            <Typography variant="body2" color="text.secondary">
-              No medicines found.
-            </Typography>
-            <Typography variant="caption" color="text.disabled">
-              Try a different name, or clear the pharmacy filter.
-            </Typography>
+            <Typography variant="body2" color="text.secondary">No medicines found.</Typography>
+            <Typography variant="caption" color="text.disabled">Try a different name, or clear the pharmacy filter.</Typography>
           </Box>
         )}
 
+        {/* ── Medicine table ── */}
         {hasSearchedOrFiltered && !loadingMedicines && medicines.length > 0 && (
-          <Box
-            sx={{
-              display: "grid",
-              gridTemplateColumns: { xs: "repeat(2, 1fr)", sm: "repeat(3, 1fr)", md: "repeat(4, 1fr)" },
-              gap: 1.5,
-            }}
-          >
-            {medicines.map((med) => {
-              const pharmacyName = med.pharmacy?.name ?? med.pharmacyId?.name ?? "Unknown pharmacy";
-              const outOfStock = med.stock === 0;
-              const favorited = isMedicineFavorited(med._id);
-              return (
-                <Card key={med._id} sx={{ borderRadius: "12px", position: "relative" }}>
-                  <IconButton
-                    size="small"
-                    onClick={() => handleToggleFavoriteMedicine(med, pharmacyName)}
-                    sx={{ position: "absolute", top: 4, right: 4, zIndex: 1, p: 0.5 }}
-                  >
-                    {favorited ? (
-                      <FavoriteIcon sx={{ fontSize: 16, color: "#E0457B" }} />
-                    ) : (
-                      <FavoriteBorderIcon sx={{ fontSize: 16, color: "text.disabled" }} />
-                    )}
-                  </IconButton>
-
-                  <CardContent sx={{ p: "10px 12px !important" }}>
-                    <Box sx={{ display: "flex", alignItems: "center", gap: 0.75, mb: 0.5, pr: 2.5 }}>
-                      <Box
-                        sx={{
-                          width: 24,
-                          height: 24,
-                          borderRadius: "6px",
-                          backgroundColor: "#EEF4FB",
-                          color: "#0D3B6E",
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "center",
-                          flexShrink: 0,
+          <Card sx={{ borderRadius: "12px", overflow: "hidden" }}>
+            <Box sx={{ overflowX: "auto" }}>
+              <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "0.82rem" }}>
+                <thead>
+                  <tr style={{ backgroundColor: "#F8FAFC" }}>
+                    <th style={thStyle}>Medicine</th>
+                    <th style={thStyle}>Generic name</th>
+                    <th style={thStyle}>Description</th>
+                    <th style={thStyle}>Category</th>
+                    <th style={thStyle}>Pharmacy</th>
+                    <th style={{ ...thStyle, textAlign: "right" }}>Price</th>
+                    <th style={{ ...thStyle, textAlign: "center" }}>Stock</th>
+                    <th style={{ ...thStyle, textAlign: "center" }}></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {medicines.map((med, idx) => {
+                    const pharmacyName = med.pharmacy?.name ?? med.pharmacyId?.name ?? "Unknown pharmacy";
+                    const outOfStock = med.stock === 0;
+                    const favorited = isMedicineFavorited(med._id);
+                    return (
+                      <tr
+                        key={med._id}
+                        style={{
+                          borderBottom: idx < medicines.length - 1 ? "1px solid rgba(0,0,0,0.05)" : "none",
+                          backgroundColor: "white",
                         }}
+                        onMouseEnter={e => (e.currentTarget.style.backgroundColor = "#F9FBFD")}
+                        onMouseLeave={e => (e.currentTarget.style.backgroundColor = "white")}
                       >
-                        <MedicalServicesOutlinedIcon sx={{ fontSize: 14 }} />
-                      </Box>
-                      <Typography
-                        sx={{
-                          fontSize: "0.8rem",
-                          fontWeight: 600,
-                          color: "text.primary",
-                          whiteSpace: "nowrap",
-                          overflow: "hidden",
-                          textOverflow: "ellipsis",
-                          flex: 1,
-                          minWidth: 0,
-                        }}
-                      >
-                        {med.name}
-                      </Typography>
-                    </Box>
+                        {/* Name */}
+                        <td style={{ padding: "10px 16px", whiteSpace: "nowrap" }}>
+                          <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                            <Box sx={{ width: 28, height: 28, borderRadius: "7px", backgroundColor: "#EEF4FB", color: "#0D3B6E", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                              <MedicalServicesOutlinedIcon sx={{ fontSize: 14 }} />
+                            </Box>
+                            <Typography sx={{ fontSize: "0.82rem", fontWeight: 600, color: "text.primary" }}>
+                              {med.name}
+                            </Typography>
+                          </Box>
+                        </td>
 
-                    <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", mb: 0.25 }}>
-                      <Typography sx={{ fontSize: "0.78rem", color: "#0D3B6E", fontWeight: 600 }}>
-                        ₱{med.price.toFixed(2)}
-                      </Typography>
-                      <Typography
-                        variant="caption"
-                        sx={{ color: outOfStock ? "#C62828" : "text.disabled", fontSize: "0.68rem" }}
-                      >
-                        {outOfStock ? "Out of stock" : `${med.stock} left`}
-                      </Typography>
-                    </Box>
+                        {/* Generic name */}
+                        <td style={{ padding: "10px 16px", whiteSpace: "nowrap" }}>
+                          <Typography variant="caption" color="text.secondary">
+                            {med.genericName || "—"}
+                          </Typography>
+                        </td>
 
-                    <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 1 }}>
-                      <Typography
-                        variant="caption"
-                        color="text.secondary"
-                        sx={{
-                          whiteSpace: "nowrap",
-                          overflow: "hidden",
-                          textOverflow: "ellipsis",
-                          fontSize: "0.68rem",
-                          flex: 1,
-                          minWidth: 0,
-                        }}
-                      >
-                        {pharmacyName}
-                      </Typography>
+                        {/* Description */}
+                        <td style={{ padding: "10px 16px", maxWidth: 220 }}>
+                          <Typography
+                            variant="caption"
+                            color="text.secondary"
+                            sx={{
+                              display: "-webkit-box",
+                              WebkitLineClamp: 2,
+                              WebkitBoxOrient: "vertical",
+                              overflow: "hidden",
+                            }}
+                          >
+                            {med.description || "—"}
+                          </Typography>
+                        </td>
 
-                      <IconButton
-                        size="small"
-                        disabled={outOfStock}
-                        onClick={() => addToCart(med)}
-                        sx={{
-                          backgroundColor: outOfStock ? "rgba(0,0,0,0.06)" : "#0D3B6E",
-                          color: "#fff",
-                          width: 26,
-                          height: 26,
-                          flexShrink: 0,
-                          "&:hover": { backgroundColor: outOfStock ? "rgba(0,0,0,0.06)" : "#0A2E55" },
-                          "&.Mui-disabled": { color: "text.disabled" },
-                        }}
-                      >
-                        <AddShoppingCartIcon sx={{ fontSize: 14 }} />
-                      </IconButton>
-                    </Box>
-                  </CardContent>
-                </Card>
-              );
-            })}
-          </Box>
+                        {/* Category */}
+                        <td style={{ padding: "10px 16px", whiteSpace: "nowrap" }}>
+                          <Typography variant="caption" color="text.secondary">
+                            {med.category || "—"}
+                          </Typography>
+                        </td>
+
+                        {/* Pharmacy */}
+                        <td style={{ padding: "10px 16px", whiteSpace: "nowrap" }}>
+                          <Typography variant="caption" color="text.secondary">
+                            {pharmacyName}
+                          </Typography>
+                        </td>
+
+                        {/* Price */}
+                        <td style={{ padding: "10px 16px", textAlign: "right", whiteSpace: "nowrap" }}>
+                          <Typography sx={{ fontSize: "0.82rem", fontWeight: 600, color: "#0D3B6E" }}>
+                            ₱{med.price.toFixed(2)}
+                          </Typography>
+                        </td>
+
+                        {/* Stock */}
+                        <td style={{ padding: "10px 16px", textAlign: "center", whiteSpace: "nowrap" }}>
+                          <Chip
+                            label={outOfStock ? "Out of stock" : `${med.stock} left`}
+                            size="small"
+                            color={outOfStock ? "error" : "success"}
+                            variant="outlined"
+                            sx={{ fontSize: "0.68rem" }}
+                          />
+                        </td>
+
+                        {/* Actions */}
+                        <td style={{ padding: "10px 16px", textAlign: "center", whiteSpace: "nowrap" }}>
+                          <Box sx={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 0.5 }}>
+                            <IconButton size="small" onClick={() => handleToggleFavoriteMedicine(med, pharmacyName)}>
+                              {favorited
+                                ? <FavoriteIcon sx={{ fontSize: 16, color: "#E0457B" }} />
+                                : <FavoriteBorderIcon sx={{ fontSize: 16, color: "text.disabled" }} />}
+                            </IconButton>
+                            <IconButton
+                              size="small"
+                              disabled={outOfStock}
+                              onClick={() => addToCart(med)}
+                              sx={{
+                                backgroundColor: outOfStock ? "rgba(0,0,0,0.06)" : "#0D3B6E",
+                                color: "#fff",
+                                width: 28,
+                                height: 28,
+                                "&:hover": { backgroundColor: outOfStock ? "rgba(0,0,0,0.06)" : "#0A2E55" },
+                                "&.Mui-disabled": { color: "text.disabled" },
+                              }}
+                            >
+                              <AddShoppingCartIcon sx={{ fontSize: 14 }} />
+                            </IconButton>
+                          </Box>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </Box>
+          </Card>
         )}
       </Box>
 
-      {/* STICKY CART BAR */}
+      {/* ── STICKY CART BAR ── */}
       {cart.length > 0 && (
         <Box
           sx={{
@@ -617,7 +583,7 @@ export default function Home() {
             backgroundColor: "#fff",
             borderTop: "1px solid rgba(13,59,110,0.12)",
             boxShadow: "0 -4px 20px rgba(13,59,110,0.10)",
-            mx: { xs: -1.5, sm: -2, md: -3 }, // cancel out UserLayout's responsive page padding so it spans full width
+            mx: { xs: -1.5, sm: -2, md: -3 },
           }}
         >
           <Collapse in={cartExpanded}>
@@ -625,31 +591,16 @@ export default function Home() {
               {cart.map((item) => (
                 <Box
                   key={item._id}
-                  sx={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "space-between",
-                    gap: 1,
-                    py: 0.75,
-                  }}
+                  sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 1, py: 0.75 }}
                 >
                   <Box sx={{ minWidth: 0, flex: 1 }}>
-                    <Typography
-                      sx={{
-                        fontSize: "0.82rem",
-                        fontWeight: 500,
-                        whiteSpace: "nowrap",
-                        overflow: "hidden",
-                        textOverflow: "ellipsis",
-                      }}
-                    >
+                    <Typography sx={{ fontSize: "0.82rem", fontWeight: 500, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
                       {item.name}
                     </Typography>
                     <Typography variant="caption" color="text.secondary">
                       ₱{item.price.toFixed(2)} each
                     </Typography>
                   </Box>
-
                   <Box sx={{ display: "flex", alignItems: "center", gap: 0.5, flexShrink: 0 }}>
                     <IconButton size="small" onClick={() => updateQuantity(item._id, -1)}>
                       <RemoveIcon sx={{ fontSize: 15 }} />
@@ -661,7 +612,6 @@ export default function Home() {
                       <AddIcon sx={{ fontSize: 15 }} />
                     </IconButton>
                   </Box>
-
                   <Typography sx={{ fontSize: "0.82rem", fontWeight: 600, minWidth: 60, textAlign: "right" }}>
                     ₱{(item.price * item.quantity).toFixed(2)}
                   </Typography>
@@ -671,33 +621,12 @@ export default function Home() {
             </Box>
           </Collapse>
 
-          <Box
-            sx={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-              gap: 1.5,
-              px: 2,
-              py: 1.25,
-            }}
-          >
+          <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 1.5, px: 2, py: 1.25 }}>
             <Box
               onClick={() => setCartExpanded((prev) => !prev)}
               sx={{ display: "flex", alignItems: "center", gap: 1, cursor: "pointer", flex: 1, minWidth: 0 }}
             >
-              <Box
-                sx={{
-                  width: 34,
-                  height: 34,
-                  borderRadius: "9px",
-                  backgroundColor: "#5BC4A0",
-                  color: "#fff",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  flexShrink: 0,
-                }}
-              >
+              <Box sx={{ width: 34, height: 34, borderRadius: "9px", backgroundColor: "#5BC4A0", color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
                 <ShoppingBagOutlinedIcon sx={{ fontSize: 17 }} />
               </Box>
               <Box sx={{ minWidth: 0 }}>
@@ -708,11 +637,9 @@ export default function Home() {
                   {cartExpanded ? "Tap to collapse" : "Tap to view cart"}
                 </Typography>
               </Box>
-              {cartExpanded ? (
-                <ExpandMoreIcon sx={{ fontSize: 18, color: "text.secondary" }} />
-              ) : (
-                <ExpandLessIcon sx={{ fontSize: 18, color: "text.secondary" }} />
-              )}
+              {cartExpanded
+                ? <ExpandMoreIcon sx={{ fontSize: 18, color: "text.secondary" }} />
+                : <ExpandLessIcon sx={{ fontSize: 18, color: "text.secondary" }} />}
             </Box>
 
             <Button
@@ -734,7 +661,7 @@ export default function Home() {
         </Box>
       )}
 
-      {/* CHECKOUT MODAL */}
+      {/* ── CHECKOUT MODAL ── */}
       <Modal open={checkoutOpen} onClose={() => setCheckoutOpen(false)}>
         <Box
           sx={{
@@ -821,7 +748,7 @@ export default function Home() {
         </Box>
       </Modal>
 
-      {/* SEARCH-RESULT FEEDBACK */}
+      {/* ── SNACKBAR ── */}
       <Snackbar
         open={snackbar.open}
         autoHideDuration={3000}

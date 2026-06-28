@@ -9,7 +9,10 @@ export interface IPharmacy extends Document {
     lng: number;
   };
   contactNumber: string;
-  isApproved: boolean;
+  isActive: {
+  type: Boolean,
+  default: false,
+},
 }
 
 const PharmacySchema: Schema = new Schema(
