@@ -1,7 +1,6 @@
 import { useState,useRef } from "react";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import api from "../../api/api";
-import logo from "frontend/src/assets/Seal.png"
 import {
   Box,
   TextField,
@@ -13,6 +12,7 @@ import {
   IconButton,
   InputAdornment,
 } from "@mui/material";
+import logo from "../../assets/Seal.png"
 
 
 export default function Login() {
