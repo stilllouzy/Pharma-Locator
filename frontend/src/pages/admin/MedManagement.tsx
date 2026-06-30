@@ -4,10 +4,11 @@ import {
   Card,
   CardContent,
   TextField,
-  Button,
   Chip,
   InputAdornment,
   Skeleton,
+  IconButton,
+  Tooltip,
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import MedicationOutlinedIcon from "@mui/icons-material/MedicationOutlined";
@@ -254,21 +255,23 @@ export default function MedManagement() {
                   }}
                 >
                   <StockChip stock={med.stock} />
-                  <Button
-                    size="small"
-                    color="error"
-                    variant="outlined"
-                    startIcon={<DeleteIcon sx={{ fontSize: "16px !important" }} />}
-                    onClick={() => deleteMedicine(med._id)}
-                    sx={{
-                      borderRadius: "8px",
-                      fontSize: "0.75rem",
-                      borderWidth: "0.5px",
-                      px: 1.5,
-                      py: 0.5,
-                    }}
-                  >
-                  </Button>
+              <Tooltip title="Delete medicine">
+  <IconButton
+    size="small"
+    onClick={() => deleteMedicine(med._id)}
+    sx={{
+      color: "error.main",
+      border: "1px solid",
+      borderColor: "error.main",
+      borderWidth: "0.5px",
+      borderRadius: "8px",
+      width: 32,
+      height: 32,
+    }}
+  >
+    <DeleteIcon sx={{ fontSize: 16 }} />
+  </IconButton>
+</Tooltip>
                 </Box>
               </CardContent>
             </Card>
