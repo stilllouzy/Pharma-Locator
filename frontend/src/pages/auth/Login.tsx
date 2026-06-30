@@ -104,14 +104,33 @@ const confirmPasswordRef = useRef<HTMLInputElement>(null);
     boxShadow: "0 8px 30px rgba(0,0,0,0.06)",
   }}
 >
-    <Box sx={{ textAlign: "center", mb: 3 }}>
-  <img
-    src={logo}
-    alt="Brgy. Pharma Locator"
-    style={{ height: 72, objectFit: "contain", marginBottom: 8 }}
-  />
-  <Typography variant="body2" color="text.secondary">
-    Emmanuel Bergado 1, Pharmacy Locator
+ <Box sx={{ textAlign: "center", mb: 3 }}>
+  <Box
+    sx={{
+      width: 96,
+      height: 96,
+      borderRadius: "50%",
+      backgroundColor: "#fff",
+      border: "2px solid #E0E6ED",
+      boxShadow: "0 2px 8px rgba(0,0,0,0.06)",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      mx: "auto",
+      mb: 1.5,
+    }}
+  >
+    <img
+      src={logo}
+      alt="Brgy. Pharma Locator"
+      style={{ height: 64, width: 64, objectFit: "contain", borderRadius: "50%" }}
+    />
+  </Box>
+  <Typography
+    variant="body2"
+    sx={{ color: "primary.main", fontWeight: 700 }}
+  >
+    Brgy. Emmanuel Bergado 1, Pharma-Locator
   </Typography>
 </Box>
         {/* TABS */}
