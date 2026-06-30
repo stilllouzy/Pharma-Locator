@@ -79,7 +79,7 @@ export default function RiderSidebar({ open, onClose }: SidebarProps) {
       height: open ? 38 : 34,
       borderRadius: "50%",
       backgroundColor: "rgba(255,255,255,0.08)",
-      border: "1px solid rgba(255,255,255,0.18)",
+      border: "1px solid rgba(255,255,255,0.6)",
       display: "flex",
       alignItems: "center",
       justifyContent: "center",
