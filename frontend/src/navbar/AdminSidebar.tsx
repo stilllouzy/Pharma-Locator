@@ -85,7 +85,7 @@ export default function Sidebar({ open }: SidebarProps) {
         overflow: "hidden",
       }}
     >
-  {/* BRAND */}
+ {/* BRAND */}
 <Box
   sx={{
     display: "flex",
@@ -97,17 +97,32 @@ export default function Sidebar({ open }: SidebarProps) {
     flexShrink: 0,
   }}
 >
-  <img
-    src={logo}
-    alt="Pharma Locator"
-    style={{
-      height: open ? 36 : 32,
-      width: open ? "auto" : 32,
-      objectFit: "contain",
+  <Box
+    sx={{
+      width: open ? 38 : 34,
+      height: open ? 38 : 34,
+      borderRadius: "50%",
+      backgroundColor: "rgba(255,255,255,0.08)",
+      border: "1px solid rgba(255,255,255,0.18)",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
       flexShrink: 0,
-      transition: "height 0.25s ease, width 0.25s ease",
+      transition: "width 0.25s ease, height 0.25s ease",
     }}
-  />
+  >
+    <img
+      src={logo}
+      alt="Pharma Locator"
+      style={{
+        height: open ? 28 : 24,
+        width: open ? 28 : 24,
+        objectFit: "contain",
+        flexShrink: 0,
+        transition: "height 0.25s ease, width 0.25s ease",
+      }}
+    />
+  </Box>
   {open && (
     <Box>
       <Typography sx={{ fontSize: 11, color: "rgba(255,255,255,0.45)", whiteSpace: "nowrap", lineHeight: 1.2 }}>

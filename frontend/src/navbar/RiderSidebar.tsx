@@ -61,29 +61,45 @@ export default function RiderSidebar({ open, onClose }: SidebarProps) {
         overflow: "hidden",
       }}
     >
-   {/* BRAND */}
+  {/* BRAND */}
 <Box
   sx={{
     display: "flex",
     alignItems: "center",
     gap: 1.25,
     height: 64,
-    px: showLabels ? 2.5 : 0,
-    justifyContent: showLabels ? "flex-start" : "center",
+    px: open ? 2.5 : 0,
+    justifyContent: open ? "flex-start" : "center",
     flexShrink: 0,
   }}
 >
-  <img
-    src={logo}
-    alt="Pharma Locator"
-    style={{
-      height: showLabels ? 36 : 32,
-      width: showLabels ? "auto" : 32,
-      objectFit: "contain",
+  <Box
+    sx={{
+      width: open ? 38 : 34,
+      height: open ? 38 : 34,
+      borderRadius: "50%",
+      backgroundColor: "rgba(255,255,255,0.08)",
+      border: "1px solid rgba(255,255,255,0.18)",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
       flexShrink: 0,
-      transition: "height 0.25s ease, width 0.25s ease",
+      transition: "width 0.25s ease, height 0.25s ease",
     }}
-  />
+  >
+    <img
+      src={logo}
+      alt="Pharma Locator"
+      style={{
+        height: showLabels ? 28 : 24,
+        width: showLabels ? 28 : 24,
+        objectFit: "contain",
+        flexShrink: 0,
+        transition: "height 0.25s ease, width 0.25s ease",
+        mixBlendMode: "multiply",
+      }}
+    />
+  </Box>
   {showLabels && (
     <Box>
       <Typography sx={{ fontSize: 11, color: "rgba(255,255,255,0.45)", whiteSpace: "nowrap", lineHeight: 1.2 }}>
