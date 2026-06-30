@@ -102,7 +102,7 @@ export default function Sidebar({ open }: SidebarProps) {
       width: open ? 38 : 34,
       height: open ? 38 : 34,
       borderRadius: "50%",
-      backgroundColor: "rgba(255,255,255,0.6)",
+      backgroundColor: "white",
       border: "1px solid rgba(255,255,255,0.18)",
       display: "flex",
       alignItems: "center",
